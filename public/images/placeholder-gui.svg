@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <!-- Window chrome -->
+  <rect width="800" height="500" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <rect width="800" height="36" rx="10" fill="#1e293b"/>
+  <rect y="26" width="800" height="10" fill="#1e293b"/>
+  <circle cx="18" cy="18" r="5.5" fill="#ef4444" opacity="0.8"/>
+  <circle cx="36" cy="18" r="5.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="54" cy="18" r="5.5" fill="#22c55e" opacity="0.8"/>
+  <text x="400" y="23" text-anchor="middle" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Universal Dendrimer Builder v1.0</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="36" width="180" height="464" fill="#0b1221"/>
+  <text x="90" y="65" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="10" font-weight="600" letter-spacing="1">DENDRIMER TYPES</text>
+  <rect x="10" y="78" width="160" height="28" rx="4" fill="#134e4a"/>
+  <text x="20" y="97" fill="#2dd4bf" font-family="Inter,sans-serif" font-size="12">PAMAM</text>
+  <text x="20" y="133" fill="#64748b" font-family="Inter,sans-serif" font-size="12">PPI</text>
+  <text x="20" y="169" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Triazine</text>
+  <text x="20" y="205" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Carbosilane</text>
+  <text x="20" y="241" fill="#64748b" font-family="Inter,sans-serif" font-size="12">PLL</text>
+  <text x="20" y="277" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Phosphorus</text>
+  <text x="20" y="313" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Polyester</text>
+  <text x="20" y="349" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Polyglycerol</text>
+  <text x="20" y="385" fill="#64748b" font-family="Inter,sans-serif" font-size="12">Custom</text>
+
+  <!-- Tabs -->
+  <rect x="190" y="40" width="115" height="28" rx="4" fill="#0f172a" stroke="#334155"/>
+  <text x="248" y="59" text-anchor="middle" fill="#e2e8f0" font-family="Inter,sans-serif" font-size="12">Build</text>
+  <text x="368" y="59" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="12">Parameterize</text>
+  <text x="488" y="59" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="12">MD Setup</text>
+  <text x="608" y="59" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="12">Characterize</text>
+  <text x="724" y="59" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="12">Log</text>
+
+  <!-- Main content area -->
+  <rect x="190" y="80" width="600" height="380" fill="#080e1a" rx="4"/>
+
+  <!-- Generation label -->
+  <text x="210" y="110" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11" font-weight="600">GENERATION</text>
+  <rect x="210" y="118" width="200" height="3" rx="1.5" fill="#1e293b"/>
+  <rect x="210" y="118" width="80" height="3" rx="1.5" fill="#14b8a6"/>
+  <circle cx="290" cy="119" r="7" fill="#14b8a6" stroke="#0b1221" stroke-width="2"/>
+  <text x="424" y="125" fill="#14b8a6" font-family="JetBrains Mono,monospace" font-size="14" font-weight="700">G3</text>
+
+  <!-- Structure viewport -->
+  <rect x="210" y="140" width="370" height="280" rx="6" fill="#0b1221" stroke="#1e293b" stroke-width="1"/>
+  <!-- Dendrimer structure sketch inside viewport -->
+  <circle cx="395" cy="280" r="6" fill="#14b8a6" opacity="0.7"/>
+  <line x1="395" y1="274" x2="370" y2="250" stroke="#14b8a6" stroke-width="2" opacity="0.5"/>
+  <line x1="395" y1="274" x2="420" y2="250" stroke="#14b8a6" stroke-width="2" opacity="0.5"/>
+  <line x1="395" y1="274" x2="395" y2="310" stroke="#14b8a6" stroke-width="2" opacity="0.5"/>
+  <line x1="395" y1="274" x2="360" y2="275" stroke="#14b8a6" stroke-width="2" opacity="0.5"/>
+  <circle cx="370" cy="250" r="4" fill="#0d9488" opacity="0.6"/>
+  <circle cx="420" cy="250" r="4" fill="#0d9488" opacity="0.6"/>
+  <circle cx="395" cy="310" r="4" fill="#0d9488" opacity="0.6"/>
+  <circle cx="360" cy="275" r="4" fill="#0d9488" opacity="0.6"/>
+  <line x1="370" y1="246" x2="352" y2="228" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <line x1="370" y1="246" x2="388" y2="228" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <line x1="420" y1="246" x2="402" y2="228" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <line x1="420" y1="246" x2="438" y2="228" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="352" cy="228" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <circle cx="388" cy="228" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <circle cx="402" cy="228" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <circle cx="438" cy="228" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <line x1="395" y1="314" x2="380" y2="335" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <line x1="395" y1="314" x2="410" y2="335" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="380" cy="335" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <circle cx="410" cy="335" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <line x1="360" y1="279" x2="340" y2="263" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <line x1="360" y1="279" x2="340" y2="295" stroke="#2dd4bf" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="340" cy="263" r="4.5" fill="#5eead4" opacity="0.8"/>
+  <circle cx="340" cy="295" r="4.5" fill="#5eead4" opacity="0.8"/>
+
+  <!-- Stats panel -->
+  <rect x="590" y="140" width="200" height="280" rx="6" fill="#0b1221" stroke="#1e293b" stroke-width="1"/>
+  <text x="690" y="165" text-anchor="middle" fill="#475569" font-family="Inter,sans-serif" font-size="10" font-weight="600" letter-spacing="1">PROPERTIES</text>
+  <text x="604" y="192" fill="#475569" font-family="Inter,sans-serif" font-size="11">Atoms</text>
+  <text x="786" y="192" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11">516</text>
+  <text x="604" y="224" fill="#475569" font-family="Inter,sans-serif" font-size="11">Residues</text>
+  <text x="786" y="224" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11">72</text>
+  <text x="604" y="256" fill="#475569" font-family="Inter,sans-serif" font-size="11">Terminal Groups</text>
+  <text x="786" y="256" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11">32</text>
+  <text x="604" y="288" fill="#475569" font-family="Inter,sans-serif" font-size="11">Mol. Weight</text>
+  <text x="786" y="288" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11">~6.9 kDa</text>
+  <text x="604" y="320" fill="#475569" font-family="Inter,sans-serif" font-size="11">Rg estimate</text>
+  <text x="786" y="320" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11">~12.4 &#8491;</text>
+  <text x="604" y="352" fill="#475569" font-family="Inter,sans-serif" font-size="11">Surface Area</text>
+  <text x="786" y="352" text-anchor="end" fill="#475569" font-family="JetBrains Mono,monospace" font-size="11">pending</text>
+
+  <!-- Build button -->
+  <rect x="210" y="434" width="155" height="32" rx="6" fill="#0d9488"/>
+  <text x="288" y="454" text-anchor="middle" fill="#f0fdf4" font-family="Inter,sans-serif" font-size="13" font-weight="600">&#9654;  Build Structure</text>
+  <!-- Parameterize button -->
+  <rect x="378" y="434" width="195" height="32" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="476" y="454" text-anchor="middle" fill="#94a3b8" font-family="Inter,sans-serif" font-size="13">Parameterize (AMBER)</text>
+</svg>

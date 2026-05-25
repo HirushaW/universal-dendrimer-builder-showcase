@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-navy-950: #020617;
+    --color-navy-900: #0b1221;
+    --color-navy-800: #0f1e35;
+    --color-teal-500: #14b8a6;
+    --color-teal-400: #2dd4bf;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-200 font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-teal-500/30 text-teal-200;
+  }
+}
+
+@layer components {
+  .code-block {
+    @apply bg-slate-900 border border-slate-700 rounded-lg overflow-x-auto font-mono text-sm;
+  }
+
+  .section-title {
+    @apply text-3xl font-bold text-slate-100 tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-lg text-slate-400 mt-2 leading-relaxed;
+  }
+
+  .card {
+    @apply bg-slate-900 border border-slate-700 rounded-xl p-6
+           hover:border-teal-500/50 transition-colors duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+           bg-teal-500 text-slate-950 font-semibold text-sm
+           hover:bg-teal-400 transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-slate-950;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+           border border-slate-600 text-slate-200 font-semibold text-sm
+           hover:border-teal-500 hover:text-teal-400 transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-950;
+  }
+
+  .nav-link {
+    @apply text-slate-400 hover:text-teal-400 font-medium text-sm transition-colors duration-150;
+  }
+
+  .table-scientific {
+    @apply w-full text-sm text-left border-collapse;
+  }
+
+  .table-scientific th {
+    @apply bg-slate-800 text-slate-200 font-semibold px-4 py-3 border-b border-slate-700;
+  }
+
+  .table-scientific td {
+    @apply px-4 py-3 border-b border-slate-800 text-slate-300;
+  }
+
+  .table-scientific tr:hover td {
+    @apply bg-slate-800/50;
+  }
+
+  .limitation-item {
+    @apply flex gap-3 p-4 bg-slate-900 rounded-lg border border-slate-700;
+  }
+
+  .limitation-severity-high {
+    @apply border-l-4 border-l-red-500;
+  }
+
+  .limitation-severity-medium {
+    @apply border-l-4 border-l-amber-500;
+  }
+
+  .limitation-severity-low {
+    @apply border-l-4 border-l-slate-500;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #14b8a6;
+}

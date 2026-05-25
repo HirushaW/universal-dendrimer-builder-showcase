@@ -1,0 +1,191 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CitationBlock from '../../../components/CitationBlock.astro';
+
+const forceFieldMatrix = [
+  { type: 'PAMAM',       gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'PPI',         gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'Triazine',    gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'Carbosilane', gaff2: 'Manual bypass',cgenff: 'Not supported',mixed: 'Partial', notes: 'CGenFF+Si incompatible; use GAFF2 bypass' },
+  { type: 'PLL',         gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'Phosphorus',  gaff2: 'Gasteiger+UFF',cgenff: 'Partial',    mixed: 'Full',    notes: 'G3+ may need Gasteiger charges' },
+  { type: 'Polyester',   gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'Polyglycerol',gaff2: 'Full',         cgenff: 'Full',       mixed: 'Full',    notes: '' },
+  { type: 'Custom',      gaff2: 'User-defined', cgenff: 'User-defined',mixed:'User-defined',notes: '' },
+];
+
+function statusClass(status: string) {
+  if (status === 'Full') return 'text-teal-400';
+  if (status.includes('bypass') || status.includes('Partial') || status.includes('Gasteiger')) return 'text-amber-400';
+  if (status.includes('Not')) return 'text-red-400';
+  return 'text-slate-400';
+}
+---
+
+<Layout title="UDB Overview" description="Universal Dendrimer Builder — features, force-field matrix, and workflow overview." activeNav="tools">
+
+  <!-- Page header -->
+  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
+        <span>/</span>
+        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors text-slate-300">UDB</a>
+      </div>
+      <h1 class="text-4xl font-bold text-slate-100 mb-3">Universal Dendrimer Builder</h1>
+      <p class="text-lg text-slate-400 max-w-2xl">
+        An open-source Python desktop application for constructing, parameterizing,
+        and simulating dendrimer nanostructures — G1 to G10, 9 types, AMBER + NAMD pipeline.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/tools/udb/install/" class="btn-primary">Install v1.0</a>
+        <a href="/tools/udb/manual/" class="btn-outline">User Manual</a>
+        <a href="/tools/udb/examples/" class="btn-outline">Examples</a>
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <!-- What is UDB -->
+    <section class="mb-16">
+      <h2 class="section-title mb-4">What is UDB?</h2>
+      <div class="grid lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-4 text-slate-300 leading-relaxed">
+          <p>
+            The Universal Dendrimer Builder (UDB) is a Python-based GUI application designed
+            for computational chemists who need to build three-dimensional dendrimer structures
+            ready for molecular dynamics simulation. Unlike scripted tools such as
+            <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">dendrimer-build.py</code>,
+            UDB provides a unified interface for the entire workflow: geometry construction,
+            force-field parameterization, MD input generation, and structural characterization.
+          </p>
+          <p>
+            UDB was developed to address the lack of a single tool covering multiple dendrimer
+            chemistries — PAMAM-focused tools exist, but switching to PPI, Phosphorus, or
+            Carbosilane dendrimers requires either manual scripting or switching platforms.
+            UDB handles all nine supported types through one workflow with type-specific
+            force-field routing.
+          </p>
+          <p>
+            The placement engine uses a seven-stage algorithm: cone subdivision on a unit sphere,
+            Fibonacci point sampling for initial arm placement, Simulated Annealing over SO(3)
+            rotation space to resolve steric conflicts, and collective energy minimization via
+            gradient descent before handing off to AMBER's <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">antechamber</code>
+            and <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">parmchk2</code>.
+          </p>
+        </div>
+        <div class="space-y-3">
+          {[
+            { label: 'Current version', value: 'v1.0' },
+            { label: 'License', value: 'Open Source (TBD)' },
+            { label: 'Platform', value: 'Linux (Ubuntu 20.04+)' },
+            { label: 'Python', value: '3.8+' },
+            { label: 'Dependencies', value: 'AmberTools25, NAMD 3.x' },
+            { label: 'Supported types', value: '9 dendrimer families' },
+            { label: 'Generations', value: 'G1 – G10' },
+          ].map(row => (
+            <div class="flex justify-between items-center py-2 border-b border-slate-800">
+              <span class="text-slate-500 text-sm">{row.label}</span>
+              <span class="text-slate-200 text-sm font-medium">{row.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Force-field matrix -->
+    <section class="mb-16">
+      <h2 class="section-title mb-2">Force-Field Support Matrix</h2>
+      <p class="text-slate-400 mb-6">
+        UDB automatically routes each dendrimer type to the appropriate force-field pathway.
+        Status indicates the default path; workarounds exist for "caveats" cases.
+        See <a href="/tools/udb/limitations/" class="text-teal-400 hover:text-teal-300">Known Limitations</a> for details.
+      </p>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-700">
+        <table class="table-scientific">
+          <thead>
+            <tr>
+              <th>Dendrimer Type</th>
+              <th>GAFF2</th>
+              <th>CGenFF</th>
+              <th>Mixed</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {forceFieldMatrix.map(row => (
+              <tr>
+                <td class="font-medium text-slate-200">{row.type}</td>
+                <td class={statusClass(row.gaff2)}>{row.gaff2}</td>
+                <td class={statusClass(row.cgenff)}>{row.cgenff}</td>
+                <td class={statusClass(row.mixed)}>{row.mixed}</td>
+                <td class="text-slate-500 text-xs">{row.notes || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-3 text-slate-600 text-xs">
+        "Full" = default automatic routing. "Manual bypass" = requires user action per the Limitations page.
+        "Not supported" = known incompatibility.
+      </p>
+    </section>
+
+    <!-- Workflow stages -->
+    <section class="mb-16">
+      <h2 class="section-title mb-6">Seven-Stage Placement Engine</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { n: '01', title: 'Cone Subdivision', desc: 'Recursive subdivision of a unit sphere into angular sectors, one sector per branch arm.' },
+          { n: '02', title: 'Fibonacci Sampling', desc: 'Fibonacci sphere algorithm distributes initial branch direction vectors without bias.' },
+          { n: '03', title: 'Labile-H Grafting', desc: 'Reactive hydrogen sites identified; monomer units grafted onto branch tips iteratively.' },
+          { n: '04', title: 'SO(3) Annealing', desc: 'Simulated Annealing over SO(3) rotation space resolves steric clashes at each generation.' },
+          { n: '05', title: 'Collective Minimization', desc: 'Gradient-descent minimization of all branch vectors simultaneously for global energy reduction.' },
+          { n: '06', title: 'Intergenerational Min.', desc: 'Minimization between generation-placement steps ensures smooth, non-clashing structures.' },
+          { n: '07', title: 'Fragment BCC Charging', desc: 'Residue-level AM1-BCC charge assignment via antechamber. Handles large systems exceeding whole-molecule BCC limits.' },
+        ].map(stage => (
+          <div class="card">
+            <div class="text-teal-500/40 font-mono text-xs mb-2">{stage.n}</div>
+            <h3 class="text-slate-200 font-semibold text-sm mb-1">{stage.title}</h3>
+            <p class="text-slate-500 text-xs leading-relaxed">{stage.desc}</p>
+          </div>
+        ))}
+        <div class="card bg-teal-500/5 border-teal-500/20 flex flex-col justify-center items-center text-center">
+          <a href="/tools/udb/manual/#theory" class="text-teal-400 text-sm font-medium hover:text-teal-300 transition-colors">
+            Full theory section →
+          </a>
+          <p class="text-slate-500 text-xs mt-1">diagrams and equations</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sub-page links -->
+    <section class="mb-16">
+      <h2 class="section-title mb-6">UDB Documentation</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {[
+          { href: '/tools/udb/install/', title: 'Installation', desc: 'Conda environment setup, AmberTools25, NAMD 3.x, Python dependencies, known install errors.' },
+          { href: '/tools/udb/manual/', title: 'User Manual', desc: 'Complete tab-by-tab reference with parameter explanations and expected outputs.' },
+          { href: '/tools/udb/examples/', title: 'Worked Examples', desc: 'End-to-end walkthroughs: PAMAM G3, Carbosilane, Phosphorus, and more.' },
+          { href: '/tools/udb/validation/', title: 'Benchmarks', desc: 'Atom counts, Rg, and asphericity validated against Maiti et al. 2004 and other literature.' },
+          { href: '/tools/udb/limitations/', title: 'Known Limitations', desc: 'Honest list of what UDB cannot do, with workarounds where they exist.' },
+          { href: '/tools/udb/changelog/', title: 'Changelog', desc: 'Version-by-version history of features added, bugs fixed, and algorithms changed.' },
+        ].map(card => (
+          <a href={card.href} class="card group flex flex-col">
+            <h3 class="text-slate-100 font-semibold mb-2 group-hover:text-teal-400 transition-colors">{card.title} →</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Citation -->
+    <section>
+      <CitationBlock compact={true} />
+    </section>
+
+  </div>
+</Layout>

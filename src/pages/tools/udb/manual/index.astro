@@ -1,0 +1,342 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+
+const tabs = [
+  { id: 'build', label: 'Build Tab', icon: '⬡' },
+  { id: 'param', label: 'Parameterize Tab', icon: '⚗' },
+  { id: 'md', label: 'MD Setup Tab', icon: '▶' },
+  { id: 'characterize', label: 'Characterize Tab', icon: '◎' },
+  { id: 'log', label: 'Log Tab', icon: '📋' },
+];
+---
+
+<Layout title="User Manual" description="Complete UDB manual — workflow overview, tab-by-tab guide, and key parameters." activeNav="tools">
+
+  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
+        <span>/</span>
+        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
+        <span>/</span>
+        <span class="text-slate-300">Manual</span>
+      </div>
+      <h1 class="text-4xl font-bold text-slate-100 mb-3">User Manual</h1>
+      <p class="text-lg text-slate-400 max-w-2xl">
+        Complete reference for UDB v1.0 — workflow overview, tab-by-tab guide,
+        key parameters, expected outputs, and output file formats.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <div class="grid lg:grid-cols-4 gap-10">
+
+      <!-- Sidebar TOC -->
+      <aside class="lg:col-span-1">
+        <div class="sticky top-24 bg-slate-900 border border-slate-700 rounded-xl p-4">
+          <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Contents</p>
+          <nav class="space-y-1 text-sm">
+            {[
+              { href: '#overview', label: 'Workflow Overview' },
+              { href: '#getting-started', label: 'Getting Started' },
+              { href: '#build', label: 'Build Tab' },
+              { href: '#param', label: 'Parameterize Tab' },
+              { href: '#md', label: 'MD Setup Tab' },
+              { href: '#characterize', label: 'Characterize Tab' },
+              { href: '#theory', label: 'Theory & Algorithms' },
+              { href: '#outputs', label: 'Output Files' },
+              { href: '#parameters', label: 'Key Parameters' },
+            ].map(item => (
+              <a href={item.href} class="block px-2 py-1.5 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors">
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div class="mt-4 pt-4 border-t border-slate-700 space-y-2">
+            <a href="/tools/udb/install/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">← Installation</a>
+            <a href="/tools/udb/examples/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">Worked Examples →</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="lg:col-span-3 space-y-14">
+
+        <!-- Workflow overview -->
+        <section id="overview">
+          <h2 class="text-2xl font-bold text-slate-100 mb-4">Workflow Overview</h2>
+          <p class="text-slate-400 leading-relaxed mb-4">
+            UDB implements a five-stage pipeline, each corresponding to a tab in the application.
+            You work through them left to right: Build → Parameterize → MD Setup → Run → Characterize.
+          </p>
+          <div class="grid sm:grid-cols-5 gap-2 mb-6">
+            {tabs.map((tab, i) => (
+              <div class="text-center p-3 bg-slate-900 rounded-lg border border-slate-700 text-sm">
+                <div class="text-xl mb-1">{tab.icon}</div>
+                <div class="text-slate-400 text-xs font-medium">{tab.label.replace(' Tab', '')}</div>
+                <div class="text-slate-600 text-xs mt-1">{i + 1}</div>
+              </div>
+            ))}
+          </div>
+          <div class="flex items-start gap-2 p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 text-slate-400 text-sm leading-relaxed">
+            <svg class="w-5 h-5 text-teal-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>
+              A typical PAMAM G3 build takes under 30 seconds on modern hardware.
+              Parameterization (antechamber + tleap) takes 1–5 minutes depending on
+              generation. NAMD MD runs depend on system size and simulation length.
+            </span>
+          </div>
+        </section>
+
+        <!-- Getting started -->
+        <section id="getting-started">
+          <h2 class="text-2xl font-bold text-slate-100 mb-4">Getting Started</h2>
+          <ol class="space-y-4 text-slate-400 leading-relaxed">
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">1.</span>
+              <span>Launch UDB: <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">conda activate AmberTools25 && python3 universal_dendrimer_builder_v1_0.py</code></span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">2.</span>
+              <span>In the left panel, select your <strong class="text-slate-200">Dendrimer Type</strong> (e.g., PAMAM).</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">3.</span>
+              <span>Set the <strong class="text-slate-200">Generation</strong> slider to G1 – G10.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">4.</span>
+              <span>Click <strong class="text-teal-400">Build Structure</strong> in the Build tab.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">5.</span>
+              <span>When build completes, move to the <strong class="text-slate-200">Parameterize</strong> tab.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">6.</span>
+              <span>Select GAFF2 or CGenFF and click <strong class="text-teal-400">Run Parameterization</strong>.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-teal-400 font-bold shrink-0">7.</span>
+              <span>In MD Setup, configure solvation box and output directory, then click <strong class="text-teal-400">Generate NAMD Input</strong>.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- Build tab -->
+        <section id="build">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">Build Tab</h2>
+          <p class="text-slate-500 text-sm mb-4">Construct the 3D dendrimer geometry</p>
+          <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
+            <p>
+              The Build tab is the starting point. Select a dendrimer type from the left panel,
+              set the generation, and click <strong class="text-teal-400">Build Structure</strong>.
+              UDB constructs the 3D geometry using the seven-stage placement engine and displays
+              atom count, residue count, terminal groups, and estimated Rg in the Properties panel.
+            </p>
+            <div class="overflow-x-auto rounded-lg border border-slate-700">
+              <table class="table-scientific">
+                <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+                <tbody>
+                  <tr><td class="font-mono text-sm text-teal-300">Dendrimer Type</td><td>One of 9 supported types</td><td>PAMAM</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Generation (G)</td><td>G1 to G10</td><td>G3</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Bond Length Scale</td><td>Multiplier on equilibrium bond lengths</td><td>1.0</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Annealing Steps</td><td>SA iterations for clash resolution</td><td>5000</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Output Dir</td><td>Directory for output files</td><td>./output/</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              The Build tab writes a <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded">dendrimer.mol2</code>
+              file to the output directory. This file is the input to the Parameterize tab.
+            </p>
+          </div>
+        </section>
+
+        <!-- Parameterize tab -->
+        <section id="param">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">Parameterize Tab</h2>
+          <p class="text-slate-500 text-sm mb-4">Force-field assignment via AMBER antechamber</p>
+          <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
+            <p>
+              The Parameterize tab calls AmberTools' <code class="text-teal-300 bg-slate-800 px-1 rounded">antechamber</code>
+              and <code class="text-teal-300 bg-slate-800 px-1 rounded">parmchk2</code> on each
+              residue (Fragment BCC mode) or the whole molecule (for small systems). The process:
+            </p>
+            <ol class="space-y-2 ml-4">
+              <li>1. Mol2 input split into residue fragments</li>
+              <li>2. <code class="text-teal-300 bg-slate-800 px-1 rounded">antechamber -fi mol2 -fo mol2 -c bcc -at gaff2</code> per fragment</li>
+              <li>3. <code class="text-teal-300 bg-slate-800 px-1 rounded">parmchk2</code> generates missing parameters (<code class="text-teal-300 bg-slate-800 px-1 rounded">.frcmod</code>)</li>
+              <li>4. <code class="text-teal-300 bg-slate-800 px-1 rounded">tleap</code> assembles final topology and coordinates</li>
+            </ol>
+            <p>
+              Outputs: <code class="text-teal-300 bg-slate-800 px-1 rounded">.prmtop</code> (AMBER topology),
+              <code class="text-teal-300 bg-slate-800 px-1 rounded">.inpcrd</code> (coordinates),
+              and <code class="text-teal-300 bg-slate-800 px-1 rounded">.frcmod</code> (missing parameters).
+            </p>
+            <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
+              <strong>BCC charge limit:</strong> For G3+ PAMAM or any dendrimer exceeding ~500 bonds per fragment,
+              Fragment BCC may fail. Switch to Gasteiger charges in the Parameterize tab dropdown, or see
+              <a href="/tools/udb/limitations/" class="underline">Known Limitations</a> for the manual GAFF2 bypass procedure.
+            </div>
+          </div>
+        </section>
+
+        <!-- MD Setup tab -->
+        <section id="md">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">MD Setup Tab</h2>
+          <p class="text-slate-500 text-sm mb-4">Generate NAMD 3.x input deck</p>
+          <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
+            <p>
+              The MD Setup tab converts AMBER topology/coordinates to CHARMM-format PSF/PDB
+              (used by NAMD), solvates in a TIP3P water box, adds counterions, and writes
+              a complete NAMD 3.x configuration file.
+            </p>
+            <div class="overflow-x-auto rounded-lg border border-slate-700">
+              <table class="table-scientific">
+                <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+                <tbody>
+                  <tr><td class="font-mono text-sm text-teal-300">Solvation Padding</td><td>Water box padding (Å)</td><td>12.0 Å</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Ion Concentration</td><td>NaCl concentration (M)</td><td>0.15 M</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Timestep</td><td>MD timestep (fs)</td><td>2.0 fs</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Temperature</td><td>Target temperature (K)</td><td>300 K</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Simulation Steps</td><td>Production MD steps</td><td>1,000,000</td></tr>
+                  <tr><td class="font-mono text-sm text-teal-300">Output Frequency</td><td>Trajectory write interval</td><td>1000 steps</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Characterize tab -->
+        <section id="characterize">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">Characterize Tab</h2>
+          <p class="text-slate-500 text-sm mb-4">Post-simulation structural analysis</p>
+          <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
+            <p>
+              The Characterize tab computes structural descriptors from either the built geometry
+              (pre-simulation) or from a NAMD trajectory (post-simulation). Available metrics:
+            </p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              {[
+                { metric: 'Rg', desc: 'Radius of gyration — overall size' },
+                { metric: 'SASA', desc: 'Solvent-accessible surface area' },
+                { metric: 'vdW Volume', desc: 'van der Waals volume (Å³)' },
+                { metric: 'Rh', desc: 'Hydrodynamic radius estimate' },
+                { metric: 'Asphericity (δ)', desc: 'Shape anisotropy from Rg tensor' },
+                { metric: 'Acylindricity (κ)', desc: 'Cylindrical asymmetry' },
+                { metric: 'Density', desc: 'Solvated system density (g/cm³)' },
+                { metric: 'Terminal distribution', desc: 'Terminal group radial distribution' },
+              ].map(item => (
+                <div class="flex gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-700">
+                  <code class="text-teal-300 text-xs font-mono shrink-0">{item.metric}</code>
+                  <span class="text-slate-500 text-xs">{item.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Theory -->
+        <section id="theory">
+          <h2 class="text-2xl font-bold text-slate-100 mb-4">Theory & Algorithms</h2>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 text-sm leading-relaxed">
+            <p class="text-amber-300 font-medium mb-2">⚠ Diagram placeholders</p>
+            <p>
+              Full algorithm diagrams are in preparation. This section will include:
+              the seven-stage cone subdivision flowchart, Labile-H grafting mechanism
+              illustration, Fragment BCC fingerprint charge-transfer diagram, and the
+              force-field decision tree (GAFF2 / CGenFF / mixed). Replace this block
+              with rendered SVG diagrams when available.
+            </p>
+          </div>
+          <div class="mt-4 grid sm:grid-cols-2 gap-4">
+            {[
+              'Seven-stage cone subdivision flowchart',
+              'Labile-H grafting mechanism',
+              'Fragment BCC charge-transfer diagram',
+              'Force-field decision tree (GAFF2 / CGenFF / mixed)',
+            ].map(item => (
+              <div class="h-40 rounded-lg border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-sm text-center px-4">
+                [ Diagram: {item} ]
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Outputs -->
+        <section id="outputs">
+          <h2 class="text-2xl font-bold text-slate-100 mb-4">Output Files</h2>
+          <div class="overflow-x-auto rounded-xl border border-slate-700">
+            <table class="table-scientific">
+              <thead><tr><th>File</th><th>Stage</th><th>Description</th></tr></thead>
+              <tbody>
+                {[
+                  ['dendrimer.mol2', 'Build', 'Full dendrimer in mol2 format'],
+                  ['dendrimer_charged.mol2', 'Parameterize', 'Mol2 with AM1-BCC charges'],
+                  ['dendrimer.frcmod', 'Parameterize', 'Missing GAFF2 parameters'],
+                  ['dendrimer.prmtop', 'Parameterize', 'AMBER topology file'],
+                  ['dendrimer.inpcrd', 'Parameterize', 'AMBER coordinate file'],
+                  ['solvated.psf', 'MD Setup', 'CHARMM PSF for NAMD'],
+                  ['solvated.pdb', 'MD Setup', 'PDB with water + ions'],
+                  ['namd.conf', 'MD Setup', 'NAMD 3.x configuration'],
+                  ['minimize.conf', 'MD Setup', 'NAMD minimization input'],
+                  ['characterization.csv', 'Characterize', 'Tabulated structural metrics'],
+                ].map(([file, stage, desc]) => (
+                  <tr>
+                    <td class="font-mono text-teal-300 text-xs">{file}</td>
+                    <td class="text-slate-400 text-xs">{stage}</td>
+                    <td class="text-slate-400 text-xs">{desc}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Key parameters -->
+        <section id="parameters">
+          <h2 class="text-2xl font-bold text-slate-100 mb-4">Key Parameters Reference</h2>
+          <p class="text-slate-400 text-sm mb-4">
+            Default values are chosen to work well for PAMAM G1–G6.
+            Adjust for larger generations or alternative chemistries.
+          </p>
+          <div class="overflow-x-auto rounded-xl border border-slate-700">
+            <table class="table-scientific">
+              <thead><tr><th>Parameter</th><th>Default</th><th>Range / Notes</th></tr></thead>
+              <tbody>
+                {[
+                  ['SA_TEMP_INIT', '500 K', 'Initial SA temperature. Increase for high-generation clashes.'],
+                  ['SA_TEMP_FINAL', '1 K', 'Final SA temperature. Lower = more thorough search.'],
+                  ['SA_STEPS', '5000', 'Annealing steps per branch. Scale up for G7+.'],
+                  ['MIN_DIST', '2.5 Å', 'Minimum allowed non-bonded distance. Lower may allow clashes.'],
+                  ['BOND_SCALE', '1.0', 'Multiplier on equilibrium bond lengths. >1.0 loosens structure.'],
+                  ['BCC_CHARGE_METHOD', 'bcc', 'Charge method: bcc, gas, cm2. bcc = AM1-BCC.'],
+                  ['FRAG_MAX_BONDS', '500', 'Fragment size limit for BCC. Residues above this use Gasteiger.'],
+                  ['WATER_PAD', '12 Å', 'Solvation box padding. 10–15 Å recommended.'],
+                  ['ION_CONC', '0.15 M', 'NaCl concentration for solvation.'],
+                ].map(([param, def, notes]) => (
+                  <tr>
+                    <td class="font-mono text-teal-300 text-xs">{param}</td>
+                    <td class="text-slate-200 text-xs font-medium">{def}</td>
+                    <td class="text-slate-500 text-xs">{notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Next steps -->
+        <div class="flex gap-4 pt-4 border-t border-slate-800">
+          <a href="/tools/udb/examples/" class="btn-primary">Worked Examples →</a>
+          <a href="/tools/udb/validation/" class="btn-outline">Benchmarks</a>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</Layout>

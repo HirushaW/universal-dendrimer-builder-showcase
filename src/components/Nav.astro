@@ -1,0 +1,122 @@
+---
+interface Props {
+  activeNav?: string;
+}
+const { activeNav } = Astro.props;
+
+const toolsLinks = [
+  { href: '/tools/udb/', label: 'UDB Overview' },
+  { href: '/tools/udb/install/', label: 'Installation' },
+  { href: '/tools/udb/manual/', label: 'User Manual' },
+  { href: '/tools/udb/examples/', label: 'Worked Examples' },
+  { href: '/tools/udb/validation/', label: 'Benchmarks' },
+  { href: '/tools/udb/limitations/', label: 'Known Limitations' },
+  { href: '/tools/udb/changelog/', label: 'Changelog' },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-sm">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-md bg-teal-500/10 border border-teal-500/40 flex items-center justify-center group-hover:border-teal-400 transition-colors">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="12" cy="12" r="2"/>
+            <line x1="12" y1="10" x2="12" y2="4"/>
+            <line x1="12" y1="14" x2="12" y2="20"/>
+            <line x1="10" y1="12" x2="4" y2="12"/>
+            <line x1="14" y1="12" x2="20" y2="12"/>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="20" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="20" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-slate-100 font-bold text-base leading-none">UDB</span>
+          <span class="text-slate-500 text-xs block leading-none mt-0.5">Universal Dendrimer Builder</span>
+        </div>
+      </a>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex items-center gap-1">
+
+        <!-- Tools dropdown -->
+        <div class="relative group">
+          <button class={`nav-link px-3 py-2 rounded-md flex items-center gap-1 ${activeNav === 'tools' ? 'text-teal-400' : ''}`}>
+            Tools
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div class="absolute left-0 top-full mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-1">
+            {toolsLinks.map(link => (
+              <a href={link.href} class="block px-4 py-2.5 text-sm text-slate-300 hover:text-teal-400 hover:bg-slate-800 transition-colors">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <a href="/docs/" class={`nav-link px-3 py-2 rounded-md ${activeNav === 'docs' ? 'text-teal-400' : ''}`}>Docs</a>
+        <a href="/about/" class={`nav-link px-3 py-2 rounded-md ${activeNav === 'about' ? 'text-teal-400' : ''}`}>About</a>
+
+        <!-- GitHub CTA -->
+        <a
+          href="https://github.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-3 flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-700 text-slate-300 text-sm font-medium hover:border-teal-500 hover:text-teal-400 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-slate-400 hover:text-slate-100" aria-label="Toggle menu">
+        <svg class="w-5 h-5" id="icon-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg class="w-5 h-5 hidden" id="icon-close" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-950">
+    <div class="px-4 py-3 space-y-1">
+      <p class="text-xs text-slate-500 uppercase tracking-wider font-medium px-2 pb-1">Tools</p>
+      {toolsLinks.map(link => (
+        <a href={link.href} class="block px-2 py-2 text-sm text-slate-300 hover:text-teal-400 transition-colors">
+          {link.label}
+        </a>
+      ))}
+      <div class="border-t border-slate-800 pt-2 mt-2">
+        <a href="/docs/" class="block px-2 py-2 text-sm text-slate-300 hover:text-teal-400 transition-colors">Docs</a>
+        <a href="/about/" class="block px-2 py-2 text-sm text-slate-300 hover:text-teal-400 transition-colors">About</a>
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="block px-2 py-2 text-sm text-slate-300 hover:text-teal-400 transition-colors">GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  btn?.addEventListener('click', () => {
+    const isOpen = !menu?.classList.contains('hidden');
+    menu?.classList.toggle('hidden', isOpen);
+    iconOpen?.classList.toggle('hidden', !isOpen);
+    iconClose?.classList.toggle('hidden', isOpen);
+  });
+</script>

@@ -1,0 +1,229 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+---
+
+<Layout title="Changelog" description="UDB version history — features added, algorithms changed, bugs fixed." activeNav="tools">
+
+  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
+        <span>/</span>
+        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
+        <span>/</span>
+        <span class="text-slate-300">Changelog</span>
+      </div>
+      <h1 class="text-4xl font-bold text-slate-100 mb-3">Changelog</h1>
+      <p class="text-lg text-slate-400 max-w-xl">
+        Version history for Universal Dendrimer Builder.
+        All significant algorithmic changes, new features, and bug fixes are documented here.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+
+    <!-- v1.0 -->
+    <div class="relative pl-8 border-l-2 border-teal-500/30">
+      <!-- Version badge -->
+      <div class="absolute -left-4 top-0 w-8 h-8 rounded-full bg-teal-500 border-4 border-slate-950 flex items-center justify-center">
+        <svg class="w-3 h-3 text-slate-950" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+
+      <div class="mb-16">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-bold text-slate-100">v1.0</h2>
+          <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">Current Stable</span>
+          <span class="text-slate-500 text-sm">2025</span>
+        </div>
+
+        <p class="text-slate-400 leading-relaxed mb-8 max-w-2xl">
+          First public stable release of Universal Dendrimer Builder. This version consolidates
+          the placement engine, force-field parameterization pipeline, NAMD MD setup, and
+          structural characterization into a single GUI application.
+        </p>
+
+        <!-- Feature groups -->
+        <div class="space-y-8">
+
+          <!-- Placement engine -->
+          <div>
+            <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+              Placement Engine
+            </h3>
+            <ul class="space-y-2">
+              {[
+                {
+                  item: 'Seven-stage placement engine',
+                  detail: 'Complete pipeline: cone subdivision → Fibonacci sampling → Labile-H grafting → SO(3) annealing → collective minimization → intergenerational minimization → Fragment BCC.',
+                },
+                {
+                  item: 'Fibonacci sphere sampling',
+                  detail: 'Fibonacci lattice-based point distribution on the unit sphere for unbiased initial arm placement. Avoids clustering artifacts of random sampling.',
+                },
+                {
+                  item: 'Simulated Annealing over SO(3)',
+                  detail: 'SA with exponential cooling schedule operates over the special orthogonal group SO(3) for branch rotation — resolves steric clashes without breaking covalent geometry.',
+                },
+                {
+                  item: 'Collective Minimisation',
+                  detail: 'Gradient-descent minimization of all branch vectors simultaneously after SA, ensuring global energy reduction rather than per-branch local minima.',
+                },
+                {
+                  item: 'Intergenerational Minimization',
+                  detail: 'Additional minimization pass between each generation placement step. Prevents steric accumulation from propagating outward.',
+                },
+              ].map(f => (
+                <li class="flex gap-3 text-sm">
+                  <svg class="w-4 h-4 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>
+                    <strong class="text-slate-200">{f.item}:</strong>{' '}
+                    <span class="text-slate-400">{f.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Parameterization -->
+          <div>
+            <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+              Force-Field Parameterization
+            </h3>
+            <ul class="space-y-2">
+              {[
+                {
+                  item: 'Fragment BCC parameterization',
+                  detail: 'Residue-level AM1-BCC partial charge assignment via antechamber. Bypasses the whole-molecule MAXBOND limit. Charges are assembled post-fragment for the full topology.',
+                },
+                {
+                  item: 'CGenFF integration',
+                  detail: 'CGenFF (CHARMM General Force Field) parameter routing for heteroatom-rich branch fragments. Automatic selection based on fragment composition.',
+                },
+                {
+                  item: 'GAFF2 default pathway',
+                  detail: 'AMBER GAFF2 as the default force field for organic dendrimers. antechamber → parmchk2 → tleap pipeline fully automated.',
+                },
+                {
+                  item: 'Gasteiger fallback',
+                  detail: 'Gasteiger charge method as fallback when BCC fails (e.g., fragment exceeds MAXBOND). Selectable from Parameterize tab.',
+                },
+              ].map(f => (
+                <li class="flex gap-3 text-sm">
+                  <svg class="w-4 h-4 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>
+                    <strong class="text-slate-200">{f.item}:</strong>{' '}
+                    <span class="text-slate-400">{f.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- MD pipeline -->
+          <div>
+            <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+              MD Simulation Pipeline
+            </h3>
+            <ul class="space-y-2">
+              {[
+                {
+                  item: 'NAMD 3.x pipeline generator',
+                  detail: 'Automated generation of NAMD 3.x-compatible input: PSF/PDB conversion from AMBER topology, TIP3P solvation, ion placement, minimization and production conf files.',
+                },
+                {
+                  item: 'AMBER topology support',
+                  detail: 'Full .prmtop + .inpcrd pipeline via AmberTools25 (antechamber, parmchk2, tleap). Sander-compatible for energy minimization.',
+                },
+              ].map(f => (
+                <li class="flex gap-3 text-sm">
+                  <svg class="w-4 h-4 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>
+                    <strong class="text-slate-200">{f.item}:</strong>{' '}
+                    <span class="text-slate-400">{f.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Characterization -->
+          <div>
+            <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+              Structural Characterization
+            </h3>
+            <ul class="space-y-2">
+              {[
+                {
+                  item: 'Extended structural characterization',
+                  detail: 'Computes: radius of gyration (Rg), solvent-accessible surface area (SASA), van der Waals volume, hydrodynamic radius (Rh), asphericity (δ), acylindricity (κ), and system density.',
+                },
+                {
+                  item: 'Rg tensor analysis',
+                  detail: 'Full Rg tensor diagonalization gives principal moments of inertia and shape descriptors (asphericity, acylindricity, relative shape anisotropy κ²).',
+                },
+              ].map(f => (
+                <li class="flex gap-3 text-sm">
+                  <svg class="w-4 h-4 text-teal-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>
+                    <strong class="text-slate-200">{f.item}:</strong>{' '}
+                    <span class="text-slate-400">{f.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Supported types -->
+          <div>
+            <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+              Supported Dendrimer Types
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['PAMAM', 'PPI', 'Triazine', 'Carbosilane', 'PLL', 'Phosphorus', 'Polyester', 'Polyglycerol', 'Custom'].map(type => (
+                <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">{type}</span>
+              ))}
+            </div>
+            <p class="text-slate-400 text-sm mt-2">All 9 types support G1–G10.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Future versions placeholder -->
+    <div class="relative pl-8 border-l-2 border-slate-800">
+      <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center">
+        <span class="text-slate-600 text-xs">?</span>
+      </div>
+      <div class="pb-8">
+        <h2 class="text-xl font-bold text-slate-600 mb-2">v2.0 — Planned</h2>
+        <p class="text-slate-600 text-sm">
+          Planned improvements for v2.0 include: parallel SA placement engine, GPU-accelerated
+          antechamber calls, COF builder integration, and ARM64 NAMD support. No release date set.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 flex gap-4">
+      <a href="/tools/udb/" class="btn-primary">← UDB Overview</a>
+      <a href="/tools/udb/limitations/" class="btn-outline">Known Limitations</a>
+    </div>
+
+  </div>
+</Layout>

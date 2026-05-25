@@ -1,0 +1,208 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+
+const examples = [
+  {
+    id: 'pamam-g3',
+    type: 'PAMAM',
+    generation: 'G3',
+    title: 'PAMAM G3 — Start to NAMD Trajectory',
+    time: '~15 min total',
+    atoms: '516',
+    status: 'placeholder',
+    forceField: 'GAFF2 + BCC',
+    summary: 'Full walkthrough: build a PAMAM G3 dendrimer with EDA core, parameterize with Fragment BCC / GAFF2, solvate in TIP3P water, and run a 1 ns NAMD trajectory.',
+    steps: [
+      'Select PAMAM, Generation G3 in the left panel',
+      'Build tab → Build Structure → 516 atoms expected',
+      'Parameterize tab → GAFF2 + Fragment BCC → Run Parameterization',
+      'Verify .prmtop and .inpcrd in output directory',
+      'MD Setup → 12 Å padding, 0.15 M NaCl, 1 ns, 300 K',
+      'Generate NAMD Input → review namd.conf',
+      'Run: namd3 +p4 namd.conf > run.log',
+      'Characterize tab → Load trajectory → Compute Rg, SASA',
+    ],
+    expectedOutputs: ['dendrimer.mol2 (516 atoms)', 'dendrimer.prmtop', 'solvated.psf / solvated.pdb', 'namd.conf', 'trajectory.dcd'],
+    timing: 'Build: ~5 s | Param: ~3 min | NAMD 1 ns: ~2–4 h (4 cores)',
+  },
+  {
+    id: 'carbosilane',
+    type: 'Carbosilane',
+    generation: 'G2',
+    title: 'Carbosilane G2 — Manual GAFF2 Bypass',
+    time: '~20 min total',
+    atoms: '~280',
+    status: 'placeholder',
+    forceField: 'GAFF2 manual bypass',
+    summary: 'Carbosilane dendrimers contain silicon — CGenFF is incompatible. This example shows the manual GAFF2 bypass procedure for Si-containing branches.',
+    steps: [
+      'Select Carbosilane, Generation G2',
+      'Build tab → Build Structure',
+      'Parameterize tab → Force Field dropdown → select GAFF2 (manual)',
+      'Uncheck "Auto-detect CGenFF for heteroatoms"',
+      'Run Parameterization → check .frcmod for Si parameters',
+      'Verify no penalty >200 in parameterization log',
+      'Continue to MD Setup as normal',
+    ],
+    expectedOutputs: ['carbosilane_g2.mol2', 'carbosilane_g2.frcmod (with Si params)', 'carbosilane_g2.prmtop'],
+    timing: 'Build: ~3 s | Param: ~5 min (manual verification needed)',
+  },
+  {
+    id: 'phosphorus',
+    type: 'Phosphorus',
+    generation: 'G3',
+    title: 'Phosphorus G3 — Gasteiger + UFF',
+    time: '~25 min total',
+    atoms: '~650',
+    status: 'placeholder',
+    forceField: 'Gasteiger + UFF',
+    summary: 'High-generation Phosphorus dendrimers may exceed BCC bond limits. This example demonstrates the Gasteiger charge fallback with UFF parameters.',
+    steps: [
+      'Select Phosphorus, Generation G3',
+      'Build tab → Build Structure',
+      'Parameterize tab → Charge Method → Gasteiger',
+      'Force Field → GAFF2 + UFF for P-core',
+      'Run Parameterization',
+      'Inspect .frcmod — UFF parameters substituted for any missing P terms',
+    ],
+    expectedOutputs: ['phosphorus_g3.mol2', 'phosphorus_g3_gasteiger.frcmod', 'phosphorus_g3.prmtop'],
+    timing: 'Build: ~10 s | Param: ~4 min',
+  },
+  {
+    id: 'ppi',
+    type: 'PPI',
+    generation: 'G4',
+    title: 'PPI G4 — Standard Workflow',
+    time: '~15 min total',
+    atoms: '~1400',
+    status: 'placeholder',
+    forceField: 'GAFF2 + CGenFF',
+    summary: 'PPI dendrimers use a DAB (1,4-diaminobutane) core with tertiary amine branching. This example shows a standard G4 build and parameterization.',
+    steps: [
+      'Select PPI, Generation G4',
+      'Build tab → Build Structure → ~1400 atoms expected',
+      'Parameterize tab → GAFF2 + CGenFF (auto) → Run',
+      'MD Setup → 15 Å padding (larger box for G4)',
+    ],
+    expectedOutputs: ['ppi_g4.mol2', 'ppi_g4.prmtop', 'namd_ppi_g4.conf'],
+    timing: 'Build: ~8 s | Param: ~5 min | NAMD 1 ns: ~4–8 h (4 cores)',
+  },
+];
+---
+
+<Layout title="Worked Examples" description="UDB worked examples — end-to-end walkthroughs for PAMAM, Carbosilane, Phosphorus, and PPI dendrimers." activeNav="tools">
+
+  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
+        <span>/</span>
+        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
+        <span>/</span>
+        <span class="text-slate-300">Examples</span>
+      </div>
+      <h1 class="text-4xl font-bold text-slate-100 mb-3">Worked Examples</h1>
+      <p class="text-lg text-slate-400 max-w-2xl">
+        End-to-end walkthroughs covering one example per major dendrimer type.
+        Each includes step-by-step instructions, expected outputs, and timing on reference hardware.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+
+    <!-- Status note -->
+    <div class="mb-10 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <p class="text-amber-300 font-medium text-sm mb-1">Phase 2 content — scaffolded, details pending</p>
+          <p class="text-amber-400/70 text-sm">
+            These example outlines are complete but detailed screenshots and log outputs
+            will be added in the Phase 2 content update. The step-by-step instructions
+            and expected outputs are accurate and can be followed now.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example list -->
+    <div class="space-y-10">
+      {examples.map(ex => (
+        <div id={ex.id} class="bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden">
+          <!-- Header -->
+          <div class="p-6 border-b border-slate-700 flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">{ex.type}</span>
+                <span class="badge bg-slate-800 text-slate-300 border border-slate-700">{ex.generation}</span>
+                <span class="badge bg-slate-800 text-slate-400 border border-slate-700">{ex.forceField}</span>
+                <span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">Placeholder</span>
+              </div>
+              <h2 class="text-xl font-bold text-slate-100 mb-1">{ex.title}</h2>
+              <p class="text-slate-400 text-sm leading-relaxed">{ex.summary}</p>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-teal-400 font-bold">{ex.time}</div>
+              <div class="text-slate-500 text-xs">{ex.atoms} atoms</div>
+            </div>
+          </div>
+
+          <div class="p-6 grid md:grid-cols-2 gap-6">
+            <!-- Steps -->
+            <div>
+              <h3 class="text-slate-300 font-semibold text-sm mb-3">Steps</h3>
+              <ol class="space-y-2">
+                {ex.steps.map((step, i) => (
+                  <li class="flex gap-3 text-sm">
+                    <span class="text-teal-500/60 font-mono text-xs w-5 shrink-0 pt-0.5">{i + 1}.</span>
+                    <span class="text-slate-400">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <!-- Expected outputs + timing -->
+            <div class="space-y-5">
+              <div>
+                <h3 class="text-slate-300 font-semibold text-sm mb-3">Expected Outputs</h3>
+                <ul class="space-y-1.5">
+                  {ex.expectedOutputs.map(out => (
+                    <li class="flex items-center gap-2 text-xs">
+                      <svg class="w-3.5 h-3.5 text-teal-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                      <code class="text-teal-300 font-mono">{out}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-slate-300 font-semibold text-sm mb-2">Timing Reference</h3>
+                <p class="text-slate-500 text-xs font-mono leading-relaxed">{ex.timing}</p>
+              </div>
+              <!-- Screenshot placeholder -->
+              <div class="h-28 rounded-lg border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-xs text-center">
+                [ Screenshot: {ex.type} {ex.generation} Build tab ]
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Additional examples placeholder -->
+    <div class="mt-10 p-6 rounded-2xl border-2 border-dashed border-slate-800 text-center">
+      <p class="text-slate-500 text-sm mb-2">Additional examples coming in Phase 2</p>
+      <p class="text-slate-600 text-xs">Polyester, Polyglycerol, Triazine, and Custom type examples will be added after validation testing.</p>
+    </div>
+
+    <div class="mt-10 flex gap-4">
+      <a href="/tools/udb/manual/" class="btn-outline">← User Manual</a>
+      <a href="/tools/udb/validation/" class="btn-primary">Benchmarks →</a>
+    </div>
+
+  </div>
+</Layout>
