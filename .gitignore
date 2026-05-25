@@ -24,3 +24,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Raw source assets (PPTX, loose images at repo root)
+*.pptx
+*_plan.md

@@ -9,7 +9,10 @@ const examples = [
     title: 'PAMAM G3 — Start to NAMD Trajectory',
     time: '~15 min total',
     atoms: '516',
-    status: 'placeholder',
+    screenshot: '/images/gui-pamam.png',
+    screenshotAlt: 'UDB v1.0 GUI — PAMAM G6 build complete with generation preview table',
+    structure: '/images/avogadro-pamam-g3.png',
+    structureAlt: 'Avogadro render of PAMAM G3 minimized structure',
     forceField: 'GAFF2 + BCC',
     summary: 'Full walkthrough: build a PAMAM G3 dendrimer with EDA core, parameterize with Fragment BCC / GAFF2, solvate in TIP3P water, and run a 1 ns NAMD trajectory.',
     steps: [
@@ -32,7 +35,10 @@ const examples = [
     title: 'Carbosilane G2 — Manual GAFF2 Bypass',
     time: '~20 min total',
     atoms: '~280',
-    status: 'placeholder',
+    screenshot: '/images/gui-carbosilane.png',
+    screenshotAlt: 'UDB v1.0 GUI — Carbosilane G6 build complete with generation preview table',
+    structure: '/images/avogadro-carbosilane-g2.png',
+    structureAlt: 'Avogadro render of Carbosilane G2 minimized structure',
     forceField: 'GAFF2 manual bypass',
     summary: 'Carbosilane dendrimers contain silicon — CGenFF is incompatible. This example shows the manual GAFF2 bypass procedure for Si-containing branches.',
     steps: [
@@ -54,7 +60,10 @@ const examples = [
     title: 'Phosphorus G3 — Gasteiger + UFF',
     time: '~25 min total',
     atoms: '~650',
-    status: 'placeholder',
+    screenshot: '/images/gui-phosphorus.png',
+    screenshotAlt: 'UDB v1.0 GUI — Phosphorus G6 build complete with generation preview table',
+    structure: '/images/avogadro-phosphorus-g3.png',
+    structureAlt: 'Avogadro render of Phosphorus G3 minimized structure',
     forceField: 'Gasteiger + UFF',
     summary: 'High-generation Phosphorus dendrimers may exceed BCC bond limits. This example demonstrates the Gasteiger charge fallback with UFF parameters.',
     steps: [
@@ -75,7 +84,10 @@ const examples = [
     title: 'PPI G4 — Standard Workflow',
     time: '~15 min total',
     atoms: '~1400',
-    status: 'placeholder',
+    screenshot: '/images/gui-ppi.png',
+    screenshotAlt: 'UDB v1.0 GUI — PPI G6 build complete with generation preview table',
+    structure: '/images/avogadro-ppi-g4.png',
+    structureAlt: 'Avogadro render of PPI G4 minimized structure',
     forceField: 'GAFF2 + CGenFF',
     summary: 'PPI dendrimers use a DAB (1,4-diaminobutane) core with tertiary amine branching. This example shows a standard G4 build and parameterization.',
     steps: [
@@ -139,7 +151,7 @@ const examples = [
                 <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">{ex.type}</span>
                 <span class="badge bg-slate-800 text-slate-300 border border-slate-700">{ex.generation}</span>
                 <span class="badge bg-slate-800 text-slate-400 border border-slate-700">{ex.forceField}</span>
-                <span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">Placeholder</span>
+                <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">GUI Screenshot</span>
               </div>
               <h2 class="text-xl font-bold text-slate-100 mb-1">{ex.title}</h2>
               <p class="text-slate-400 text-sm leading-relaxed">{ex.summary}</p>
@@ -183,20 +195,20 @@ const examples = [
                 <h3 class="text-slate-300 font-semibold text-sm mb-2">Timing Reference</h3>
                 <p class="text-slate-500 text-xs font-mono leading-relaxed">{ex.timing}</p>
               </div>
-              <!-- Screenshot placeholder -->
-              <div class="h-28 rounded-lg border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-xs text-center">
-                [ Screenshot: {ex.type} {ex.generation} Build tab ]
+              <div class="space-y-3">
+                <div>
+                  <p class="text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">GUI — Build Output</p>
+                  <img src={ex.screenshot} alt={ex.screenshotAlt} class="w-full rounded-lg border border-slate-700" />
+                </div>
+                <div>
+                  <p class="text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">Minimized Structure (Avogadro)</p>
+                  <img src={ex.structure} alt={ex.structureAlt} class="w-full rounded-lg border border-slate-700 bg-black" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       ))}
-    </div>
-
-    <!-- Additional examples placeholder -->
-    <div class="mt-10 p-6 rounded-2xl border-2 border-dashed border-slate-800 text-center">
-      <p class="text-slate-500 text-sm mb-2">Additional examples coming in Phase 2</p>
-      <p class="text-slate-600 text-xs">Polyester, Polyglycerol, Triazine, and Custom type examples will be added after validation testing.</p>
     </div>
 
     <div class="mt-10 flex gap-4">

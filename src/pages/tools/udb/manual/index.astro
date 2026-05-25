@@ -179,8 +179,7 @@ const tabs = [
             </p>
             <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
               <strong>BCC charge limit:</strong> For G3+ PAMAM or any dendrimer exceeding ~500 bonds per fragment,
-              Fragment BCC may fail. Switch to Gasteiger charges in the Parameterize tab dropdown, or see
-              <a href="/tools/udb/limitations/" class="underline">Known Limitations</a> for the manual GAFF2 bypass procedure.
+              Fragment BCC may fail. Switch to Gasteiger charges in the Parameterize tab dropdown.
             </div>
           </div>
         </section>
@@ -242,26 +241,19 @@ const tabs = [
 
         <!-- Theory -->
         <section id="theory">
-          <h2 class="text-2xl font-bold text-slate-100 mb-4">Theory & Algorithms</h2>
-          <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 text-sm leading-relaxed">
-            <p class="text-amber-300 font-medium mb-2">⚠ Diagram placeholders</p>
-            <p>
-              Full algorithm diagrams are in preparation. This section will include:
-              the seven-stage cone subdivision flowchart, Labile-H grafting mechanism
-              illustration, Fragment BCC fingerprint charge-transfer diagram, and the
-              force-field decision tree (GAFF2 / CGenFF / mixed). Replace this block
-              with rendered SVG diagrams when available.
-            </p>
-          </div>
-          <div class="mt-4 grid sm:grid-cols-2 gap-4">
+          <h2 class="text-2xl font-bold text-slate-100 mb-6">Theory & Algorithms</h2>
+          <div class="grid sm:grid-cols-2 gap-6">
             {[
-              'Seven-stage cone subdivision flowchart',
-              'Labile-H grafting mechanism',
-              'Fragment BCC charge-transfer diagram',
-              'Force-field decision tree (GAFF2 / CGenFF / mixed)',
-            ].map(item => (
-              <div class="h-40 rounded-lg border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-sm text-center px-4">
-                [ Diagram: {item} ]
+              { src: '/images/diagram-7stage.png',      label: 'Seven-Stage Cone Placement Engine',    alt: '7-stage cone placement pipeline diagram' },
+              { src: '/images/diagram-labile.png',      label: 'Labile Atom Lifecycle',                alt: 'Labile atom extraction pathways diagram' },
+              { src: '/images/diagram-fragmentbcc.png', label: 'Fragment BCC Charge-Transfer',         alt: 'Fragment BCC chemical environment fingerprinting' },
+              { src: '/images/diagram-pipelines.png',   label: 'Parameterisation Pipelines',           alt: 'Fragment BCC vs Full Antechamber pipeline' },
+            ].map(d => (
+              <div>
+                <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-2">{d.label}</p>
+                <div class="diagram-frame">
+                  <img src={d.src} alt={d.alt} class="w-full" />
+                </div>
               </div>
             ))}
           </div>

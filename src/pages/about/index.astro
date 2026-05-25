@@ -18,37 +18,26 @@ import CitationBlock from '../../components/CitationBlock.astro';
 
     <!-- Author section -->
     <section class="grid sm:grid-cols-3 gap-8">
-      <!-- Avatar placeholder -->
       <div class="sm:col-span-1 flex flex-col items-center sm:items-start gap-4">
-        <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-teal-500/20 to-slate-800 border border-slate-700 flex items-center justify-center">
-          <svg class="w-16 h-16 text-teal-500/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-          </svg>
-        </div>
+        <img
+          src="/images/profile.jpg"
+          alt="Hirusha Walgampaya"
+          class="w-32 h-32 rounded-2xl object-cover border border-slate-700 shadow-lg"
+          width="128" height="128"
+        />
         <!-- Contact links -->
         <div class="space-y-2 w-full">
           <a
-            href="mailto:placeholder@example.com"
+            href="mailto:hiruwalgampaya@gmail.com"
             class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-teal-400 transition-colors"
           >
             <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            Email (placeholder)
+            hiruwalgampaya@gmail.com
           </a>
           <a
-            href="https://orcid.org/0000-0000-0000-0000"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-teal-400 transition-colors"
-          >
-            <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947-.946-.431-.946-.947.421-.947.946-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.444h2.297c2.359 0 4.022-1.575 4.022-3.713 0-2.109-1.597-3.731-4.022-3.731h-2.297z"/>
-            </svg>
-            ORCID (placeholder)
-          </a>
-          <a
-            href="https://github.com/"
+            href="https://github.com/HirushaW/universal-dendrimer-builder"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center gap-2.5 text-sm text-slate-400 hover:text-teal-400 transition-colors"
@@ -175,7 +164,7 @@ import CitationBlock from '../../components/CitationBlock.astro';
             </svg>
             GitHub Issues
           </h3>
-          <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-teal-400 text-sm hover:text-teal-300 transition-colors">github.com / (link TBD) ↗</a>
+          <a href="https://github.com/HirushaW/universal-dendrimer-builder/issues" target="_blank" rel="noopener noreferrer" class="text-teal-400 text-sm hover:text-teal-300 transition-colors">github.com/HirushaW/universal-dendrimer-builder ↗</a>
           <p class="text-slate-600 text-xs mt-1">For bug reports and feature requests</p>
         </div>
       </div>

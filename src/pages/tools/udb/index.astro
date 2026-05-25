@@ -101,7 +101,6 @@ function statusClass(status: string) {
       <p class="text-slate-400 mb-6">
         UDB automatically routes each dendrimer type to the appropriate force-field pathway.
         Status indicates the default path; workarounds exist for "caveats" cases.
-        See <a href="/tools/udb/limitations/" class="text-teal-400 hover:text-teal-300">Known Limitations</a> for details.
       </p>
 
       <div class="overflow-x-auto rounded-xl border border-slate-700">
@@ -129,7 +128,7 @@ function statusClass(status: string) {
         </table>
       </div>
       <p class="mt-3 text-slate-600 text-xs">
-        "Full" = default automatic routing. "Manual bypass" = requires user action per the Limitations page.
+        "Full" = default automatic routing. "Manual bypass" = requires user action.
         "Not supported" = known incompatibility.
       </p>
     </section>
@@ -171,7 +170,6 @@ function statusClass(status: string) {
           { href: '/tools/udb/manual/', title: 'User Manual', desc: 'Complete tab-by-tab reference with parameter explanations and expected outputs.' },
           { href: '/tools/udb/examples/', title: 'Worked Examples', desc: 'End-to-end walkthroughs: PAMAM G3, Carbosilane, Phosphorus, and more.' },
           { href: '/tools/udb/validation/', title: 'Benchmarks', desc: 'Atom counts, Rg, and asphericity validated against Maiti et al. 2004 and other literature.' },
-          { href: '/tools/udb/limitations/', title: 'Known Limitations', desc: 'Honest list of what UDB cannot do, with workarounds where they exist.' },
           { href: '/tools/udb/changelog/', title: 'Changelog', desc: 'Version-by-version history of features added, bugs fixed, and algorithms changed.' },
         ].map(card => (
           <a href={card.href} class="card group flex flex-col">
