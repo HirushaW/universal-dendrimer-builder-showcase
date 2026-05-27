@@ -11,7 +11,7 @@ const examples = [
     atoms: '516',
     screenshot: '/images/gui-pamam.png',
     screenshotAlt: 'UDB v1.0 GUI — PAMAM G6 build complete with generation preview table',
-    structure: '/images/avogadro-pamam-g3.png',
+    structure: '/images/real-pamam-g3.png',
     structureAlt: 'Avogadro render of PAMAM G3 minimized structure',
     forceField: 'GAFF2 + BCC',
     summary: 'Full walkthrough: build a PAMAM G3 dendrimer with EDA core, parameterize with Fragment BCC / GAFF2, solvate in TIP3P water, and run a 1 ns NAMD trajectory.',
@@ -37,7 +37,7 @@ const examples = [
     atoms: '~280',
     screenshot: '/images/gui-carbosilane.png',
     screenshotAlt: 'UDB v1.0 GUI — Carbosilane G6 build complete with generation preview table',
-    structure: '/images/avogadro-carbosilane-g2.png',
+    structure: '/images/real-carbosilane-g2.png',
     structureAlt: 'Avogadro render of Carbosilane G2 minimized structure',
     forceField: 'GAFF2 manual bypass',
     summary: 'Carbosilane dendrimers contain silicon — CGenFF is incompatible. This example shows the manual GAFF2 bypass procedure for Si-containing branches.',
@@ -62,7 +62,7 @@ const examples = [
     atoms: '~650',
     screenshot: '/images/gui-phosphorus.png',
     screenshotAlt: 'UDB v1.0 GUI — Phosphorus G6 build complete with generation preview table',
-    structure: '/images/avogadro-phosphorus-g3.png',
+    structure: '/images/real-phosphorus-g3.png',
     structureAlt: 'Avogadro render of Phosphorus G3 minimized structure',
     forceField: 'Gasteiger + UFF',
     summary: 'High-generation Phosphorus dendrimers may exceed BCC bond limits. This example demonstrates the Gasteiger charge fallback with UFF parameters.',
@@ -86,7 +86,7 @@ const examples = [
     atoms: '~1400',
     screenshot: '/images/gui-ppi.png',
     screenshotAlt: 'UDB v1.0 GUI — PPI G6 build complete with generation preview table',
-    structure: '/images/avogadro-ppi-g4.png',
+    structure: '/images/real-ppi-g4.png',
     structureAlt: 'Avogadro render of PPI G4 minimized structure',
     forceField: 'GAFF2 + CGenFF',
     summary: 'PPI dendrimers use a DAB (1,4-diaminobutane) core with tertiary amine branching. This example shows a standard G4 build and parameterization.',
@@ -123,21 +123,12 @@ const examples = [
 
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
-    <!-- Status note -->
-    <div class="mb-10 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
-      <div class="flex items-start gap-3">
-        <svg class="w-5 h-5 text-amber-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-        </svg>
-        <div>
-          <p class="text-amber-300 font-medium text-sm mb-1">Phase 2 content — scaffolded, details pending</p>
-          <p class="text-amber-400/70 text-sm">
-            These example outlines are complete but detailed screenshots and log outputs
-            will be added in the Phase 2 content update. The step-by-step instructions
-            and expected outputs are accurate and can be followed now.
-          </p>
-        </div>
-      </div>
+    <!-- Gallery link note -->
+    <div class="mb-10 p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 flex items-center justify-between gap-4">
+      <p class="text-teal-300 text-sm">
+        Looking for rendered structures across all dendrimer types and generations?
+      </p>
+      <a href="/tools/udb/structures/" class="btn-primary shrink-0 text-sm">Structure Gallery →</a>
     </div>
 
     <!-- Example list -->

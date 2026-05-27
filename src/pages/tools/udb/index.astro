@@ -133,6 +133,15 @@ function statusClass(status: string) {
       </p>
     </section>
 
+    <!-- Workflow diagram -->
+    <section class="mb-16">
+      <h2 class="section-title mb-4">Complete Pipeline</h2>
+      <p class="text-slate-400 text-sm mb-5">From dendrimer type selection through final NAMD trajectory — all 6 stages handled inside a single GUI.</p>
+      <div class="rounded-2xl overflow-hidden border border-slate-700">
+        <img src="/images/ai-workflow-diagram.png" alt="UDB complete 6-stage workflow: Build → Parameterize → Solvate → MD Setup → Run → Characterize" class="w-full" />
+      </div>
+    </section>
+
     <!-- Workflow stages -->
     <section class="mb-16">
       <h2 class="section-title mb-6">Seven-Stage Placement Engine</h2>
@@ -169,6 +178,7 @@ function statusClass(status: string) {
           { href: '/tools/udb/install/', title: 'Installation', desc: 'Conda environment setup, AmberTools25, NAMD 3.x, Python dependencies, known install errors.' },
           { href: '/tools/udb/manual/', title: 'User Manual', desc: 'Complete tab-by-tab reference with parameter explanations and expected outputs.' },
           { href: '/tools/udb/examples/', title: 'Worked Examples', desc: 'End-to-end walkthroughs: PAMAM G3, Carbosilane, Phosphorus, and more.' },
+          { href: '/tools/udb/structures/', title: 'Structure Gallery', desc: 'Avogadro-rendered structures for all 7 types across G1–G5, with interactive 3D monomer/core viewers.' },
           { href: '/tools/udb/validation/', title: 'Benchmarks', desc: 'Atom counts, Rg, and asphericity validated against Maiti et al. 2004 and other literature.' },
           { href: '/tools/udb/changelog/', title: 'Changelog', desc: 'Version-by-version history of features added, bugs fixed, and algorithms changed.' },
         ].map(card => (
