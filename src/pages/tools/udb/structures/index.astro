@@ -1,154 +1,9 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
-import Mol2Viewer from '../../../../components/Mol2Viewer.astro';
-
-const dendrimers = [
-  {
-    id: 'pamam',
-    name: 'PAMAM',
-    full: 'Polyamidoamine',
-    core: 'EDA core',
-    color: 'teal',
-    description: 'The most widely studied dendrimer family. EDA core, amidoamine branching, amine surface groups. Benchmark for all computational dendrimer tools.',
-    generations: [
-      { gen: 'G1', src: '/images/real-pamam-g1.png', atoms: '84' },
-      { gen: 'G2', src: '/images/real-pamam-g2.png', atoms: '228' },
-      { gen: 'G3', src: '/images/real-pamam-g3.png', atoms: '516' },
-      { gen: 'G4', src: '/images/real-pamam-g4.png', atoms: '1,108' },
-    ],
-    monomerUrl: '/mol2/pamam-monomer.pdb',
-    coreUrl: '/mol2/pamam-core.pdb',
-  },
-  {
-    id: 'ppi',
-    name: 'PPI',
-    full: 'Polypropylenimine',
-    core: 'DAB core',
-    color: 'sky',
-    description: 'DAB (1,4-diaminobutane) core with propylenimine branching. Dense amine surface. Closely related to PAMAM but with a more compact, hydrophobic interior.',
-    generations: [
-      { gen: 'G1', src: '/images/real-ppi-g1.png', atoms: '~60' },
-      { gen: 'G2', src: '/images/real-ppi-g2.png', atoms: '~220' },
-      { gen: 'G3', src: '/images/real-ppi-g3.png', atoms: '~700' },
-      { gen: 'G4', src: '/images/real-ppi-g4.png', atoms: '~1,400' },
-    ],
-    monomerUrl: '/mol2/ppi-monomer.pdb',
-    coreUrl: '/mol2/ppi-core.pdb',
-  },
-  {
-    id: 'carbosilane',
-    name: 'Carbosilane',
-    full: 'Carbosilane',
-    core: 'Si-C core',
-    color: 'amber',
-    description: 'Silicon–carbon backbone. Unique among dendrimers for its hydrophobic, organosilicon interior. Requires GAFF2 manual bypass — CGenFF is incompatible with Si.',
-    generations: [
-      { gen: 'G1', src: '/images/real-carbosilane-g1.png', atoms: '~80' },
-      { gen: 'G2', src: '/images/real-carbosilane-g2.png', atoms: '~280' },
-      { gen: 'G3', src: '/images/real-carbosilane-g3.png', atoms: '~800' },
-      { gen: 'G4', src: '/images/real-carbosilane-g4.png', atoms: '~2,200' },
-    ],
-    monomerUrl: '/mol2/carbosilane-monomer.pdb',
-    coreUrl: '/mol2/carbosilane-core.pdb',
-  },
-  {
-    id: 'phosphorus',
-    name: 'Phosphorus',
-    full: 'Phosphorus',
-    core: 'P-N core',
-    color: 'red',
-    description: 'Phosphorus–nitrogen backbone with cyclotriphosphazene or other P-containing repeating units. High density of P atoms creates unusual electrostatic properties.',
-    generations: [
-      { gen: 'G1', src: '/images/real-phosphorus-g1.png', atoms: '~120' },
-      { gen: 'G2', src: '/images/real-phosphorus-g2.png', atoms: '~350' },
-      { gen: 'G3', src: '/images/real-phosphorus-g3.png', atoms: '~650' },
-      { gen: 'G4', src: '/images/real-phosphorus-g4.png', atoms: '~1,500' },
-    ],
-    monomerUrl: '/mol2/phosphorus-monomer.pdb',
-    coreUrl: '/mol2/phosphorus-core.pdb',
-  },
-  {
-    id: 'pll',
-    name: 'PLL',
-    full: 'Poly-L-Lysine',
-    core: 'Lys core',
-    color: 'emerald',
-    description: 'Amino acid-based dendrimer using L-Lysine as the branching unit. Biocompatible, biodegradable, and amenable to surface functionalization for drug delivery.',
-    generations: [
-      { gen: 'G1', src: '/images/real-pll-g1.png', atoms: '~90' },
-      { gen: 'G2', src: '/images/real-pll-g2.png', atoms: '~300' },
-      { gen: 'G3', src: '/images/real-pll-g3.png', atoms: '~850' },
-      { gen: 'G4', src: '/images/real-pll-g4.png', atoms: '~2,100' },
-    ],
-    monomerUrl: '/mol2/pll-monomer.pdb',
-    coreUrl: '/mol2/pll-core.pdb',
-  },
-  {
-    id: 'polyester',
-    name: 'Polyester',
-    full: 'Polyester',
-    core: 'Ester core',
-    color: 'orange',
-    description: 'Ester-linked dendrimer backbone. Hydrolytically degradable under physiological conditions — highly relevant for controlled drug release applications.',
-    generations: [
-      { gen: 'G1', src: '/images/real-polyester-g1.png', atoms: '~80' },
-      { gen: 'G2', src: '/images/real-polyester-g2.png', atoms: '~260' },
-      { gen: 'G3', src: '/images/real-polyester-g3.png', atoms: '~760' },
-      { gen: 'G4', src: '/images/real-polyester-g4.png', atoms: '~2,000' },
-    ],
-    monomerUrl: '/mol2/polyester-monomer.pdb',
-    coreUrl: '/mol2/polyester-core.pdb',
-  },
-  {
-    id: 'polyglycerol',
-    name: 'Polyglycerol',
-    full: 'Polyglycerol',
-    core: 'Glycerol core',
-    color: 'fuchsia',
-    description: 'Glycerol-based branching with a high density of hydroxyl surface groups. Excellent water solubility and low cytotoxicity — a leading platform for biomedical use.',
-    generations: [
-      { gen: 'G1', src: '/images/real-polyglycerol-g1.png', atoms: '~70' },
-      { gen: 'G2', src: '/images/real-polyglycerol-g2.png', atoms: '~220' },
-      { gen: 'G3', src: '/images/real-polyglycerol-g3.png', atoms: '~650' },
-      { gen: 'G5', src: '/images/real-polyglycerol-g5.png', atoms: '~5,500' },
-    ],
-    monomerUrl: '/mol2/polyglycerol-monomer.pdb',
-    coreUrl: '/mol2/polyglycerol-core.pdb',
-  },
-];
-
-const colorBadge: Record<string, string> = {
-  teal:    'bg-teal-500/10    text-teal-300    border-teal-500/25',
-  sky:     'bg-sky-500/10     text-sky-300     border-sky-500/25',
-  amber:   'bg-amber-500/10   text-amber-300   border-amber-500/25',
-  red:     'bg-red-500/10     text-red-300     border-red-500/25',
-  emerald: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
-  orange:  'bg-orange-500/10  text-orange-300  border-orange-500/25',
-  fuchsia: 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/25',
-};
-
-const colorAccent: Record<string, string> = {
-  teal:    'text-teal-400',
-  sky:     'text-sky-400',
-  amber:   'text-amber-400',
-  red:     'text-red-400',
-  emerald: 'text-emerald-400',
-  orange:  'text-orange-400',
-  fuchsia: 'text-fuchsia-400',
-};
-
-const colorBorder: Record<string, string> = {
-  teal:    'border-teal-500/30    hover:border-teal-500/70',
-  sky:     'border-sky-500/30     hover:border-sky-500/70',
-  amber:   'border-amber-500/30   hover:border-amber-500/70',
-  red:     'border-red-500/30     hover:border-red-500/70',
-  emerald: 'border-emerald-500/30 hover:border-emerald-500/70',
-  orange:  'border-orange-500/30  hover:border-orange-500/70',
-  fuchsia: 'border-fuchsia-500/30 hover:border-fuchsia-500/70',
-};
+import { dendrimers, colorBadge, colorAccent, colorBorder, colorGlow } from '../../../../data/dendrimers';
 ---
 
-<Layout title="Structure Gallery" description="Avogadro-rendered molecular structures for all 7 UDB dendrimer types across generations G1–G5, with interactive 3D monomer and core viewers." activeNav="tools">
+<Layout title="Structure Gallery" description="Avogadro-rendered molecular structures for all 7 UDB dendrimer types — individual pages with generation series, interactive 3D viewers, and building block analysis." activeNav="tools">
 
   <!-- Header -->
   <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
@@ -162,156 +17,74 @@ const colorBorder: Record<string, string> = {
       </div>
       <h1 class="text-4xl font-bold text-slate-100 mb-3">Structure Gallery</h1>
       <p class="text-lg text-slate-400 max-w-2xl">
-        Avogadro-rendered molecular structures for all 7 supported dendrimer types across
-        G1–G5, with interactive 3D views of the monomer and core building blocks from the actual UDB output files.
+        Seven dendrimer families supported by UDB v1.0 — each with Avogadro-rendered generation
+        series, interactive 3D building-block viewers, chemistry, and applications.
       </p>
     </div>
   </div>
 
-  <!-- Comparison banner -->
+  <!-- All-types comparison banner -->
   <div class="bg-slate-900/60 border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3 text-center">All Types at G3</p>
+      <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3 text-center">All 7 Types at G3 — Avogadro Renders</p>
       <div class="rounded-2xl overflow-hidden border border-slate-700">
         <img src="/images/ai-dendrimer-comparison.png" alt="All 7 dendrimer types compared at Generation 3" class="w-full" />
       </div>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-20">
+  <!-- Type cards grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-8 text-center">Select a Dendrimer Type</p>
 
-    {dendrimers.map(d => (
-      <section id={d.id}>
-        <!-- Type header -->
-        <div class="flex flex-col sm:flex-row sm:items-start gap-4 mb-8">
-          <div class="flex-1">
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class={`badge border ${colorBadge[d.color]}`}>{d.name}</span>
-              <span class="badge bg-slate-800 text-slate-400 border border-slate-700">{d.full}</span>
-              <span class="badge bg-slate-800 text-slate-500 border border-slate-700 mono text-xs">{d.core}</span>
-            </div>
-            <h2 class={`text-2xl font-bold mb-2 ${colorAccent[d.color]}`}>{d.name} — {d.full}</h2>
-            <p class="text-slate-400 text-sm leading-relaxed max-w-2xl">{d.description}</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {dendrimers.map(d => (
+        <a
+          href={`/tools/udb/structures/${d.id}/`}
+          class={`group relative rounded-2xl border bg-slate-900/60 overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_var(--glow)] hover:-translate-y-1 ${colorBorder[d.color]}`}
+          style={`--glow: ${colorGlow[d.color]}`}
+        >
+          <!-- Preview image (G3 or highest available) -->
+          <div class="aspect-square bg-black overflow-hidden">
+            <img
+              src={d.generations[Math.min(2, d.generations.length - 1)].src}
+              alt={`${d.name} ${d.generations[Math.min(2, d.generations.length - 1)].gen}`}
+              class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
           </div>
-        </div>
 
-        <!-- Generation series -->
-        <div class="mb-8">
-          <h3 class="text-slate-300 font-semibold text-sm mb-4 uppercase tracking-wider">Generation Series — Avogadro Renders</h3>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {d.generations.map(g => (
-              <div class={`rounded-2xl overflow-hidden border bg-black transition-all duration-300 ${colorBorder[d.color]}`}>
-                <img
-                  src={g.src}
-                  alt={`${d.name} ${g.gen} — Avogadro minimized structure, ${g.atoms} atoms`}
-                  class="w-full object-contain"
-                  style="min-height: 260px; max-height: 320px;"
-                  loading="lazy"
-                />
-                <div class="px-4 py-3 bg-slate-950/80">
-                  <div class={`font-bold text-sm ${colorAccent[d.color]}`}>{d.name} {g.gen}</div>
-                  <div class="mono text-slate-500 text-xs mt-0.5">{g.atoms} atoms</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <!-- 3D viewer section -->
-        <div class="bg-slate-900/60 rounded-2xl border border-slate-700 p-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
-              </svg>
-              <h3 class="text-slate-200 font-semibold text-sm">Building Blocks — Interactive 3D (from UDB output files)</h3>
+          <!-- Info -->
+          <div class="p-5">
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class={`badge border text-xs ${colorBadge[d.color]}`}>{d.name}</span>
+              <span class="badge bg-slate-800 text-slate-500 border border-slate-700 text-xs mono">{d.coreLabel}</span>
             </div>
-            <!-- Atom colour legend -->
-            <div class="flex flex-wrap items-center gap-3 text-xs mono">
-              <span class="text-slate-500 mr-1">Atom colours:</span>
-              {[
-                { el: 'C',  bg: '#606060', label: 'Carbon' },
-                { el: 'H',  bg: '#e0e0e0', label: 'Hydrogen' },
-                { el: 'N',  bg: '#3050F8', label: 'Nitrogen' },
-                { el: 'O',  bg: '#FF2010', label: 'Oxygen' },
-                { el: 'P',  bg: '#FF8000', label: 'Phosphorus' },
-                { el: 'S',  bg: '#FFFF30', label: 'Sulfur' },
-                { el: 'Si', bg: '#F0C8A0', label: 'Silicon' },
-              ].map(a => (
-                <span class="flex items-center gap-1.5" title={a.label}>
-                  <span class="w-3 h-3 rounded-full inline-block shrink-0" style={`background:${a.bg};`}></span>
-                  <span class="text-slate-300">{a.el}</span>
-                </span>
-              ))}
+            <h2 class={`font-bold text-base mb-1 ${colorAccent[d.color]}`}>{d.name}</h2>
+            <p class="text-slate-500 text-xs mb-3">{d.full}</p>
+            <p class="text-slate-400 text-xs leading-relaxed line-clamp-3">{d.description}</p>
+
+            <div class="mt-4 flex items-center gap-1.5 text-xs">
+              <span class="text-slate-500">{d.generations.length} generations rendered</span>
+              <span class="text-slate-700">·</span>
+              <span class="text-slate-500">3D viewer</span>
             </div>
           </div>
-          <Mol2Viewer id={d.id} monomerUrl={d.monomerUrl} coreUrl={d.coreUrl} />
-        </div>
-      </section>
-    ))}
 
-  </div>
+          <!-- Arrow -->
+          <div class={`absolute top-4 right-4 w-7 h-7 rounded-full border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${colorBadge[d.color]} border-current`}>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 flex gap-4">
-    <a href="/tools/udb/examples/" class="btn-outline">← Worked Examples</a>
-    <a href="/tools/udb/validation/" class="btn-primary">Benchmarks →</a>
+    <div class="mt-14 flex gap-4">
+      <a href="/tools/udb/examples/" class="btn-outline">← Worked Examples</a>
+      <a href="/tools/udb/validation/" class="btn-primary">Benchmarks →</a>
+    </div>
   </div>
 
 </Layout>
-
-<!-- 3Dmol.js -->
-<script is:inline src="https://3dmol.org/build/3Dmol-min.js"></script>
-<script is:inline>
-(async function () {
-  if (typeof $3Dmol === 'undefined') return;
-
-  const pairs = document.querySelectorAll('.mol2-viewer-pair');
-
-  for (const pair of pairs) {
-    const monomerUrl = pair.dataset.monomer;
-    const coreUrl    = pair.dataset.core;
-    const id         = pair.dataset.id;
-
-    async function initViewer(containerId, url) {
-      const el = document.getElementById(containerId);
-      if (!el) return;
-
-      try {
-        const data = await fetch(url).then(r => r.text());
-        const loading = el.querySelector('.viewer-loading');
-        if (loading) loading.remove();
-
-        const viewer = $3Dmol.createViewer(el, {
-          backgroundColor: '#0b1221',
-          antialias: true,
-        });
-
-        const fmt = url.endsWith('.pdb') ? 'pdb' : 'mol2';
-        viewer.addModel(data, fmt);
-
-        // Ball-and-stick with Jmol element colours (C=grey, N=blue, O=red, P=orange, Si=tan, S=yellow)
-        // Hide H atoms from sticks to reduce visual noise, show all spheres
-        viewer.setStyle({}, {
-          stick:  { colorscheme: 'Jmol', radius: 0.18 },
-          sphere: { colorscheme: 'Jmol', scale: 0.38 },
-        });
-        // Slightly shrink hydrogens so heavy atoms dominate
-        viewer.setStyle({ elem: 'H' }, {
-          stick:  { colorscheme: 'Jmol', radius: 0.08 },
-          sphere: { colorscheme: 'Jmol', scale: 0.18 },
-        });
-
-        viewer.zoomTo();
-        viewer.zoom(0.88);
-        viewer.render();
-      } catch (e) {
-        const el2 = document.getElementById(containerId);
-        if (el2) el2.innerHTML = '<p class="text-slate-500 text-xs text-center p-4">Failed to load structure</p>';
-      }
-    }
-
-    initViewer(`viewer-${id}-monomer`, monomerUrl);
-    initViewer(`viewer-${id}-core`,    coreUrl);
-  }
-})();
-</script>
