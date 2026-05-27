@@ -16,8 +16,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-pamam-g3.png', atoms: '516' },
       { gen: 'G4', src: '/images/real-pamam-g4.png', atoms: '1,108' },
     ],
-    monomerUrl: '/mol2/pamam-monomer.mol2',
-    coreUrl: '/mol2/pamam-core.mol2',
+    monomerUrl: '/mol2/pamam-monomer.pdb',
+    coreUrl: '/mol2/pamam-core.pdb',
   },
   {
     id: 'ppi',
@@ -32,8 +32,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-ppi-g3.png', atoms: '~700' },
       { gen: 'G4', src: '/images/real-ppi-g4.png', atoms: '~1,400' },
     ],
-    monomerUrl: '/mol2/ppi-monomer.mol2',
-    coreUrl: '/mol2/ppi-core.mol2',
+    monomerUrl: '/mol2/ppi-monomer.pdb',
+    coreUrl: '/mol2/ppi-core.pdb',
   },
   {
     id: 'carbosilane',
@@ -48,8 +48,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-carbosilane-g3.png', atoms: '~800' },
       { gen: 'G4', src: '/images/real-carbosilane-g4.png', atoms: '~2,200' },
     ],
-    monomerUrl: '/mol2/carbosilane-monomer.mol2',
-    coreUrl: '/mol2/carbosilane-core.mol2',
+    monomerUrl: '/mol2/carbosilane-monomer.pdb',
+    coreUrl: '/mol2/carbosilane-core.pdb',
   },
   {
     id: 'phosphorus',
@@ -64,8 +64,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-phosphorus-g3.png', atoms: '~650' },
       { gen: 'G4', src: '/images/real-phosphorus-g4.png', atoms: '~1,500' },
     ],
-    monomerUrl: '/mol2/phosphorus-monomer.mol2',
-    coreUrl: '/mol2/phosphorus-core.mol2',
+    monomerUrl: '/mol2/phosphorus-monomer.pdb',
+    coreUrl: '/mol2/phosphorus-core.pdb',
   },
   {
     id: 'pll',
@@ -80,8 +80,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-pll-g3.png', atoms: '~850' },
       { gen: 'G4', src: '/images/real-pll-g4.png', atoms: '~2,100' },
     ],
-    monomerUrl: '/mol2/pll-monomer.mol2',
-    coreUrl: '/mol2/pll-core.mol2',
+    monomerUrl: '/mol2/pll-monomer.pdb',
+    coreUrl: '/mol2/pll-core.pdb',
   },
   {
     id: 'polyester',
@@ -96,8 +96,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-polyester-g3.png', atoms: '~760' },
       { gen: 'G4', src: '/images/real-polyester-g4.png', atoms: '~2,000' },
     ],
-    monomerUrl: '/mol2/polyester-monomer.mol2',
-    coreUrl: '/mol2/polyester-core.mol2',
+    monomerUrl: '/mol2/polyester-monomer.pdb',
+    coreUrl: '/mol2/polyester-core.pdb',
   },
   {
     id: 'polyglycerol',
@@ -112,8 +112,8 @@ const dendrimers = [
       { gen: 'G3', src: '/images/real-polyglycerol-g3.png', atoms: '~650' },
       { gen: 'G5', src: '/images/real-polyglycerol-g5.png', atoms: '~5,500' },
     ],
-    monomerUrl: '/mol2/polyglycerol-monomer.mol2',
-    coreUrl: '/mol2/polyglycerol-core.mol2',
+    monomerUrl: '/mol2/polyglycerol-monomer.pdb',
+    coreUrl: '/mol2/polyglycerol-core.pdb',
   },
 ];
 
@@ -286,7 +286,8 @@ const colorBorder: Record<string, string> = {
           antialias: true,
         });
 
-        viewer.addModel(data, 'mol2');
+        const fmt = url.endsWith('.pdb') ? 'pdb' : 'mol2';
+        viewer.addModel(data, fmt);
 
         // Ball-and-stick with Jmol element colours (C=grey, N=blue, O=red, P=orange, Si=tan, S=yellow)
         // Hide H atoms from sticks to reduce visual noise, show all spheres

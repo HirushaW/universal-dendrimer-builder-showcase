@@ -11,7 +11,7 @@ const { id, monomerUrl, coreUrl, label = '' } = Astro.props;
 <div class="mol2-viewer-pair" data-id={id} data-monomer={monomerUrl} data-core={coreUrl}>
   <div class="grid grid-cols-2 gap-3">
     <div>
-      <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2 text-center">Monomer</p>
+      <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2 text-center">Monomer Unit <span class="normal-case text-slate-600">(QM optimised)</span></p>
       <div
         id={`viewer-${id}-monomer`}
         class="w-full rounded-xl border border-slate-700 overflow-hidden"
@@ -23,7 +23,7 @@ const { id, monomerUrl, coreUrl, label = '' } = Astro.props;
       </div>
     </div>
     <div>
-      <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2 text-center">Core</p>
+      <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-2 text-center">Core + G1 <span class="normal-case text-slate-600">(minimised)</span></p>
       <div
         id={`viewer-${id}-core`}
         class="w-full rounded-xl border border-slate-700 overflow-hidden"

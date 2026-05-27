@@ -186,16 +186,22 @@ const examples = [
                 <h3 class="text-slate-300 font-semibold text-sm mb-2">Timing Reference</h3>
                 <p class="text-slate-500 text-xs font-mono leading-relaxed">{ex.timing}</p>
               </div>
-              <div class="space-y-3">
-                <div>
-                  <p class="text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">GUI — Build Output</p>
-                  <img src={ex.screenshot} alt={ex.screenshotAlt} class="w-full rounded-lg border border-slate-700" />
-                </div>
-                <div>
-                  <p class="text-slate-400 text-xs font-medium mb-1.5 uppercase tracking-wider">Minimized Structure (Avogadro)</p>
-                  <img src={ex.structure} alt={ex.structureAlt} class="w-full rounded-lg border border-slate-700 bg-black" />
-                </div>
-              </div>
+            </div>
+          </div>
+
+          <!-- Full-width images -->
+          <div class="px-6 pb-6 grid md:grid-cols-2 gap-5 border-t border-slate-700/50 pt-6">
+            <div>
+              <p class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">GUI — Build Output</p>
+              <img src={ex.screenshot} alt={ex.screenshotAlt}
+                class="w-full rounded-xl border border-slate-700 object-cover"
+                style="min-height: 280px; max-height: 400px; object-position: top;" />
+            </div>
+            <div>
+              <p class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">Minimized Structure (Avogadro)</p>
+              <img src={ex.structure} alt={ex.structureAlt}
+                class="w-full rounded-xl border border-slate-700 bg-black object-contain"
+                style="min-height: 280px; max-height: 400px;" />
             </div>
           </div>
         </div>
