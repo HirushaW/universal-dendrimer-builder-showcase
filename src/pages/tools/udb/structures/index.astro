@@ -198,18 +198,19 @@ const colorBorder: Record<string, string> = {
         <!-- Generation series -->
         <div class="mb-8">
           <h3 class="text-slate-300 font-semibold text-sm mb-4 uppercase tracking-wider">Generation Series — Avogadro Renders</h3>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {d.generations.map(g => (
               <div class={`rounded-2xl overflow-hidden border bg-black transition-all duration-300 ${colorBorder[d.color]}`}>
                 <img
                   src={g.src}
                   alt={`${d.name} ${g.gen} — Avogadro minimized structure, ${g.atoms} atoms`}
-                  class="w-full"
+                  class="w-full object-contain"
+                  style="min-height: 260px; max-height: 320px;"
                   loading="lazy"
                 />
-                <div class="px-3 py-2.5 bg-slate-950/80">
+                <div class="px-4 py-3 bg-slate-950/80">
                   <div class={`font-bold text-sm ${colorAccent[d.color]}`}>{d.name} {g.gen}</div>
-                  <div class="mono text-slate-500 text-xs">{g.atoms} atoms</div>
+                  <div class="mono text-slate-500 text-xs mt-0.5">{g.atoms} atoms</div>
                 </div>
               </div>
             ))}
@@ -218,11 +219,31 @@ const colorBorder: Record<string, string> = {
 
         <!-- 3D viewer section -->
         <div class="bg-slate-900/60 rounded-2xl border border-slate-700 p-6">
-          <div class="flex items-center gap-2 mb-4">
-            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
-            </svg>
-            <h3 class="text-slate-200 font-semibold text-sm">Building Blocks — Interactive 3D (from UDB output files)</h3>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
+              </svg>
+              <h3 class="text-slate-200 font-semibold text-sm">Building Blocks — Interactive 3D (from UDB output files)</h3>
+            </div>
+            <!-- Atom colour legend -->
+            <div class="flex flex-wrap items-center gap-3 text-xs mono">
+              <span class="text-slate-500 mr-1">Atom colours:</span>
+              {[
+                { el: 'C',  bg: '#606060', label: 'Carbon' },
+                { el: 'H',  bg: '#e0e0e0', label: 'Hydrogen' },
+                { el: 'N',  bg: '#3050F8', label: 'Nitrogen' },
+                { el: 'O',  bg: '#FF2010', label: 'Oxygen' },
+                { el: 'P',  bg: '#FF8000', label: 'Phosphorus' },
+                { el: 'S',  bg: '#FFFF30', label: 'Sulfur' },
+                { el: 'Si', bg: '#F0C8A0', label: 'Silicon' },
+              ].map(a => (
+                <span class="flex items-center gap-1.5" title={a.label}>
+                  <span class="w-3 h-3 rounded-full inline-block shrink-0" style={`background:${a.bg};`}></span>
+                  <span class="text-slate-300">{a.el}</span>
+                </span>
+              ))}
+            </div>
           </div>
           <Mol2Viewer id={d.id} monomerUrl={d.monomerUrl} coreUrl={d.coreUrl} />
         </div>
@@ -266,11 +287,21 @@ const colorBorder: Record<string, string> = {
         });
 
         viewer.addModel(data, 'mol2');
+
+        // Ball-and-stick with Jmol element colours (C=grey, N=blue, O=red, P=orange, Si=tan, S=yellow)
+        // Hide H atoms from sticks to reduce visual noise, show all spheres
         viewer.setStyle({}, {
-          stick:  { colorscheme: 'Jmol', radius: 0.12 },
-          sphere: { colorscheme: 'Jmol', scale: 0.22 },
+          stick:  { colorscheme: 'Jmol', radius: 0.18 },
+          sphere: { colorscheme: 'Jmol', scale: 0.38 },
         });
+        // Slightly shrink hydrogens so heavy atoms dominate
+        viewer.setStyle({ elem: 'H' }, {
+          stick:  { colorscheme: 'Jmol', radius: 0.08 },
+          sphere: { colorscheme: 'Jmol', scale: 0.18 },
+        });
+
         viewer.zoomTo();
+        viewer.zoom(0.88);
         viewer.render();
       } catch (e) {
         const el2 = document.getElementById(containerId);
