@@ -7,12 +7,12 @@ const features = [
   {
     icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>`,
     title: '9 Dendrimer Types',
-    desc: 'PAMAM, PPI, Triazine, Carbosilane, PLL, Phosphorus, Polyester, Polyglycerol, and Custom — all from a single unified interface.',
+    desc: 'PAMAM, PPI, Triazine, Carbosilane, PLL, Phosphorus, Polyester, Polyglycerol, and Custom, all from a single unified interface.',
   },
   {
     icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>`,
     title: 'GUI-Driven Workflow',
-    desc: 'Full Tkinter GUI — build, parameterize, set up MD, and characterize from a single desktop application. No scripting required.',
+    desc: 'Full Tkinter GUI: build, parameterize, set up MD, and characterize from a single desktop application. No scripting required.',
   },
   {
     icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/>`,
@@ -27,7 +27,7 @@ const features = [
   {
     icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>`,
     title: 'Fragment BCC Parameterization',
-    desc: 'Residue-level AM1-BCC charge assignment via antechamber. Bypasses whole-molecule limits — works at any generation size.',
+    desc: 'Residue-level AM1-BCC charge assignment via antechamber. Bypasses whole-molecule limits, so it works at any generation size.',
   },
   {
     icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`,
@@ -105,7 +105,7 @@ const structColorMap: Record<string,string> = {
         <div>
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-400 text-xs font-semibold mb-7 mono">
             <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
-            v1.0 — Stable Release
+            v1.0 Stable Release
           </div>
 
           <h1 class="text-5xl sm:text-6xl font-extrabold text-slate-100 leading-[1.1] tracking-tight">
@@ -119,7 +119,7 @@ const structColorMap: Record<string,string> = {
           <p class="mt-6 text-base text-slate-400 leading-relaxed max-w-lg">
             Universal Dendrimer Builder is an open-source Python desktop application for
             constructing, force-field parameterizing, and running molecular dynamics
-            simulations of dendrimer nanostructures — 9 types, G1–G10, from a single GUI.
+            simulations of dendrimer nanostructures: 9 types, G1–G10, from a single GUI.
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3">
@@ -162,7 +162,7 @@ const structColorMap: Record<string,string> = {
             <div class="structure-frame relative">
               <img
                 src="/images/hero-dendrimer.png"
-                alt="PAMAM G3 dendrimer — radial node graph showing 4-arm EDA core with 3 generations"
+                alt="PAMAM G3 dendrimer: radial node graph showing 4-arm EDA core with 3 generations"
                 class="w-full"
                 width="820" height="560"
               />
@@ -184,7 +184,7 @@ const structColorMap: Record<string,string> = {
         <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Capabilities</p>
         <h2 class="section-title">Everything you need for dendrimer MD</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
-          UDB handles the full pipeline — geometry construction, force-field parameterization,
+          UDB handles the full pipeline: geometry construction, force-field parameterization,
           solvation, MD input generation, and post-simulation structural analysis.
         </p>
       </div>
@@ -210,7 +210,7 @@ const structColorMap: Record<string,string> = {
         <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Output Structures</p>
         <h2 class="section-title">Simulation-ready at every generation</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
-          Radial topology diagrams for each supported dendrimer family — color-coded by type.
+          Radial topology diagrams for each supported dendrimer family, color-coded by type.
           Each is exported as AMBER-compatible .prmtop / .inpcrd ready for NAMD.
         </p>
       </div>
@@ -228,7 +228,7 @@ const structColorMap: Record<string,string> = {
       </div>
 
       <p class="text-center mt-8 text-slate-600 text-sm">
-        All topologies built and parameterized by UDB v1.0 — GAFF2 + Fragment BCC charge assignment.
+        All topologies built and parameterized by UDB v1.0 using GAFF2 + Fragment BCC charge assignment.
         <a href="/tools/udb/structures/" class="text-teal-500 hover:text-teal-400 ml-1">Full structure gallery →</a>
       </p>
     </div>
@@ -241,7 +241,7 @@ const structColorMap: Record<string,string> = {
         <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Supported Topologies</p>
         <h2 class="section-title">9 Dendrimer Families</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
-          Each type has a dedicated parameterization pathway —
+          Each type has a dedicated parameterization pathway using
           GAFF2, CGenFF, or mixed force fields depending on backbone chemistry.
         </p>
       </div>
@@ -302,7 +302,7 @@ const structColorMap: Record<string,string> = {
           <div class="diagram-frame">
             <img
               src="/images/gui-pamam.png"
-              alt="UDB v1.0 GUI — PAMAM G6 build complete, 9,156 atoms, Generation Preview table"
+              alt="UDB v1.0 GUI: PAMAM G6 build complete, 9,156 atoms, Generation Preview table"
               class="w-full"
               width="800" height="500"
             />

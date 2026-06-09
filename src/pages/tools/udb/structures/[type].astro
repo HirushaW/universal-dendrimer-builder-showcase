@@ -16,8 +16,8 @@ const next = dendrimers[currentIdx + 1] ?? null;
 ---
 
 <Layout
-  title={`${d.name} — ${d.full}`}
-  description={`${d.name} (${d.full}) dendrimer — Avogadro renders G1–G4, interactive 3D monomer and core viewer, chemistry and applications.`}
+  title={`${d.name}: ${d.full}`}
+  description={`${d.name} (${d.full}) dendrimer: Avogadro renders G1–G4, interactive 3D monomer and core viewer, chemistry and applications.`}
   activeNav="tools"
 >
 
@@ -106,7 +106,7 @@ const next = dendrimers[currentIdx + 1] ?? null;
           <div class={`rounded-2xl overflow-hidden border bg-black transition-all duration-300 ${colorBorder[d.color]}`}>
             <img
               src={g.src}
-              alt={`${d.name} ${g.gen} — Avogadro minimized structure, ${g.atoms} atoms`}
+              alt={`${d.name} ${g.gen}: Avogadro minimized structure, ${g.atoms} atoms`}
               class="w-full object-contain"
               style="min-height: 300px; max-height: 360px;"
               loading="lazy"
@@ -130,7 +130,7 @@ const next = dendrimers[currentIdx + 1] ?? null;
     <section>
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
-          <h2 class="text-2xl font-bold text-slate-100">Building Blocks — Interactive 3D</h2>
+          <h2 class="text-2xl font-bold text-slate-100">Building Blocks: Interactive 3D</h2>
           <p class="text-slate-400 text-sm mt-1">
             Loaded from actual UDB output files. Coloured by element (Jmol scheme).
             Drag to rotate · Scroll to zoom.

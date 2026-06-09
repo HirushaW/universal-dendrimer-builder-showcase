@@ -64,7 +64,7 @@ export const dendrimers: DendrimerType[] = [
     full: 'Carbosilane',
     coreLabel: 'Si–C core',
     color: 'amber',
-    description: 'Silicon–carbon backbone dendrimer with a highly flexible, hydrophobic interior. Unique among dendrimers for its organosilicon chemistry. Requires GAFF2 manual bypass — CGenFF is incompatible with Si atoms.',
+    description: 'Silicon–carbon backbone dendrimer with a highly flexible, hydrophobic interior. Unique among dendrimers for its organosilicon chemistry. Requires GAFF2 manual bypass, since CGenFF is incompatible with Si atoms.',
     chemistry: 'Si–C branching units · vinyl or allyl termini · hydrophobic interior · high chain flexibility',
     applications: 'Antiviral agents (HIV inhibition), hydrophobic drug carriers, materials science, silicon-based nanodevices',
     forceField: 'GAFF2 manual bypass (CGenFF incompatible with Si)',

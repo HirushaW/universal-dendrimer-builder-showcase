@@ -93,7 +93,7 @@ conda init bash</pre>
           <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">parmchk2</code>,
           <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">tleap</code>, and
           <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">sander</code>
-          — all required for GAFF2 parameterization.
+          are all required for GAFF2 parameterization.
         </p>
         <div class="code-block p-4 mb-3">
           <div class="text-slate-500 text-xs mb-2 font-mono"># Create and activate the AmberTools25 environment</div>
@@ -106,7 +106,7 @@ conda activate AmberTools25</pre>
           </svg>
           <span>
             The conda-forge AmberTools package includes serial <code class="font-mono bg-slate-700 px-1 rounded">sander</code> only.
-            <code class="font-mono bg-slate-700 px-1 rounded">sander.MPI</code> is not included — see
+            <code class="font-mono bg-slate-700 px-1 rounded">sander.MPI</code> is not included; see
             <a href="/tools/udb/limitations/" class="text-teal-400 hover:text-teal-300">Known Limitations</a> if you need parallel MD runs.
           </span>
         </div>
@@ -242,14 +242,14 @@ python3 universal_dendrimer_builder_v1_0.py</pre>
           {
             severity: 'medium',
             title: 'conda activate fails in shell scripts',
-            problem: 'Running conda activate inside a .sh script without sourcing the conda init file first silently fails — the environment is not activated and AmberTools binaries are not found.',
+            problem: 'Running conda activate inside a .sh script without sourcing the conda init file first silently fails, so the environment is not activated and AmberTools binaries are not found.',
             fix: 'Use: source ~/miniconda3/bin/activate AmberTools25 in scripts. Do not use conda activate in non-interactive shell contexts.',
           },
           {
             severity: 'medium',
             title: 'antechamber MAXBOND limit',
             problem: 'AmberTools antechamber has an internal MAXBOND limit (~400 atoms for full-molecule AM1-BCC). Building G4+ PAMAM as a single molecule will hit this limit.',
-            fix: 'UDB uses Fragment BCC mode for large dendrimers — charge each residue separately. See the Parameterization tab in UDB and the Limitations page.',
+            fix: 'UDB uses Fragment BCC mode for large dendrimers, charging each residue separately. See the Parameterization tab in UDB and the Limitations page.',
           },
           {
             severity: 'low',
@@ -279,7 +279,7 @@ python3 universal_dendrimer_builder_v1_0.py</pre>
     <section>
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Verify Your Installation</h2>
       <div class="code-block p-4">
-        <div class="text-slate-500 text-xs mb-2 font-mono"># Quick verification — all these should succeed</div>
+        <div class="text-slate-500 text-xs mb-2 font-mono"># Quick verification: all these should succeed</div>
         <pre class="text-slate-200 text-sm leading-relaxed">conda activate AmberTools25
 python3 -c "import numpy, scipy, matplotlib, tkinter; print('Python deps OK')"
 antechamber -h 2>&1 | head -1       # Should show antechamber version

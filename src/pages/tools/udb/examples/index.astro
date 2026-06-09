@@ -6,11 +6,11 @@ const examples = [
     id: 'pamam-g3',
     type: 'PAMAM',
     generation: 'G3',
-    title: 'PAMAM G3 — Start to NAMD Trajectory',
+    title: 'PAMAM G3: Start to NAMD Trajectory',
     time: '~15 min total',
     atoms: '516',
     screenshot: '/images/gui-pamam.png',
-    screenshotAlt: 'UDB v1.0 GUI — PAMAM G6 build complete with generation preview table',
+    screenshotAlt: 'UDB v1.0 GUI: PAMAM G6 build complete with generation preview table',
     structure: '/images/real-pamam-g3.png',
     structureAlt: 'Avogadro render of PAMAM G3 minimized structure',
     forceField: 'GAFF2 + BCC',
@@ -32,15 +32,15 @@ const examples = [
     id: 'carbosilane',
     type: 'Carbosilane',
     generation: 'G2',
-    title: 'Carbosilane G2 — Manual GAFF2 Bypass',
+    title: 'Carbosilane G2: Manual GAFF2 Bypass',
     time: '~20 min total',
     atoms: '~280',
     screenshot: '/images/gui-carbosilane.png',
-    screenshotAlt: 'UDB v1.0 GUI — Carbosilane G6 build complete with generation preview table',
+    screenshotAlt: 'UDB v1.0 GUI: Carbosilane G6 build complete with generation preview table',
     structure: '/images/real-carbosilane-g2.png',
     structureAlt: 'Avogadro render of Carbosilane G2 minimized structure',
     forceField: 'GAFF2 manual bypass',
-    summary: 'Carbosilane dendrimers contain silicon — CGenFF is incompatible. This example shows the manual GAFF2 bypass procedure for Si-containing branches.',
+    summary: 'Carbosilane dendrimers contain silicon, so CGenFF is incompatible. This example shows the manual GAFF2 bypass procedure for Si-containing branches.',
     steps: [
       'Select Carbosilane, Generation G2',
       'Build tab → Build Structure',
@@ -57,11 +57,11 @@ const examples = [
     id: 'phosphorus',
     type: 'Phosphorus',
     generation: 'G3',
-    title: 'Phosphorus G3 — Gasteiger + UFF',
+    title: 'Phosphorus G3: Gasteiger + UFF',
     time: '~25 min total',
     atoms: '~650',
     screenshot: '/images/gui-phosphorus.png',
-    screenshotAlt: 'UDB v1.0 GUI — Phosphorus G6 build complete with generation preview table',
+    screenshotAlt: 'UDB v1.0 GUI: Phosphorus G6 build complete with generation preview table',
     structure: '/images/real-phosphorus-g3.png',
     structureAlt: 'Avogadro render of Phosphorus G3 minimized structure',
     forceField: 'Gasteiger + UFF',
@@ -72,7 +72,7 @@ const examples = [
       'Parameterize tab → Charge Method → Gasteiger',
       'Force Field → GAFF2 + UFF for P-core',
       'Run Parameterization',
-      'Inspect .frcmod — UFF parameters substituted for any missing P terms',
+      'Inspect .frcmod: UFF parameters substituted for any missing P terms',
     ],
     expectedOutputs: ['phosphorus_g3.mol2', 'phosphorus_g3_gasteiger.frcmod', 'phosphorus_g3.prmtop'],
     timing: 'Build: ~10 s | Param: ~4 min',
@@ -81,11 +81,11 @@ const examples = [
     id: 'ppi',
     type: 'PPI',
     generation: 'G4',
-    title: 'PPI G4 — Standard Workflow',
+    title: 'PPI G4: Standard Workflow',
     time: '~15 min total',
     atoms: '~1400',
     screenshot: '/images/gui-ppi.png',
-    screenshotAlt: 'UDB v1.0 GUI — PPI G6 build complete with generation preview table',
+    screenshotAlt: 'UDB v1.0 GUI: PPI G6 build complete with generation preview table',
     structure: '/images/real-ppi-g4.png',
     structureAlt: 'Avogadro render of PPI G4 minimized structure',
     forceField: 'GAFF2 + CGenFF',
@@ -102,7 +102,7 @@ const examples = [
 ];
 ---
 
-<Layout title="Worked Examples" description="UDB worked examples — end-to-end walkthroughs for PAMAM, Carbosilane, Phosphorus, and PPI dendrimers." activeNav="tools">
+<Layout title="Worked Examples" description="UDB worked examples: end-to-end walkthroughs for PAMAM, Carbosilane, Phosphorus, and PPI dendrimers." activeNav="tools">
 
   <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,7 +192,7 @@ const examples = [
           <!-- Full-width images -->
           <div class="px-6 pb-6 grid md:grid-cols-2 gap-5 border-t border-slate-700/50 pt-6">
             <div>
-              <p class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">GUI — Build Output</p>
+              <p class="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">GUI Build Output</p>
               <img src={ex.screenshot} alt={ex.screenshotAlt}
                 class="w-full rounded-xl border border-slate-700 object-cover"
                 style="min-height: 280px; max-height: 400px; object-position: top;" />

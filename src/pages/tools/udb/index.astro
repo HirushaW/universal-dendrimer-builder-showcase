@@ -22,7 +22,7 @@ function statusClass(status: string) {
 }
 ---
 
-<Layout title="UDB Overview" description="Universal Dendrimer Builder — features, force-field matrix, and workflow overview." activeNav="tools">
+<Layout title="UDB Overview" description="Universal Dendrimer Builder: features, force-field matrix, and workflow overview." activeNav="tools">
 
   <!-- Page header -->
   <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
@@ -35,7 +35,7 @@ function statusClass(status: string) {
       <h1 class="text-4xl font-bold text-slate-100 mb-3">Universal Dendrimer Builder</h1>
       <p class="text-lg text-slate-400 max-w-2xl">
         An open-source Python desktop application for constructing, parameterizing,
-        and simulating dendrimer nanostructures — G1 to G10, 9 types, AMBER + NAMD pipeline.
+        and simulating dendrimer nanostructures: G1 to G10, 9 types, AMBER + NAMD pipeline.
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
         <a href="/tools/udb/install/" class="btn-primary">Install v1.0</a>
@@ -63,7 +63,7 @@ function statusClass(status: string) {
           </p>
           <p>
             UDB was developed to address the lack of a single tool covering multiple dendrimer
-            chemistries — PAMAM-focused tools exist, but switching to PPI, Phosphorus, or
+            chemistries. PAMAM-focused tools exist, but switching to PPI, Phosphorus, or
             Carbosilane dendrimers requires either manual scripting or switching platforms.
             UDB handles all nine supported types through one workflow with type-specific
             force-field routing.
@@ -121,7 +121,7 @@ function statusClass(status: string) {
                 <td class={statusClass(row.gaff2)}>{row.gaff2}</td>
                 <td class={statusClass(row.cgenff)}>{row.cgenff}</td>
                 <td class={statusClass(row.mixed)}>{row.mixed}</td>
-                <td class="text-slate-500 text-xs">{row.notes || '—'}</td>
+                <td class="text-slate-500 text-xs">{row.notes || '-'}</td>
               </tr>
             ))}
           </tbody>
@@ -136,7 +136,7 @@ function statusClass(status: string) {
     <!-- Workflow diagram -->
     <section class="mb-16">
       <h2 class="section-title mb-4">Complete Pipeline</h2>
-      <p class="text-slate-400 text-sm mb-5">From dendrimer type selection through final NAMD trajectory — all 6 stages handled inside a single GUI.</p>
+      <p class="text-slate-400 text-sm mb-5">From dendrimer type selection through final NAMD trajectory, all 6 stages handled inside a single GUI.</p>
       <div class="rounded-2xl overflow-hidden border border-slate-700">
         <img src="/images/ai-workflow-diagram.png" alt="UDB complete 6-stage workflow: Build → Parameterize → Solvate → MD Setup → Run → Characterize" class="w-full" />
       </div>
