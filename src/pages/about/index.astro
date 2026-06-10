@@ -1,23 +1,20 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CitationBlock from '../../components/CitationBlock.astro';
+import PageHeader from '../../components/PageHeader.astro';
 ---
 
 <Layout title="About" description="About Hirusha Walgampaya and the Universal Dendrimer Builder project at University of Peradeniya." activeNav="about">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">About</h1>
-      <p class="text-lg text-slate-400">
-        The Universal Dendrimer Builder and its author.
-      </p>
-    </div>
-  </div>
+  <PageHeader
+    title="About"
+    description="The Universal Dendrimer Builder and its author."
+  />
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
 
     <!-- Author section -->
-    <section class="grid sm:grid-cols-3 gap-8">
+    <section class="reveal reveal-up grid sm:grid-cols-3 gap-8">
       <div class="sm:col-span-1 flex flex-col items-center sm:items-start gap-4">
         <img
           src="/images/profile.jpg"
@@ -81,7 +78,7 @@ import CitationBlock from '../../components/CitationBlock.astro';
     </section>
 
     <!-- About the project -->
-    <section>
+    <section class="reveal reveal-up">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">About the Project</h2>
       <div class="space-y-3 text-slate-400 leading-relaxed">
         <p>
@@ -103,7 +100,7 @@ import CitationBlock from '../../components/CitationBlock.astro';
     </section>
 
     <!-- Affiliation -->
-    <section>
+    <section class="reveal reveal-up">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Institution</h2>
       <div class="p-5 bg-slate-900 rounded-xl border border-slate-700">
         <div class="flex items-start gap-4">
@@ -125,7 +122,7 @@ import CitationBlock from '../../components/CitationBlock.astro';
     </section>
 
     <!-- Open questions / disclaimers -->
-    <section>
+    <section class="reveal reveal-up">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Acknowledgements</h2>
       <div class="p-5 bg-slate-900 rounded-xl border border-slate-700 text-slate-400 text-sm leading-relaxed">
         <p class="text-amber-300 font-medium mb-2">Acknowledgements placeholder</p>
@@ -138,13 +135,13 @@ import CitationBlock from '../../components/CitationBlock.astro';
     </section>
 
     <!-- Citation -->
-    <section>
+    <section class="reveal reveal-up">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Citation</h2>
       <CitationBlock compact={false} />
     </section>
 
     <!-- Contact -->
-    <section>
+    <section class="reveal reveal-up">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Contact & Issues</h2>
       <div class="grid sm:grid-cols-2 gap-5">
         <div class="p-5 bg-slate-900 rounded-xl border border-slate-700">

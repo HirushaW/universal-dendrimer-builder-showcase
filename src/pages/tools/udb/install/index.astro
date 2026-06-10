@@ -1,37 +1,27 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
 ---
 
 <Layout title="Install UDB" description="Install Universal Dendrimer Builder on Linux with AmberTools25 and NAMD 3.x." activeNav="tools">
 
-  <!-- Header -->
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Install</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Installation</h1>
-      <p class="text-lg text-slate-400">
-        UDB runs on Linux (Ubuntu 20.04+). This guide covers the full dependency stack:
-        Conda, AmberTools25, NAMD 3.x, and Python requirements.
-      </p>
-      <div class="mt-5 flex flex-wrap gap-2">
-        <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Linux / Ubuntu 20.04+</span>
-        <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">AmberTools25</span>
-        <span class="badge bg-sky-500/10 text-sky-400 border border-sky-500/20">NAMD 3.x</span>
-        <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Python 3.8+</span>
-      </div>
-    </div>
-  </div>
+  <PageHeader
+    title="Installation"
+    description="UDB runs on Linux (Ubuntu 20.04+). This guide covers the full dependency stack: Conda, AmberTools25, NAMD 3.x, and Python requirements."
+    breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'UDB', href: '/tools/udb/' }, { label: 'Install' }]}
+  >
+    <Fragment slot="actions">
+      <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Linux / Ubuntu 20.04+</span>
+      <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">AmberTools25</span>
+      <span class="badge bg-sky-500/10 text-sky-400 border border-sky-500/20">NAMD 3.x</span>
+      <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Python 3.8+</span>
+    </Fragment>
+  </PageHeader>
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
     <!-- Requirements -->
-    <section class="mb-12">
+    <section class="reveal reveal-up mb-12">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">System Requirements</h2>
       <div class="overflow-x-auto rounded-xl border border-slate-700">
         <table class="table-scientific">
@@ -51,7 +41,7 @@ import Layout from '../../../../layouts/Layout.astro';
     </section>
 
     <!-- Step 1 -->
-    <section class="mb-10">
+    <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">1</div>
         <h2 class="text-xl font-bold text-slate-100">Install Miniconda (if not already installed)</h2>
@@ -82,7 +72,7 @@ conda init bash</pre>
     </section>
 
     <!-- Step 2 -->
-    <section class="mb-10">
+    <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">2</div>
         <h2 class="text-xl font-bold text-slate-100">Install AmberTools25</h2>
@@ -114,7 +104,7 @@ conda activate AmberTools25</pre>
     </section>
 
     <!-- Step 3 -->
-    <section class="mb-10">
+    <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">3</div>
         <h2 class="text-xl font-bold text-slate-100">Install Python Dependencies</h2>
@@ -154,7 +144,7 @@ pip install numpy scipy matplotlib</pre>
     </section>
 
     <!-- Step 4 -->
-    <section class="mb-10">
+    <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">4</div>
         <h2 class="text-xl font-bold text-slate-100">Install NAMD 3.x</h2>
@@ -187,7 +177,7 @@ sudo tar -xzf NAMD_3.0.x_Linux-x86_64-multicore.tar.gz -C /opt/namd
     </section>
 
     <!-- Step 5 -->
-    <section class="mb-10">
+    <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">5</div>
         <h2 class="text-xl font-bold text-slate-100">Configure NAMD Path in UDB</h2>
@@ -209,7 +199,7 @@ sudo tar -xzf NAMD_3.0.x_Linux-x86_64-multicore.tar.gz -C /opt/namd
     </section>
 
     <!-- Step 6 -->
-    <section class="mb-12">
+    <section class="reveal reveal-up mb-12">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">6</div>
         <h2 class="text-xl font-bold text-slate-100">Launch UDB</h2>
@@ -229,7 +219,7 @@ python3 universal_dendrimer_builder_v1_0.py</pre>
     </section>
 
     <!-- Known install issues -->
-    <section class="mb-12">
+    <section class="reveal reveal-up mb-12">
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Known Installation Issues</h2>
       <div class="space-y-4">
         {[

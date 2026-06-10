@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
 
 const examples = [
   {
@@ -104,27 +105,16 @@ const examples = [
 
 <Layout title="Worked Examples" description="UDB worked examples: end-to-end walkthroughs for PAMAM, Carbosilane, Phosphorus, and PPI dendrimers." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Examples</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Worked Examples</h1>
-      <p class="text-lg text-slate-400 max-w-2xl">
-        End-to-end walkthroughs covering one example per major dendrimer type.
-        Each includes step-by-step instructions, expected outputs, and timing on reference hardware.
-      </p>
-    </div>
-  </div>
+  <PageHeader
+    title="Worked Examples"
+    description="End-to-end walkthroughs covering one example per major dendrimer type. Each includes step-by-step instructions, expected outputs, and timing on reference hardware."
+    breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'UDB', href: '/tools/udb/' }, { label: 'Examples' }]}
+  />
 
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
     <!-- Gallery link note -->
-    <div class="mb-10 p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 flex items-center justify-between gap-4">
+    <div class="reveal reveal-up mb-10 p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 flex items-center justify-between gap-4">
       <p class="text-teal-300 text-sm">
         Looking for rendered structures across all dendrimer types and generations?
       </p>
@@ -134,7 +124,7 @@ const examples = [
     <!-- Example list -->
     <div class="space-y-10">
       {examples.map(ex => (
-        <div id={ex.id} class="bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden">
+        <div id={ex.id} class="reveal reveal-up bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden">
           <!-- Header -->
           <div class="p-6 border-b border-slate-700 flex flex-col sm:flex-row sm:items-start gap-4">
             <div class="flex-1">

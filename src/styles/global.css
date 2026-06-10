@@ -259,7 +259,54 @@
 }
 .card-sheen:hover::before { opacity: 1; }
 
+/* Scroll-progress bar — pinned above the sticky nav, width set by JS */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0%;
+  z-index: 60;
+  background: linear-gradient(90deg, #2dd4bf, #38bdf8 55%, #818cf8);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.55);
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+/* Back-to-top — hidden until scrolled, then fades/rises in */
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.85rem;
+  color: #2dd4bf;
+  background: rgba(2, 6, 23, 0.8);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(14px) scale(0.92);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  border-color: rgba(45, 212, 191, 0.7);
+  box-shadow: 0 0 22px rgba(20, 184, 166, 0.3);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none; }
   .gradient-text-anim, .float-y, .shimmer::after, .aurora { animation: none; }
+  .scroll-progress, .back-to-top { transition: none; }
 }

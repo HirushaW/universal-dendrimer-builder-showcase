@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
 
 const tabs = [
   { id: 'build', label: 'Build Tab', icon: '⬡' },
@@ -12,22 +13,11 @@ const tabs = [
 
 <Layout title="User Manual" description="Complete UDB manual: workflow overview, tab-by-tab guide, and key parameters." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Manual</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">User Manual</h1>
-      <p class="text-lg text-slate-400 max-w-2xl">
-        Complete reference for UDB v1.0: workflow overview, tab-by-tab guide,
-        key parameters, expected outputs, and output file formats.
-      </p>
-    </div>
-  </div>
+  <PageHeader
+    title="User Manual"
+    description="Complete reference for UDB v1.0: workflow overview, tab-by-tab guide, key parameters, expected outputs, and output file formats."
+    breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'UDB', href: '/tools/udb/' }, { label: 'Manual' }]}
+  />
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <div class="grid lg:grid-cols-4 gap-10">
@@ -64,7 +54,7 @@ const tabs = [
       <main class="lg:col-span-3 space-y-14">
 
         <!-- Workflow overview -->
-        <section id="overview">
+        <section class="reveal reveal-up" id="overview">
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Workflow Overview</h2>
           <p class="text-slate-400 leading-relaxed mb-4">
             UDB implements a five-stage pipeline, each corresponding to a tab in the application.
@@ -92,7 +82,7 @@ const tabs = [
         </section>
 
         <!-- Getting started -->
-        <section id="getting-started">
+        <section class="reveal reveal-up" id="getting-started">
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Getting Started</h2>
           <ol class="space-y-4 text-slate-400 leading-relaxed">
             <li class="flex gap-3">
@@ -127,7 +117,7 @@ const tabs = [
         </section>
 
         <!-- Build tab -->
-        <section id="build">
+        <section class="reveal reveal-up" id="build">
           <h2 class="text-2xl font-bold text-slate-100 mb-2">Build Tab</h2>
           <p class="text-slate-500 text-sm mb-4">Construct the 3D dendrimer geometry</p>
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
@@ -157,7 +147,7 @@ const tabs = [
         </section>
 
         <!-- Parameterize tab -->
-        <section id="param">
+        <section class="reveal reveal-up" id="param">
           <h2 class="text-2xl font-bold text-slate-100 mb-2">Parameterize Tab</h2>
           <p class="text-slate-500 text-sm mb-4">Force-field assignment via AMBER antechamber</p>
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
@@ -185,7 +175,7 @@ const tabs = [
         </section>
 
         <!-- MD Setup tab -->
-        <section id="md">
+        <section class="reveal reveal-up" id="md">
           <h2 class="text-2xl font-bold text-slate-100 mb-2">MD Setup Tab</h2>
           <p class="text-slate-500 text-sm mb-4">Generate NAMD 3.x input deck</p>
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
@@ -211,7 +201,7 @@ const tabs = [
         </section>
 
         <!-- Characterize tab -->
-        <section id="characterize">
+        <section class="reveal reveal-up" id="characterize">
           <h2 class="text-2xl font-bold text-slate-100 mb-2">Characterize Tab</h2>
           <p class="text-slate-500 text-sm mb-4">Post-simulation structural analysis</p>
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
@@ -240,7 +230,7 @@ const tabs = [
         </section>
 
         <!-- Theory -->
-        <section id="theory">
+        <section class="reveal reveal-up" id="theory">
           <h2 class="text-2xl font-bold text-slate-100 mb-6">Theory & Algorithms</h2>
           <div class="grid sm:grid-cols-2 gap-6">
             {[
@@ -260,7 +250,7 @@ const tabs = [
         </section>
 
         <!-- Outputs -->
-        <section id="outputs">
+        <section class="reveal reveal-up" id="outputs">
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Output Files</h2>
           <div class="overflow-x-auto rounded-xl border border-slate-700">
             <table class="table-scientific">
@@ -290,7 +280,7 @@ const tabs = [
         </section>
 
         <!-- Key parameters -->
-        <section id="parameters">
+        <section class="reveal reveal-up" id="parameters">
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Key Parameters Reference</h2>
           <p class="text-slate-400 text-sm mb-4">
             Default values are chosen to work well for PAMAM G1–G6.

@@ -1,0 +1,62 @@
+---
+/*
+ * PageHeader — animated interior-page header that matches the homepage hero
+ * language: subtle grid + conic aurora glow, an eyebrow label, an animated
+ * gradient title, optional breadcrumbs, and a slot for action buttons.
+ * All motion is scroll-reveal + reduced-motion safe (see global.css).
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+  breadcrumbs?: Crumb[];
+}
+const { title, description, eyebrow, breadcrumbs = [] } = Astro.props;
+const hasActions = Astro.slots.has('actions');
+---
+
+<section class="relative overflow-hidden border-b border-slate-800 bg-slate-950 pt-16 pb-14">
+  <!-- Background grid, masked to a soft ellipse -->
+  <div class="absolute inset-0 grid-bg opacity-60 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_75%)]"></div>
+  <!-- Slow conic aurora glow, upper-right -->
+  <div class="absolute -top-48 right-0 w-[640px] h-[640px] rounded-full pointer-events-none aurora opacity-50"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {breadcrumbs.length > 0 && (
+      <nav class="reveal reveal-up flex items-center flex-wrap gap-2 text-sm text-slate-500 mb-5" aria-label="Breadcrumb">
+        {breadcrumbs.map((c, i) => (
+          <>
+            {c.href ? (
+              <a href={c.href} class="hover:text-teal-400 transition-colors">{c.label}</a>
+            ) : (
+              <span class="text-slate-300">{c.label}</span>
+            )}
+            {i < breadcrumbs.length - 1 && <span class="text-slate-700">/</span>}
+          </>
+        ))}
+      </nav>
+    )}
+
+    {eyebrow && (
+      <p class="reveal reveal-up reveal-delay-1 mono text-teal-500 text-xs tracking-widest uppercase mb-3">{eyebrow}</p>
+    )}
+
+    <h1 class="reveal reveal-up reveal-delay-1 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.1]">
+      <span class="gradient-text-anim">{title}</span>
+    </h1>
+
+    {description && (
+      <p class="reveal reveal-up reveal-delay-2 mt-4 text-lg text-slate-400 leading-relaxed max-w-2xl">{description}</p>
+    )}
+
+    {hasActions && (
+      <div class="reveal reveal-up reveal-delay-3 mt-7 flex flex-wrap gap-3">
+        <slot name="actions" />
+      </div>
+    )}
+  </div>
+</section>

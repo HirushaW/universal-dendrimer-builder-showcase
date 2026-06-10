@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 
 const sections = [
   {
@@ -43,19 +44,15 @@ const sections = [
 
 <Layout title="Documentation" description="UDB documentation index: manuals, examples, benchmarks, and reference materials." activeNav="docs">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Documentation</h1>
-      <p class="text-lg text-slate-400 max-w-xl">
-        Everything you need to install, use, and understand UDB.
-        Start with the Install guide or jump straight to Worked Examples.
-      </p>
-      <div class="mt-6 flex gap-3">
-        <a href="/tools/udb/install/" class="btn-primary">Install Guide</a>
-        <a href="/tools/udb/examples/" class="btn-outline">Examples</a>
-      </div>
-    </div>
-  </div>
+  <PageHeader
+    title="Documentation"
+    description="Everything you need to install, use, and understand UDB. Start with the Install guide or jump straight to Worked Examples."
+  >
+    <Fragment slot="actions">
+      <a href="/tools/udb/install/" class="btn-primary">Install Guide</a>
+      <a href="/tools/udb/examples/" class="btn-outline">Examples</a>
+    </Fragment>
+  </PageHeader>
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
@@ -67,8 +64,8 @@ const sections = [
         { href: '/tools/udb/examples/', title: 'Examples', icon: '▶', color: 'violet' },
         { href: '/tools/udb/validation/', title: 'Benchmarks', icon: '✓', color: 'emerald' },
         { href: '/tools/udb/changelog/', title: 'Changelog', icon: '📋', color: 'slate' },
-      ].map(card => (
-        <a href={card.href} class="card group flex items-center gap-3">
+      ].map((card, i) => (
+        <a href={card.href} class={`reveal reveal-up reveal-delay-${(i % 3) + 1} card card-sheen group flex items-center gap-3`}>
           <span class="text-2xl">{card.icon}</span>
           <span class="text-slate-200 font-semibold group-hover:text-teal-400 transition-colors">{card.title} →</span>
         </a>
@@ -78,7 +75,7 @@ const sections = [
     <!-- Full index -->
     <div class="space-y-10">
       {sections.map(section => (
-        <div>
+        <div class="reveal reveal-up">
           <h2 class="text-xl font-bold text-slate-200 mb-4 pb-2 border-b border-slate-800">{section.title}</h2>
           <div class="grid sm:grid-cols-2 gap-3">
             {section.links.map(link => (

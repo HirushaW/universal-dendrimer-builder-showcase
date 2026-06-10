@@ -57,11 +57,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
     />
   </head>
   <body class="min-h-screen flex flex-col bg-slate-950">
+    <!-- Scroll-progress bar (top, fills as the page scrolls) -->
+    <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+
     <Nav activeNav={activeNav} />
     <main class="flex-1">
       <slot />
     </main>
     <Footer />
+
+    <!-- Back-to-top: fades in after scrolling, smooth-scrolls home -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top" title="Back to top">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 15l7-7 7 7"/>
+      </svg>
+    </button>
 
     <!-- Scroll-reveal + count-up: progressive enhancement, no deps -->
     <script>
@@ -126,6 +136,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       } else {
         counters.forEach((el) => animateCount(el));
       }
+
+      // Scroll-progress bar + back-to-top, throttled to one update per frame.
+      const progress = document.getElementById('scroll-progress');
+      const toTop = document.getElementById('back-to-top');
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const doc = document.documentElement;
+          const max = doc.scrollHeight - doc.clientHeight;
+          const pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+          if (progress) progress.style.width = pct + '%';
+          if (toTop) toTop.classList.toggle('is-visible', doc.scrollTop > 600);
+          ticking = false;
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      toTop?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
     </script>
   </body>
 </html>

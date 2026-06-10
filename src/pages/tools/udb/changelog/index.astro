@@ -1,25 +1,15 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
 ---
 
 <Layout title="Changelog" description="UDB version history: features added, algorithms changed, bugs fixed." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Changelog</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Changelog</h1>
-      <p class="text-lg text-slate-400 max-w-xl">
-        Version history for Universal Dendrimer Builder.
-        All significant algorithmic changes, new features, and bug fixes are documented here.
-      </p>
-    </div>
-  </div>
+  <PageHeader
+    title="Changelog"
+    description="Version history for Universal Dendrimer Builder. All significant algorithmic changes, new features, and bug fixes are documented here."
+    breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'UDB', href: '/tools/udb/' }, { label: 'Changelog' }]}
+  />
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
@@ -49,7 +39,7 @@ import Layout from '../../../../layouts/Layout.astro';
         <div class="space-y-8">
 
           <!-- Placement engine -->
-          <div>
+          <div class="reveal reveal-up">
             <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               Placement Engine
@@ -91,7 +81,7 @@ import Layout from '../../../../layouts/Layout.astro';
           </div>
 
           <!-- Parameterization -->
-          <div>
+          <div class="reveal reveal-up">
             <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               Force-Field Parameterization
@@ -129,7 +119,7 @@ import Layout from '../../../../layouts/Layout.astro';
           </div>
 
           <!-- MD pipeline -->
-          <div>
+          <div class="reveal reveal-up">
             <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               MD Simulation Pipeline
@@ -159,7 +149,7 @@ import Layout from '../../../../layouts/Layout.astro';
           </div>
 
           <!-- Characterization -->
-          <div>
+          <div class="reveal reveal-up">
             <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               Structural Characterization
@@ -189,7 +179,7 @@ import Layout from '../../../../layouts/Layout.astro';
           </div>
 
           <!-- Supported types -->
-          <div>
+          <div class="reveal reveal-up">
             <h3 class="text-slate-200 font-semibold mb-3 flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               Supported Dendrimer Types
@@ -207,7 +197,7 @@ import Layout from '../../../../layouts/Layout.astro';
     </div>
 
     <!-- Future versions placeholder -->
-    <div class="relative pl-8 border-l-2 border-slate-800">
+    <div class="reveal reveal-up relative pl-8 border-l-2 border-slate-800">
       <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center">
         <span class="text-slate-600 text-xs">?</span>
       </div>
