@@ -62,5 +62,70 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       <slot />
     </main>
     <Footer />
+
+    <!-- Scroll-reveal + count-up: progressive enhancement, no deps -->
+    <script>
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Reveal elements as they enter the viewport.
+      const revealEls = document.querySelectorAll('.reveal');
+      if (reduceMotion) {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      } else if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      }
+
+      // Count-up for [data-countup] (value lives in data-to, supports prefix/suffix).
+      const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+      const animateCount = (el) => {
+        const to = parseFloat(el.getAttribute('data-to') || '0');
+        const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+        const prefix = el.getAttribute('data-prefix') || '';
+        const suffix = el.getAttribute('data-suffix') || '';
+        if (reduceMotion) {
+          el.textContent = prefix + to.toFixed(decimals) + suffix;
+          return;
+        }
+        const dur = 1400;
+        const start = performance.now();
+        const tick = (now) => {
+          const p = Math.min(1, (now - start) / dur);
+          const v = to * easeOut(p);
+          el.textContent = prefix + v.toFixed(decimals) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+      const counters = document.querySelectorAll('[data-countup]');
+      if ('IntersectionObserver' in window && counters.length) {
+        const co = new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                animateCount(entry.target);
+                obs.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.6 }
+        );
+        counters.forEach((el) => co.observe(el));
+      } else {
+        counters.forEach((el) => animateCount(el));
+      }
+    </script>
   </body>
 </html>

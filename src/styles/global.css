@@ -167,3 +167,99 @@
 ::-webkit-scrollbar-track { background: #020617; }
 ::-webkit-scrollbar-thumb { background: #1e3a3a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
+
+/* ──────────────────────────────────────────────────────────────────
+ * Motion: scroll-reveal, ambient float, shimmer, animated gradient
+ * ────────────────────────────────────────────────────────────────── */
+
+/* Scroll-reveal: elements start hidden + nudged, animate in when observed.
+   Add class="reveal" (+ optional reveal-up / reveal-left / reveal-right) and
+   a data-reveal attribute is toggled by the IntersectionObserver in Layout. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.reveal-left  { transform: translateX(-32px); }
+.reveal.reveal-right { transform: translateX(32px); }
+.reveal.reveal-scale { transform: scale(0.94); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger helpers — apply to children that share a reveal trigger */
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+
+/* Animated brand gradient (used on the hero headline) */
+@keyframes gradient-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.gradient-text-anim {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(110deg, #2dd4bf 0%, #38bdf8 35%, #818cf8 70%, #2dd4bf 100%);
+  background-size: 220% auto;
+  animation: gradient-drift 7s ease-in-out infinite;
+}
+
+/* Ambient float for decorative chips/badges */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+.float-y { animation: float-y 6s ease-in-out infinite; }
+
+/* Shimmer sweep across a surface (e.g. the live-data badge) */
+@keyframes shimmer {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.10) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: shimmer 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Slow conic aurora for big background glows */
+@keyframes aurora-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.aurora {
+  background: conic-gradient(from 0deg,
+    rgba(20,184,166,0.16),
+    rgba(56,189,248,0.10),
+    rgba(129,140,248,0.14),
+    rgba(20,184,166,0.16));
+  animation: aurora-spin 28s linear infinite;
+  filter: blur(60px);
+}
+
+/* Card lift sheen — a faint top highlight that brightens on hover */
+.card-sheen { position: relative; overflow: hidden; }
+.card-sheen::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(45,212,191,0.5), transparent);
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+.card-sheen:hover::before { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+  .gradient-text-anim, .float-y, .shimmer::after, .aurora { animation: none; }
+}
