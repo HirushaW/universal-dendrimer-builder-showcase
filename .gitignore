@@ -23,6 +23,7 @@ Thumbs.db
 .vscode/settings.json
 .idea/
 .claude/
+.superpowers/
 *.swp
 *.swo
 
