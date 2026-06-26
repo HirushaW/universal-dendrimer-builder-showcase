@@ -57,7 +57,7 @@ const dendrimerTypes = [
 ];
 
 const colorMap: Record<string, string> = {
-  teal:    'bg-teal-500/10    text-teal-300    border border-teal-500/25    hover:border-teal-400/50',
+  teal:    'bg-sky-500/10    text-sky-300    border border-sky-500/25    hover:border-sky-400/50',
   sky:     'bg-sky-500/10     text-sky-300     border border-sky-500/25     hover:border-sky-400/50',
   violet:  'bg-violet-500/10  text-violet-300  border border-violet-500/25  hover:border-violet-400/50',
   amber:   'bg-amber-500/10   text-amber-300   border border-amber-500/25   hover:border-amber-400/50',
@@ -79,7 +79,7 @@ const structures = [
 ];
 
 const structColorMap: Record<string,string> = {
-  teal:    'text-teal-400',
+  teal:    'text-sky-400',
   sky:     'text-sky-400',
   amber:   'text-amber-400',
   red:     'text-red-400',
@@ -106,8 +106,8 @@ const structColorMap: Record<string,string> = {
 
         <!-- Text column -->
         <div>
-          <div class="reveal reveal-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-400 text-xs font-semibold mb-7 mono relative overflow-hidden shimmer">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+          <div class="reveal reveal-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-sky-400 text-xs font-semibold mb-7 mono relative overflow-hidden shimmer">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
             v1.0 Stable Release
           </div>
 
@@ -137,7 +137,7 @@ const structColorMap: Record<string,string> = {
 
           <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {stats.map((s, i) => (
-              <div class={`reveal reveal-up reveal-delay-${i + 1} bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 text-center card-sheen transition-colors hover:border-teal-500/40`}>
+              <div class={`reveal reveal-up reveal-delay-${i + 1} bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 text-center card-sheen transition-colors hover:border-sky-500/40`}>
                 {s.to !== null ? (
                   <div
                     class="stat-num gradient-text text-2xl"
@@ -158,7 +158,7 @@ const structColorMap: Record<string,string> = {
           <div class="reveal reveal-up reveal-delay-5 mt-7 flex flex-wrap items-center gap-4 text-xs text-slate-500">
             {['Open Source', 'Linux / Ubuntu 20.04+', 'AmberTools25 · NAMD 3.x'].map(tag => (
               <div class="flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-3.5 h-3.5 text-sky-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
                 {tag}
@@ -184,12 +184,12 @@ const structColorMap: Record<string,string> = {
                   width="820" height="560"
                 />
               </noscript>
-              <div class="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 border border-teal-500/30 backdrop-blur-sm">
-                <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
-                <span class="mono text-teal-300 text-[10px] tracking-wide">LIVE · move cursor to orbit</span>
+              <div class="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 border border-sky-500/30 backdrop-blur-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+                <span class="mono text-sky-300 text-[10px] tracking-wide">LIVE · move cursor to orbit</span>
               </div>
               <div class="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none">
-                <span class="mono text-teal-400 text-xs">PAMAM-style G3 · 4-arm core · 7-stage cone placement · UDB v1.0</span>
+                <span class="mono text-sky-400 text-xs">PAMAM-style G3 · 4-arm core · 7-stage cone placement · UDB v1.0</span>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@ const structColorMap: Record<string,string> = {
   <section class="py-24 bg-slate-950 section-rule">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="reveal reveal-up text-center mb-16">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Capabilities</p>
+        <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-3">Capabilities</p>
         <h2 class="section-title">Everything you need for dendrimer MD</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
           UDB handles the full pipeline: geometry construction, force-field parameterization,
@@ -213,9 +213,9 @@ const structColorMap: Record<string,string> = {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {features.map((f, i) => (
-          <div class={`reveal reveal-up reveal-delay-${(i % 3) + 1} card card-sheen group border-l-2 border-l-teal-500/30 hover:border-l-teal-500`}>
-            <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-colors">
-              <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={f.icon}/>
+          <div class={`reveal reveal-up reveal-delay-${(i % 3) + 1} card card-sheen group border-l-2 border-l-sky-500/30 hover:border-l-sky-500`}>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center mb-4 group-hover:bg-sky-500/20 transition-colors">
+              <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={f.icon}/>
             </div>
             <h3 class="text-slate-100 font-bold mb-2">{f.title}</h3>
             <p class="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
@@ -229,7 +229,7 @@ const structColorMap: Record<string,string> = {
   <section class="py-24 section-rule" style="background: linear-gradient(180deg, #020617 0%, #0b1221 50%, #020617 100%);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="reveal reveal-up text-center mb-16">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Output Structures</p>
+        <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-3">Output Structures</p>
         <h2 class="section-title">Simulation-ready at every generation</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
           Radial topology diagrams for each supported dendrimer family, color-coded by type.
@@ -239,7 +239,7 @@ const structColorMap: Record<string,string> = {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
         {structures.map((s, i) => (
-          <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-teal-500/40 hover:shadow-[0_0_32px_rgba(20,184,166,0.12)] hover:-translate-y-1`}>
+          <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-sky-500/40 hover:shadow-[0_0_32px_rgba(20,184,166,0.12)] hover:-translate-y-1`}>
             <div class="overflow-hidden">
               <img src={s.src} alt={s.label + ' minimized structure'} class="w-full transition-transform duration-500 group-hover:scale-105" />
             </div>
@@ -253,7 +253,7 @@ const structColorMap: Record<string,string> = {
 
       <p class="text-center mt-8 text-slate-600 text-sm">
         All topologies built and parameterized by UDB v1.0 using GAFF2 + Fragment BCC charge assignment.
-        <a href="/tools/udb/structures/" class="text-teal-500 hover:text-teal-400 ml-1">Full structure gallery →</a>
+        <a href="/tools/udb/structures/" class="text-sky-500 hover:text-sky-400 ml-1">Full structure gallery →</a>
       </p>
     </div>
   </section>
@@ -262,7 +262,7 @@ const structColorMap: Record<string,string> = {
   <section class="py-24 bg-slate-950 section-rule">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="reveal reveal-up text-center mb-14">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Supported Topologies</p>
+        <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-3">Supported Topologies</p>
         <h2 class="section-title">9 Dendrimer Families</h2>
         <p class="section-subtitle max-w-2xl mx-auto">
           Each type has a dedicated parameterization pathway using
@@ -281,7 +281,7 @@ const structColorMap: Record<string,string> = {
 
       <p class="text-center mt-6 text-slate-500 text-sm">
         All types support G1–G10.
-        <a href="/tools/udb/" class="text-teal-500 hover:text-teal-400 ml-1">Force-field support matrix →</a>
+        <a href="/tools/udb/" class="text-sky-500 hover:text-sky-400 ml-1">Force-field support matrix →</a>
       </p>
     </div>
   </section>
@@ -292,7 +292,7 @@ const structColorMap: Record<string,string> = {
       <div class="grid lg:grid-cols-2 gap-14 items-center">
 
         <div class="reveal reveal-left">
-          <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-4">Build Engine</p>
+          <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-4">Build Engine</p>
           <h2 class="section-title">One application,<br/>complete pipeline</h2>
           <p class="mt-4 text-slate-400 leading-relaxed">
             The Build tab constructs 3D dendrimer geometry using a seven-stage cone-subdivision
@@ -309,7 +309,7 @@ const structColorMap: Record<string,string> = {
               'Characterization: Rg, SASA, asphericity, Rh, density',
             ].map(item => (
               <li class="flex items-start gap-3 text-slate-300 text-sm">
-                <svg class="w-4 h-4 text-teal-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-sky-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"/>
                 </svg>
                 {item}
@@ -344,7 +344,7 @@ const structColorMap: Record<string,string> = {
   <section class="py-24 bg-slate-950 section-rule">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="reveal reveal-up text-center mb-12">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Interactive Tool</p>
+        <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-3">Interactive Tool</p>
         <h2 class="section-title">Dendrimer Size Estimator</h2>
         <p class="section-subtitle max-w-xl mx-auto">
           Select a type and generation for instant structural estimates.
@@ -389,10 +389,10 @@ const structColorMap: Record<string,string> = {
           },
         ].map((card, i) => (
           <a href={card.href} class={`reveal reveal-up reveal-delay-${i + 1} card card-sheen group flex flex-col`}>
-            <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-3 group-hover:bg-teal-500/20 transition-colors">
-              <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={card.icon}/>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center mb-3 group-hover:bg-sky-500/20 transition-colors">
+              <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={card.icon}/>
             </div>
-            <h3 class="text-slate-200 font-bold mb-1 group-hover:text-teal-400 transition-colors">{card.title}</h3>
+            <h3 class="text-slate-200 font-bold mb-1 group-hover:text-sky-400 transition-colors">{card.title}</h3>
             <p class="text-slate-500 text-sm leading-relaxed">{card.desc}</p>
           </a>
         ))}

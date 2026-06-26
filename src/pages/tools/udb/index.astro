@@ -16,7 +16,7 @@ const forceFieldMatrix = [
 ];
 
 function statusClass(status: string) {
-  if (status === 'Full') return 'text-teal-400';
+  if (status === 'Full') return 'text-sky-400';
   if (status.includes('bypass') || status.includes('Partial') || status.includes('Gasteiger')) return 'text-amber-400';
   if (status.includes('Not')) return 'text-red-400';
   return 'text-slate-400';
@@ -51,7 +51,7 @@ function statusClass(status: string) {
             The Universal Dendrimer Builder (UDB) is a Python-based GUI application designed
             for computational chemists who need to build three-dimensional dendrimer structures
             ready for molecular dynamics simulation. Unlike scripted tools such as
-            <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">dendrimer-build.py</code>,
+            <code class="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">dendrimer-build.py</code>,
             UDB provides a unified interface for the entire workflow: geometry construction,
             force-field parameterization, MD input generation, and structural characterization.
           </p>
@@ -66,8 +66,8 @@ function statusClass(status: string) {
             The placement engine uses a seven-stage algorithm: cone subdivision on a unit sphere,
             Fibonacci point sampling for initial arm placement, Simulated Annealing over SO(3)
             rotation space to resolve steric conflicts, and collective energy minimization via
-            gradient descent before handing off to AMBER's <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">antechamber</code>
-            and <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">parmchk2</code>.
+            gradient descent before handing off to AMBER's <code class="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">antechamber</code>
+            and <code class="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">parmchk2</code>.
           </p>
         </div>
         <div class="space-y-3">
@@ -150,13 +150,13 @@ function statusClass(status: string) {
           { n: '07', title: 'Fragment BCC Charging', desc: 'Residue-level AM1-BCC charge assignment via antechamber. Handles large systems exceeding whole-molecule BCC limits.' },
         ].map((stage, i) => (
           <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} card card-sheen group hover:-translate-y-1`}>
-            <div class="text-teal-500/40 font-mono text-xs mb-2 group-hover:text-teal-400 transition-colors">{stage.n}</div>
+            <div class="text-sky-500/40 font-mono text-xs mb-2 group-hover:text-sky-400 transition-colors">{stage.n}</div>
             <h3 class="text-slate-200 font-semibold text-sm mb-1">{stage.title}</h3>
             <p class="text-slate-500 text-xs leading-relaxed">{stage.desc}</p>
           </div>
         ))}
-        <div class="reveal reveal-up reveal-delay-4 card bg-teal-500/5 border-teal-500/20 flex flex-col justify-center items-center text-center">
-          <a href="/tools/udb/manual/#theory" class="text-teal-400 text-sm font-medium hover:text-teal-300 transition-colors">
+        <div class="reveal reveal-up reveal-delay-4 card bg-sky-500/5 border-sky-500/20 flex flex-col justify-center items-center text-center">
+          <a href="/tools/udb/manual/#theory" class="text-sky-400 text-sm font-medium hover:text-sky-300 transition-colors">
             Full theory section →
           </a>
           <p class="text-slate-500 text-xs mt-1">diagrams and equations</p>
@@ -177,7 +177,7 @@ function statusClass(status: string) {
           { href: '/tools/udb/changelog/', title: 'Changelog', desc: 'Version-by-version history of features added, bugs fixed, and algorithms changed.' },
         ].map((card, i) => (
           <a href={card.href} class={`reveal reveal-up reveal-delay-${(i % 3) + 1} card card-sheen group flex flex-col`}>
-            <h3 class="text-slate-100 font-semibold mb-2 group-hover:text-teal-400 transition-colors">{card.title} →</h3>
+            <h3 class="text-slate-100 font-semibold mb-2 group-hover:text-sky-400 transition-colors">{card.title} →</h3>
             <p class="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
           </a>
         ))}

@@ -31,7 +31,7 @@ const hasActions = Astro.slots.has('actions');
         {breadcrumbs.map((c, i) => (
           <>
             {c.href ? (
-              <a href={c.href} class="hover:text-teal-400 transition-colors">{c.label}</a>
+              <a href={c.href} class="hover:text-sky-400 transition-colors">{c.label}</a>
             ) : (
               <span class="text-slate-300">{c.label}</span>
             )}
@@ -42,7 +42,7 @@ const hasActions = Astro.slots.has('actions');
     )}
 
     {eyebrow && (
-      <p class="reveal reveal-up reveal-delay-1 mono text-teal-500 text-xs tracking-widest uppercase mb-3">{eyebrow}</p>
+      <p class="reveal reveal-up reveal-delay-1 mono text-sky-500 text-xs tracking-widest uppercase mb-3">{eyebrow}</p>
     )}
 
     <h1 class="reveal reveal-up reveal-delay-1 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.1]">

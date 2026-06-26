@@ -12,7 +12,7 @@ import PageHeader from '../../../../components/PageHeader.astro';
   >
     <Fragment slot="actions">
       <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Linux / Ubuntu 20.04+</span>
-      <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">AmberTools25</span>
+      <span class="badge bg-sky-500/10 text-sky-400 border border-sky-500/20">AmberTools25</span>
       <span class="badge bg-sky-500/10 text-sky-400 border border-sky-500/20">NAMD 3.x</span>
       <span class="badge bg-slate-800 text-slate-300 border border-slate-700">Python 3.8+</span>
     </Fragment>
@@ -43,7 +43,7 @@ import PageHeader from '../../../../components/PageHeader.astro';
     <!-- Step 1 -->
     <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">1</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">1</div>
         <h2 class="text-xl font-bold text-slate-100">Install Miniconda (if not already installed)</h2>
       </div>
       <div class="ml-11">
@@ -74,15 +74,15 @@ conda init bash</pre>
     <!-- Step 2 -->
     <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">2</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">2</div>
         <h2 class="text-xl font-bold text-slate-100">Install AmberTools25</h2>
       </div>
       <div class="ml-11">
         <p class="text-slate-400 text-sm mb-3">
-          AmberTools25 provides <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">antechamber</code>,
-          <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">parmchk2</code>,
-          <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">tleap</code>, and
-          <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">sander</code>
+          AmberTools25 provides <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">antechamber</code>,
+          <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">parmchk2</code>,
+          <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">tleap</code>, and
+          <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">sander</code>
           are all required for GAFF2 parameterization.
         </p>
         <div class="code-block p-4 mb-3">
@@ -97,7 +97,7 @@ conda activate AmberTools25</pre>
           <span>
             The conda-forge AmberTools package includes serial <code class="font-mono bg-slate-700 px-1 rounded">sander</code> only.
             <code class="font-mono bg-slate-700 px-1 rounded">sander.MPI</code> is not included; see
-            <a href="/tools/udb/limitations/" class="text-teal-400 hover:text-teal-300">Known Limitations</a> if you need parallel MD runs.
+            <a href="/tools/udb/limitations/" class="text-sky-400 hover:text-sky-300">Known Limitations</a> if you need parallel MD runs.
           </span>
         </div>
       </div>
@@ -106,7 +106,7 @@ conda activate AmberTools25</pre>
     <!-- Step 3 -->
     <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">3</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">3</div>
         <h2 class="text-xl font-bold text-slate-100">Install Python Dependencies</h2>
       </div>
       <div class="ml-11">
@@ -132,11 +132,11 @@ pip install numpy scipy matplotlib</pre>
               <tr><th>Package</th><th>Required</th><th>Purpose</th></tr>
             </thead>
             <tbody>
-              <tr><td class="font-mono text-teal-300 text-sm">numpy</td><td class="text-teal-400">Required</td><td class="text-slate-400">Array operations, coordinate geometry</td></tr>
-              <tr><td class="font-mono text-teal-300 text-sm">scipy</td><td class="text-teal-400">Required</td><td class="text-slate-400">Minimization, spatial computations</td></tr>
-              <tr><td class="font-mono text-teal-300 text-sm">matplotlib</td><td class="text-teal-400">Required</td><td class="text-slate-400">Characterization plots</td></tr>
-              <tr><td class="font-mono text-teal-300 text-sm">tkinter</td><td class="text-teal-400">Required</td><td class="text-slate-400">GUI framework</td></tr>
-              <tr><td class="font-mono text-teal-300 text-sm">openbabel</td><td class="text-amber-400">Optional</td><td class="text-slate-400">Extended mol2 format support</td></tr>
+              <tr><td class="font-mono text-sky-300 text-sm">numpy</td><td class="text-sky-400">Required</td><td class="text-slate-400">Array operations, coordinate geometry</td></tr>
+              <tr><td class="font-mono text-sky-300 text-sm">scipy</td><td class="text-sky-400">Required</td><td class="text-slate-400">Minimization, spatial computations</td></tr>
+              <tr><td class="font-mono text-sky-300 text-sm">matplotlib</td><td class="text-sky-400">Required</td><td class="text-slate-400">Characterization plots</td></tr>
+              <tr><td class="font-mono text-sky-300 text-sm">tkinter</td><td class="text-sky-400">Required</td><td class="text-slate-400">GUI framework</td></tr>
+              <tr><td class="font-mono text-sky-300 text-sm">openbabel</td><td class="text-amber-400">Optional</td><td class="text-slate-400">Extended mol2 format support</td></tr>
             </tbody>
           </table>
         </div>
@@ -146,13 +146,13 @@ pip install numpy scipy matplotlib</pre>
     <!-- Step 4 -->
     <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">4</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">4</div>
         <h2 class="text-xl font-bold text-slate-100">Install NAMD 3.x</h2>
       </div>
       <div class="ml-11">
         <p class="text-slate-400 text-sm mb-3">
           NAMD 3.x is required for MD simulation. Download the precompiled Linux x86_64 multicore binary
-          from the <a href="https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD" target="_blank" rel="noopener noreferrer" class="text-teal-400 hover:text-teal-300">NAMD download page</a>
+          from the <a href="https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:text-sky-300">NAMD download page</a>
           (free registration required).
         </p>
         <div class="code-block p-4 mb-3">
@@ -179,7 +179,7 @@ sudo tar -xzf NAMD_3.0.x_Linux-x86_64-multicore.tar.gz -C /opt/namd
     <!-- Step 5 -->
     <section class="reveal reveal-up mb-10">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">5</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">5</div>
         <h2 class="text-xl font-bold text-slate-100">Configure NAMD Path in UDB</h2>
       </div>
       <div class="ml-11">
@@ -192,8 +192,8 @@ sudo tar -xzf NAMD_3.0.x_Linux-x86_64-multicore.tar.gz -C /opt/namd
         <p class="text-slate-400 text-sm">
           If you installed NAMD elsewhere, update the path in the UDB
           <strong class="text-slate-200"> Settings</strong> tab or edit
-          the <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">NAMD_PATH</code> constant
-          near the top of <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">universal_dendrimer_builder_v1_0.py</code>.
+          the <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">NAMD_PATH</code> constant
+          near the top of <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">universal_dendrimer_builder_v1_0.py</code>.
         </p>
       </div>
     </section>
@@ -201,7 +201,7 @@ sudo tar -xzf NAMD_3.0.x_Linux-x86_64-multicore.tar.gz -C /opt/namd
     <!-- Step 6 -->
     <section class="reveal reveal-up mb-12">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-8 h-8 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 font-bold text-sm shrink-0">6</div>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 font-bold text-sm shrink-0">6</div>
         <h2 class="text-xl font-bold text-slate-100">Launch UDB</h2>
       </div>
       <div class="ml-11">
@@ -213,7 +213,7 @@ python3 universal_dendrimer_builder_v1_0.py</pre>
         <p class="text-slate-400 text-sm">
           The UDB main window should open. If you see a blank window or Tkinter errors,
           ensure that a display (X11 or Wayland) is available and that
-          <code class="text-teal-300 bg-slate-800 px-1 rounded text-sm">python3-tk</code> is installed.
+          <code class="text-sky-300 bg-slate-800 px-1 rounded text-sm">python3-tk</code> is installed.
         </p>
       </div>
     </section>
@@ -258,7 +258,7 @@ python3 universal_dendrimer_builder_v1_0.py</pre>
             <div class="flex-1">
               <h3 class="text-slate-200 font-semibold text-sm mb-1">{item.title}</h3>
               <p class="text-slate-400 text-sm mb-2"><strong class="text-slate-300">Problem:</strong> {item.problem}</p>
-              <p class="text-slate-400 text-sm"><strong class="text-teal-400">Fix:</strong> {item.fix}</p>
+              <p class="text-slate-400 text-sm"><strong class="text-sky-400">Fix:</strong> {item.fix}</p>
             </div>
           </div>
         ))}

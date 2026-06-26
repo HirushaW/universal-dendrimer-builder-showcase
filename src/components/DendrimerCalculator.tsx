@@ -109,9 +109,9 @@ export default function DendrimerCalculator() {
   return (
     <div className="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-500/10 to-slate-900 border-b border-slate-700 px-6 py-4 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-gradient-to-r from-sky-500/10 to-slate-900 border-b border-slate-700 px-6 py-4 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
@@ -133,7 +133,7 @@ export default function DendrimerCalculator() {
             <select
               value={type}
               onChange={e => setType(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 appearance-none cursor-pointer"
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30 appearance-none cursor-pointer"
             >
               {Object.keys(TYPES).map(k => (
                 <option key={k} value={k}>{TYPES[k].label}: {TYPES[k].description}</option>
@@ -159,11 +159,11 @@ export default function DendrimerCalculator() {
               min={1} max={10} step={1}
               value={gen}
               onChange={e => setGen(Number(e.target.value))}
-              className="w-full accent-teal-500 cursor-pointer"
+              className="w-full accent-sky-500 cursor-pointer"
             />
             <div className="flex justify-between text-slate-600 text-xs mt-1">
               {Array.from({ length: 10 }, (_, i) => (
-                <span key={i + 1} className={gen === i + 1 ? 'text-teal-400' : ''}>G{i+1}</span>
+                <span key={i + 1} className={gen === i + 1 ? 'text-sky-400' : ''}>G{i+1}</span>
               ))}
             </div>
           </div>

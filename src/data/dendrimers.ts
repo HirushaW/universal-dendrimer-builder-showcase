@@ -156,7 +156,7 @@ export const dendrimers: DendrimerType[] = [
 ];
 
 export const colorBadge: Record<string, string> = {
-  teal:    'bg-teal-500/10    text-teal-300    border-teal-500/25',
+  teal:    'bg-sky-500/10    text-sky-300    border-sky-500/25',
   sky:     'bg-sky-500/10     text-sky-300     border-sky-500/25',
   amber:   'bg-amber-500/10   text-amber-300   border-amber-500/25',
   red:     'bg-red-500/10     text-red-300     border-red-500/25',
@@ -166,7 +166,7 @@ export const colorBadge: Record<string, string> = {
 };
 
 export const colorAccent: Record<string, string> = {
-  teal:    'text-teal-400',
+  teal:    'text-sky-400',
   sky:     'text-sky-400',
   amber:   'text-amber-400',
   red:     'text-red-400',
@@ -176,7 +176,7 @@ export const colorAccent: Record<string, string> = {
 };
 
 export const colorBorder: Record<string, string> = {
-  teal:    'border-teal-500/30    hover:border-teal-500/70',
+  teal:    'border-sky-500/30    hover:border-sky-500/70',
   sky:     'border-sky-500/30     hover:border-sky-500/70',
   amber:   'border-amber-500/30   hover:border-amber-500/70',
   red:     'border-red-500/30     hover:border-red-500/70',

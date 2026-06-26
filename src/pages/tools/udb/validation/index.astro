@@ -33,8 +33,8 @@ const asphericityData = [
 
     <!-- Why validation matters -->
     <section class="reveal reveal-up">
-      <div class="p-5 rounded-xl bg-teal-500/5 border border-teal-500/20">
-        <h2 class="text-teal-400 font-semibold mb-2">Why this page exists</h2>
+      <div class="p-5 rounded-xl bg-sky-500/5 border border-sky-500/20">
+        <h2 class="text-sky-400 font-semibold mb-2">Why this page exists</h2>
         <p class="text-slate-400 text-sm leading-relaxed">
           A computational tool's output is only useful if it matches established
           results. This page shows that UDB-generated structures reproduce published
@@ -81,11 +81,11 @@ const asphericityData = [
           <tbody>
             {pamamAtomCounts.map(row => (
               <tr>
-                <td class="font-bold text-teal-400">{row.gen}</td>
+                <td class="font-bold text-sky-400">{row.gen}</td>
                 <td class="font-mono text-slate-200">{row.atoms}</td>
                 <td class="font-mono text-slate-200">{row.atoms}</td>
                 <td>
-                  <span class="text-teal-400 flex items-center gap-1">
+                  <span class="text-sky-400 flex items-center gap-1">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
@@ -94,7 +94,7 @@ const asphericityData = [
                 </td>
                 <td class="font-mono text-slate-300">{row.terminal}</td>
                 <td class="text-slate-400 text-sm">{row.mw}</td>
-                <td class="font-mono text-teal-300">{row.rg_udb}</td>
+                <td class="font-mono text-sky-300">{row.rg_udb}</td>
                 <td class="font-mono text-slate-400">{row.rg_lit}</td>
               </tr>
             ))}
@@ -133,12 +133,12 @@ const asphericityData = [
           <tbody>
             {asphericityData.map(row => (
               <tr>
-                <td class="font-bold text-teal-400">{row.gen}</td>
-                <td class={`font-mono ${row.delta < 0.05 ? 'text-teal-400' : 'text-slate-300'}`}>{row.delta}</td>
+                <td class="font-bold text-sky-400">{row.gen}</td>
+                <td class={`font-mono ${row.delta < 0.05 ? 'text-sky-400' : 'text-slate-300'}`}>{row.delta}</td>
                 <td class="font-mono text-slate-300">{row.kappa}</td>
                 <td>
                   {row.delta < 0.05
-                    ? <span class="text-teal-400 text-xs">✓ Pass</span>
+                    ? <span class="text-sky-400 text-xs">✓ Pass</span>
                     : <span class="text-slate-500 text-xs">Below threshold</span>
                   }
                 </td>
@@ -162,7 +162,7 @@ const asphericityData = [
         <p class="text-slate-400 text-sm mb-4">
           UDB uses the following empirical formula for Rg estimates (calibrated to PAMAM):
         </p>
-        <div class="font-mono text-teal-300 text-lg text-center py-4 bg-slate-950 rounded-lg border border-slate-800 mb-4">
+        <div class="font-mono text-sky-300 text-lg text-center py-4 bg-slate-950 rounded-lg border border-slate-800 mb-4">
           R<sub class="text-sm">g</sub> = 3.0 × (N / 84)<sup class="text-sm">1/3</sup> Å
         </div>
         <p class="text-slate-500 text-xs">
@@ -189,7 +189,7 @@ const asphericityData = [
           { item: 'SASA comparison for PAMAM G3 vs. Goddard MD data', status: 'Pending' },
         ].map(row => (
           <div class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg border border-slate-700">
-            <span class={`text-xs px-2 py-0.5 rounded-full font-medium ${row.status === 'In progress' ? 'bg-teal-500/10 text-teal-400' : 'bg-slate-800 text-slate-500'}`}>
+            <span class={`text-xs px-2 py-0.5 rounded-full font-medium ${row.status === 'In progress' ? 'bg-sky-500/10 text-sky-400' : 'bg-slate-800 text-slate-500'}`}>
               {row.status}
             </span>
             <span class="text-slate-400 text-sm">{row.item}</span>

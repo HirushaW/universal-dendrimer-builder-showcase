@@ -38,14 +38,14 @@ const tabs = [
               { href: '#outputs', label: 'Output Files' },
               { href: '#parameters', label: 'Key Parameters' },
             ].map(item => (
-              <a href={item.href} class="block px-2 py-1.5 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors">
+              <a href={item.href} class="block px-2 py-1.5 text-slate-400 hover:text-sky-400 hover:bg-slate-800 rounded transition-colors">
                 {item.label}
               </a>
             ))}
           </nav>
           <div class="mt-4 pt-4 border-t border-slate-700 space-y-2">
-            <a href="/tools/udb/install/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">← Installation</a>
-            <a href="/tools/udb/examples/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">Worked Examples →</a>
+            <a href="/tools/udb/install/" class="block text-xs text-slate-500 hover:text-sky-400 transition-colors">← Installation</a>
+            <a href="/tools/udb/examples/" class="block text-xs text-slate-500 hover:text-sky-400 transition-colors">Worked Examples →</a>
           </div>
         </div>
       </aside>
@@ -69,8 +69,8 @@ const tabs = [
               </div>
             ))}
           </div>
-          <div class="flex items-start gap-2 p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 text-slate-400 text-sm leading-relaxed">
-            <svg class="w-5 h-5 text-teal-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-start gap-2 p-4 rounded-xl bg-sky-500/5 border border-sky-500/20 text-slate-400 text-sm leading-relaxed">
+            <svg class="w-5 h-5 text-sky-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <span>
@@ -86,32 +86,32 @@ const tabs = [
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Getting Started</h2>
           <ol class="space-y-4 text-slate-400 leading-relaxed">
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">1.</span>
-              <span>Launch UDB: <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">conda activate AmberTools25 && python3 universal_dendrimer_builder_v1_0.py</code></span>
+              <span class="text-sky-400 font-bold shrink-0">1.</span>
+              <span>Launch UDB: <code class="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm">conda activate AmberTools25 && python3 universal_dendrimer_builder_v1_0.py</code></span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">2.</span>
+              <span class="text-sky-400 font-bold shrink-0">2.</span>
               <span>In the left panel, select your <strong class="text-slate-200">Dendrimer Type</strong> (e.g., PAMAM).</span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">3.</span>
+              <span class="text-sky-400 font-bold shrink-0">3.</span>
               <span>Set the <strong class="text-slate-200">Generation</strong> slider to G1 – G10.</span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">4.</span>
-              <span>Click <strong class="text-teal-400">Build Structure</strong> in the Build tab.</span>
+              <span class="text-sky-400 font-bold shrink-0">4.</span>
+              <span>Click <strong class="text-sky-400">Build Structure</strong> in the Build tab.</span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">5.</span>
+              <span class="text-sky-400 font-bold shrink-0">5.</span>
               <span>When build completes, move to the <strong class="text-slate-200">Parameterize</strong> tab.</span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">6.</span>
-              <span>Select GAFF2 or CGenFF and click <strong class="text-teal-400">Run Parameterization</strong>.</span>
+              <span class="text-sky-400 font-bold shrink-0">6.</span>
+              <span>Select GAFF2 or CGenFF and click <strong class="text-sky-400">Run Parameterization</strong>.</span>
             </li>
             <li class="flex gap-3">
-              <span class="text-teal-400 font-bold shrink-0">7.</span>
-              <span>In MD Setup, configure solvation box and output directory, then click <strong class="text-teal-400">Generate NAMD Input</strong>.</span>
+              <span class="text-sky-400 font-bold shrink-0">7.</span>
+              <span>In MD Setup, configure solvation box and output directory, then click <strong class="text-sky-400">Generate NAMD Input</strong>.</span>
             </li>
           </ol>
         </section>
@@ -123,7 +123,7 @@ const tabs = [
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
             <p>
               The Build tab is the starting point. Select a dendrimer type from the left panel,
-              set the generation, and click <strong class="text-teal-400">Build Structure</strong>.
+              set the generation, and click <strong class="text-sky-400">Build Structure</strong>.
               UDB constructs the 3D geometry using the seven-stage placement engine and displays
               atom count, residue count, terminal groups, and estimated Rg in the Properties panel.
             </p>
@@ -131,16 +131,16 @@ const tabs = [
               <table class="table-scientific">
                 <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
                 <tbody>
-                  <tr><td class="font-mono text-sm text-teal-300">Dendrimer Type</td><td>One of 9 supported types</td><td>PAMAM</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Generation (G)</td><td>G1 to G10</td><td>G3</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Bond Length Scale</td><td>Multiplier on equilibrium bond lengths</td><td>1.0</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Annealing Steps</td><td>SA iterations for clash resolution</td><td>5000</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Output Dir</td><td>Directory for output files</td><td>./output/</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Dendrimer Type</td><td>One of 9 supported types</td><td>PAMAM</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Generation (G)</td><td>G1 to G10</td><td>G3</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Bond Length Scale</td><td>Multiplier on equilibrium bond lengths</td><td>1.0</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Annealing Steps</td><td>SA iterations for clash resolution</td><td>5000</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Output Dir</td><td>Directory for output files</td><td>./output/</td></tr>
                 </tbody>
               </table>
             </div>
             <p>
-              The Build tab writes a <code class="text-teal-300 bg-slate-800 px-1.5 py-0.5 rounded">dendrimer.mol2</code>
+              The Build tab writes a <code class="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded">dendrimer.mol2</code>
               file to the output directory. This file is the input to the Parameterize tab.
             </p>
           </div>
@@ -152,20 +152,20 @@ const tabs = [
           <p class="text-slate-500 text-sm mb-4">Force-field assignment via AMBER antechamber</p>
           <div class="space-y-4 text-slate-400 text-sm leading-relaxed">
             <p>
-              The Parameterize tab calls AmberTools' <code class="text-teal-300 bg-slate-800 px-1 rounded">antechamber</code>
-              and <code class="text-teal-300 bg-slate-800 px-1 rounded">parmchk2</code> on each
+              The Parameterize tab calls AmberTools' <code class="text-sky-300 bg-slate-800 px-1 rounded">antechamber</code>
+              and <code class="text-sky-300 bg-slate-800 px-1 rounded">parmchk2</code> on each
               residue (Fragment BCC mode) or the whole molecule (for small systems). The process:
             </p>
             <ol class="space-y-2 ml-4">
               <li>1. Mol2 input split into residue fragments</li>
-              <li>2. <code class="text-teal-300 bg-slate-800 px-1 rounded">antechamber -fi mol2 -fo mol2 -c bcc -at gaff2</code> per fragment</li>
-              <li>3. <code class="text-teal-300 bg-slate-800 px-1 rounded">parmchk2</code> generates missing parameters (<code class="text-teal-300 bg-slate-800 px-1 rounded">.frcmod</code>)</li>
-              <li>4. <code class="text-teal-300 bg-slate-800 px-1 rounded">tleap</code> assembles final topology and coordinates</li>
+              <li>2. <code class="text-sky-300 bg-slate-800 px-1 rounded">antechamber -fi mol2 -fo mol2 -c bcc -at gaff2</code> per fragment</li>
+              <li>3. <code class="text-sky-300 bg-slate-800 px-1 rounded">parmchk2</code> generates missing parameters (<code class="text-sky-300 bg-slate-800 px-1 rounded">.frcmod</code>)</li>
+              <li>4. <code class="text-sky-300 bg-slate-800 px-1 rounded">tleap</code> assembles final topology and coordinates</li>
             </ol>
             <p>
-              Outputs: <code class="text-teal-300 bg-slate-800 px-1 rounded">.prmtop</code> (AMBER topology),
-              <code class="text-teal-300 bg-slate-800 px-1 rounded">.inpcrd</code> (coordinates),
-              and <code class="text-teal-300 bg-slate-800 px-1 rounded">.frcmod</code> (missing parameters).
+              Outputs: <code class="text-sky-300 bg-slate-800 px-1 rounded">.prmtop</code> (AMBER topology),
+              <code class="text-sky-300 bg-slate-800 px-1 rounded">.inpcrd</code> (coordinates),
+              and <code class="text-sky-300 bg-slate-800 px-1 rounded">.frcmod</code> (missing parameters).
             </p>
             <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
               <strong>BCC charge limit:</strong> For G3+ PAMAM or any dendrimer exceeding ~500 bonds per fragment,
@@ -188,12 +188,12 @@ const tabs = [
               <table class="table-scientific">
                 <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
                 <tbody>
-                  <tr><td class="font-mono text-sm text-teal-300">Solvation Padding</td><td>Water box padding (Å)</td><td>12.0 Å</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Ion Concentration</td><td>NaCl concentration (M)</td><td>0.15 M</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Timestep</td><td>MD timestep (fs)</td><td>2.0 fs</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Temperature</td><td>Target temperature (K)</td><td>300 K</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Simulation Steps</td><td>Production MD steps</td><td>1,000,000</td></tr>
-                  <tr><td class="font-mono text-sm text-teal-300">Output Frequency</td><td>Trajectory write interval</td><td>1000 steps</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Solvation Padding</td><td>Water box padding (Å)</td><td>12.0 Å</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Ion Concentration</td><td>NaCl concentration (M)</td><td>0.15 M</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Timestep</td><td>MD timestep (fs)</td><td>2.0 fs</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Temperature</td><td>Target temperature (K)</td><td>300 K</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Simulation Steps</td><td>Production MD steps</td><td>1,000,000</td></tr>
+                  <tr><td class="font-mono text-sm text-sky-300">Output Frequency</td><td>Trajectory write interval</td><td>1000 steps</td></tr>
                 </tbody>
               </table>
             </div>
@@ -221,7 +221,7 @@ const tabs = [
                 { metric: 'Terminal distribution', desc: 'Terminal group radial distribution' },
               ].map(item => (
                 <div class="flex gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-700">
-                  <code class="text-teal-300 text-xs font-mono shrink-0">{item.metric}</code>
+                  <code class="text-sky-300 text-xs font-mono shrink-0">{item.metric}</code>
                   <span class="text-slate-500 text-xs">{item.desc}</span>
                 </div>
               ))}
@@ -240,7 +240,7 @@ const tabs = [
               { src: '/images/diagram-pipelines.png',   label: 'Parameterisation Pipelines',           alt: 'Fragment BCC vs Full Antechamber pipeline' },
             ].map(d => (
               <div>
-                <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-2">{d.label}</p>
+                <p class="mono text-sky-500 text-xs tracking-widest uppercase mb-2">{d.label}</p>
                 <div class="diagram-frame">
                   <img src={d.src} alt={d.alt} class="w-full" />
                 </div>
@@ -269,7 +269,7 @@ const tabs = [
                   ['characterization.csv', 'Characterize', 'Tabulated structural metrics'],
                 ].map(([file, stage, desc]) => (
                   <tr>
-                    <td class="font-mono text-teal-300 text-xs">{file}</td>
+                    <td class="font-mono text-sky-300 text-xs">{file}</td>
                     <td class="text-slate-400 text-xs">{stage}</td>
                     <td class="text-slate-400 text-xs">{desc}</td>
                   </tr>
@@ -302,7 +302,7 @@ const tabs = [
                   ['ION_CONC', '0.15 M', 'NaCl concentration for solvation.'],
                 ].map(([param, def, notes]) => (
                   <tr>
-                    <td class="font-mono text-teal-300 text-xs">{param}</td>
+                    <td class="font-mono text-sky-300 text-xs">{param}</td>
                     <td class="text-slate-200 text-xs font-medium">{def}</td>
                     <td class="text-slate-500 text-xs">{notes}</td>
                   </tr>

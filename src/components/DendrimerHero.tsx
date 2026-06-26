@@ -17,8 +17,8 @@ interface Node {
 
 // Generation palette: core → outer shells.
 const GEN_COLORS = [
-  [45, 212, 191],   // teal-400   (core)
-  [20, 184, 166],   // teal-500
+  [45, 212, 191],   // sky-400   (core)
+  [20, 184, 166],   // sky-500
   [56, 189, 248],   // sky-400
   [129, 140, 248],  // indigo-400 (outermost)
 ];
