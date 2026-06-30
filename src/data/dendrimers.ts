@@ -25,7 +25,7 @@ export const dendrimers: DendrimerType[] = [
     name: 'PAMAM',
     full: 'Polyamidoamine',
     coreLabel: 'EDA core',
-    color: 'teal',
+    color: 'sky',
     description: 'The most widely studied dendrimer family. EDA (ethylenediamine) core with amidoamine branching units and primary amine surface groups. The benchmark system for all computational dendrimer tools.',
     chemistry: 'Ethylenediamine core · amidoamine repeating units · –NH₂ surface groups · branching factor 2',
     applications: 'Gene delivery, drug encapsulation, MRI contrast agents, antibacterial coatings',
@@ -156,7 +156,6 @@ export const dendrimers: DendrimerType[] = [
 ];
 
 export const colorBadge: Record<string, string> = {
-  teal:    'bg-sky-500/10    text-sky-300    border-sky-500/25',
   sky:     'bg-sky-500/10     text-sky-300     border-sky-500/25',
   amber:   'bg-amber-500/10   text-amber-300   border-amber-500/25',
   red:     'bg-red-500/10     text-red-300     border-red-500/25',
@@ -166,7 +165,6 @@ export const colorBadge: Record<string, string> = {
 };
 
 export const colorAccent: Record<string, string> = {
-  teal:    'text-sky-400',
   sky:     'text-sky-400',
   amber:   'text-amber-400',
   red:     'text-red-400',
@@ -176,7 +174,6 @@ export const colorAccent: Record<string, string> = {
 };
 
 export const colorBorder: Record<string, string> = {
-  teal:    'border-sky-500/30    hover:border-sky-500/70',
   sky:     'border-sky-500/30     hover:border-sky-500/70',
   amber:   'border-amber-500/30   hover:border-amber-500/70',
   red:     'border-red-500/30     hover:border-red-500/70',
@@ -186,7 +183,6 @@ export const colorBorder: Record<string, string> = {
 };
 
 export const colorGlow: Record<string, string> = {
-  teal:    'rgba(20,184,166,0.12)',
   sky:     'rgba(14,165,233,0.12)',
   amber:   'rgba(245,158,11,0.12)',
   red:     'rgba(239,68,68,0.12)',

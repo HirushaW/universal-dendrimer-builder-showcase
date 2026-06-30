@@ -15,7 +15,7 @@ const TYPES: Record<string, DendrimerSpec> = {
     label: 'PAMAM',
     f: 4, m: 2, g1Atoms: 84, massPerAtom: 14.0,
     description: 'Polyamidoamine (EDA core, G1–G10)',
-    color: '#14b8a6',
+    color: '#22d3ee',   // cyan-400 — distinct from sky/emerald
   },
   PPI: {
     label: 'PPI',
@@ -163,7 +163,7 @@ export default function DendrimerCalculator() {
             />
             <div className="flex justify-between text-slate-600 text-xs mt-1">
               {Array.from({ length: 10 }, (_, i) => (
-                <span key={i + 1} className={gen === i + 1 ? 'text-sky-400' : ''}>G{i+1}</span>
+                <span key={i + 1} className={gen === i + 1 ? 'text-emerald-400' : ''}>G{i+1}</span>
               ))}
             </div>
           </div>

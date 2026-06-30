@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
  * DendrimerHero
  * A live, GPU-cheap canvas rendering of a 3-generation dendrimer: a 3D node
  * graph grown from a central core, gently auto-rotating with cursor parallax.
- * Nodes are depth-sorted, colored teal → sky → indigo by generation, and the
+ * Nodes are depth-sorted, colored sky → emerald by generation, and the
  * whole thing breathes (subtle radial pulse). No external 3D library.
  * ──────────────────────────────────────────────────────────────────────── */
 
@@ -15,12 +15,12 @@ interface Node {
   seed: number;                       // per-node phase for the breathing wobble
 }
 
-// Generation palette: core → outer shells.
+// Generation palette: core → outer shells (sky → emerald by depth).
 const GEN_COLORS = [
-  [45, 212, 191],   // sky-400   (core)
-  [20, 184, 166],   // sky-500
+  [125, 211, 252],  // sky-300   (core)
   [56, 189, 248],   // sky-400
-  [129, 140, 248],  // indigo-400 (outermost)
+  [14, 165, 233],   // sky-500
+  [52, 211, 153],   // emerald-400 (outermost)
 ];
 
 // Fibonacci-sphere direction for the k-th of n points — even spherical spread,

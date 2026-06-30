@@ -45,7 +45,7 @@ const stats = [
 ];
 
 const dendrimerTypes = [
-  { name: 'PAMAM',       full: 'Polyamidoamine',    core: 'EDA',     color: 'teal',    status: 'Full support' },
+  { name: 'PAMAM',       full: 'Polyamidoamine',    core: 'EDA',     color: 'sky',     status: 'Full support' },
   { name: 'PPI',         full: 'Polypropylenimine',  core: 'DAB',     color: 'sky',     status: 'Full support' },
   { name: 'Triazine',    full: 'Triazine',           core: '6-arm',   color: 'violet',  status: 'Full support' },
   { name: 'Carbosilane', full: 'Carbosilane',        core: 'Si-core', color: 'amber',   status: 'GAFF2 bypass' },
@@ -57,7 +57,6 @@ const dendrimerTypes = [
 ];
 
 const colorMap: Record<string, string> = {
-  teal:    'bg-sky-500/10    text-sky-300    border border-sky-500/25    hover:border-sky-400/50',
   sky:     'bg-sky-500/10     text-sky-300     border border-sky-500/25     hover:border-sky-400/50',
   violet:  'bg-violet-500/10  text-violet-300  border border-violet-500/25  hover:border-violet-400/50',
   amber:   'bg-amber-500/10   text-amber-300   border border-amber-500/25   hover:border-amber-400/50',
@@ -69,7 +68,7 @@ const colorMap: Record<string, string> = {
 };
 
 const structures = [
-  { src: '/images/real-pamam-g3.png',       label: 'PAMAM G3',       sub: '516 atoms · EDA core · GAFF2',          color: 'teal' },
+  { src: '/images/real-pamam-g3.png',       label: 'PAMAM G3',       sub: '516 atoms · EDA core · GAFF2',          color: 'sky' },
   { src: '/images/real-ppi-g4.png',         label: 'PPI G4',         sub: '~1,400 atoms · DAB core · GAFF2+CGenFF', color: 'sky' },
   { src: '/images/real-carbosilane-g2.png', label: 'Carbosilane G2', sub: '~280 atoms · Si-C backbone · GAFF2',    color: 'amber' },
   { src: '/images/real-phosphorus-g3.png',  label: 'Phosphorus G3',  sub: '~650 atoms · P-N backbone · GAFF2',     color: 'red' },
@@ -79,7 +78,6 @@ const structures = [
 ];
 
 const structColorMap: Record<string,string> = {
-  teal:    'text-sky-400',
   sky:     'text-sky-400',
   amber:   'text-amber-400',
   red:     'text-red-400',
@@ -99,7 +97,7 @@ const structColorMap: Record<string,string> = {
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full pointer-events-none aurora opacity-70"></div>
     <!-- Radial glow centre-left -->
     <div class="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-         style="background: radial-gradient(circle, rgba(20,184,166,0.10) 0%, transparent 70%);"></div>
+         style="background: radial-gradient(circle, rgba(14,165,233,0.10) 0%, transparent 70%);"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-2 gap-14 items-center">
@@ -140,7 +138,7 @@ const structColorMap: Record<string,string> = {
               <div class={`reveal reveal-up reveal-delay-${i + 1} bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 text-center card-sheen transition-colors hover:border-sky-500/40`}>
                 {s.to !== null ? (
                   <div
-                    class="stat-num gradient-text text-2xl"
+                    class="stat-num text-emerald-400 text-2xl"
                     data-countup
                     data-to={s.to}
                     data-prefix={s.prefix}
@@ -148,7 +146,7 @@ const structColorMap: Record<string,string> = {
                     data-decimals={s.decimals}
                   >{s.prefix}0{s.suffix}</div>
                 ) : (
-                  <div class="stat-num gradient-text text-2xl">{s.value}</div>
+                  <div class="stat-num text-emerald-400 text-2xl">{s.value}</div>
                 )}
                 <div class="text-slate-500 text-xs mt-1 leading-tight">{s.label}</div>
               </div>
@@ -172,7 +170,7 @@ const structColorMap: Record<string,string> = {
           <div class="relative w-full max-w-lg">
             <!-- Glow behind canvas -->
             <div class="absolute inset-0 rounded-3xl blur-3xl"
-                 style="background: radial-gradient(ellipse, rgba(20,184,166,0.22) 0%, rgba(14,165,233,0.10) 50%, transparent 80%);"></div>
+                 style="background: radial-gradient(ellipse, rgba(52,211,153,0.22) 0%, rgba(14,165,233,0.10) 50%, transparent 80%);"></div>
             <div class="structure-frame relative aspect-[820/560]">
               <!-- Interactive 3D dendrimer (canvas); falls back to image if JS is off -->
               <DendrimerHero client:load />
@@ -239,7 +237,7 @@ const structColorMap: Record<string,string> = {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
         {structures.map((s, i) => (
-          <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-sky-500/40 hover:shadow-[0_0_32px_rgba(20,184,166,0.12)] hover:-translate-y-1`}>
+          <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-sky-500/40 hover:shadow-[0_0_32px_rgba(14,165,233,0.12)] hover:-translate-y-1`}>
             <div class="overflow-hidden">
               <img src={s.src} alt={s.label + ' minimized structure'} class="w-full transition-transform duration-500 group-hover:scale-105" />
             </div>
