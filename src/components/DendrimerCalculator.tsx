@@ -163,7 +163,7 @@ export default function DendrimerCalculator() {
             />
             <div className="flex justify-between text-slate-600 text-xs mt-1">
               {Array.from({ length: 10 }, (_, i) => (
-                <span key={i + 1} className={gen === i + 1 ? 'text-emerald-400' : ''}>G{i+1}</span>
+                <span key={i + 1} className={gen === i + 1 ? 'text-sky-400' : ''}>G{i+1}</span>
               ))}
             </div>
           </div>
