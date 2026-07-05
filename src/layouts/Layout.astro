@@ -56,7 +56,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       rel="stylesheet"
     />
   </head>
-  <body class="min-h-screen flex flex-col bg-slate-950">
+  <body class="min-h-screen flex flex-col">
+    <!-- Scroll-driven atmosphere: colour is a pure function of scroll position,
+         so scrolling back up reverses through the exact same hues. -->
+    <div class="atmosphere" aria-hidden="true"></div>
+    <div class="atmosphere-tint" aria-hidden="true"></div>
+    <!-- Pointer spotlight: a soft light that follows the cursor -->
+    <div class="spotlight" aria-hidden="true"></div>
+
     <!-- Scroll-progress bar (top, fills as the page scrolls) -->
     <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
 
@@ -137,19 +144,73 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
         counters.forEach((el) => animateCount(el));
       }
 
-      // Scroll-progress bar + back-to-top, throttled to one update per frame.
+      // ── Scroll-driven atmosphere ──
+      // The background colour is interpolated from these stops by scroll
+      // fraction. Because it's a pure function of position, scrolling up
+      // walks back through the same colours — the reversal is automatic.
+      const ATMO_STOPS = [
+        [14, 165, 233],  // sky      (top of page)
+        [34, 211, 238],  // cyan
+        [45, 212, 191],  // teal
+        [139, 92, 246],  // violet
+        [52, 211, 153],  // emerald  (bottom of page)
+      ];
+      const FLOOR = [2, 6, 23]; // slate-950, the dark base
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const mix = (c1, c2, t) => [
+        Math.round(lerp(c1[0], c2[0], t)),
+        Math.round(lerp(c1[1], c2[1], t)),
+        Math.round(lerp(c1[2], c2[2], t)),
+      ];
+      const rgb = (c) => `rgb(${c[0]},${c[1]},${c[2]})`;
+      // pull a colour toward its own grey (luminance) to lower saturation.
+      // 0 = full colour, 1 = fully grey. DESAT is the global saturation knob.
+      const DESAT = 0.6;
+      const desat = (c, a = DESAT) => {
+        const g = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
+        return [Math.round(lerp(c[0], g, a)), Math.round(lerp(c[1], g, a)), Math.round(lerp(c[2], g, a))];
+      };
+      // colour along the multi-stop ramp for a 0..1 fraction
+      const rampColor = (f) => {
+        const n = ATMO_STOPS.length - 1;
+        const seg = Math.min(n - 1, Math.floor(f * n));
+        const local = f * n - seg;
+        return mix(ATMO_STOPS[seg], ATMO_STOPS[seg + 1], local);
+      };
+
       const progress = document.getElementById('scroll-progress');
       const toTop = document.getElementById('back-to-top');
+      const root = document.documentElement;
+      const parallaxEls = Array.from(document.querySelectorAll('.parallax'));
+
       let ticking = false;
       const onScroll = () => {
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
-          const doc = document.documentElement;
-          const max = doc.scrollHeight - doc.clientHeight;
-          const pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
-          if (progress) progress.style.width = pct + '%';
-          if (toTop) toTop.classList.toggle('is-visible', doc.scrollTop > 600);
+          const max = root.scrollHeight - root.clientHeight;
+          const frac = max > 0 ? Math.min(1, Math.max(0, root.scrollTop / max)) : 0;
+
+          if (progress) progress.style.width = frac * 100 + '%';
+          if (toTop) toTop.classList.toggle('is-visible', root.scrollTop > 600);
+
+          if (!reduceMotion) {
+            const tint = desat(rampColor(frac));
+            // base wash: a heavily darkened version of the same hue
+            const washTop = mix(FLOOR, tint, 0.14);
+            root.style.setProperty('--atmo-tint', rgb(tint));
+            root.style.setProperty('--atmo-1', rgb(washTop));
+            root.style.setProperty('--atmo-2', rgb(FLOOR));
+            // drift the tint's focal point down the page as we scroll
+            root.style.setProperty('--atmo-tint-y', (15 + frac * 45) + '%');
+
+            // parallax: each element lags scroll by its own speed
+            const y = root.scrollTop;
+            for (const el of parallaxEls) {
+              const speed = parseFloat(el.getAttribute('data-parallax-speed') || '0.15');
+              el.style.setProperty('--parallax', (y * speed) + 'px');
+            }
+          }
           ticking = false;
         });
       };
@@ -158,6 +219,49 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       toTop?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
       });
+
+      // ── Pointer spotlight + card tilt (fine-pointer, motion-friendly only) ──
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!reduceMotion && finePointer) {
+        const spotlight = document.querySelector('.spotlight');
+        let spotTick = false;
+        window.addEventListener('pointermove', (e) => {
+          if (spotTick) return;
+          spotTick = true;
+          requestAnimationFrame(() => {
+            if (spotlight) {
+              spotlight.style.setProperty('--spot-x', e.clientX + 'px');
+              spotlight.style.setProperty('--spot-y', e.clientY + 'px');
+              spotlight.style.setProperty('--spot-a', '1');
+            }
+            spotTick = false;
+          });
+        }, { passive: true });
+
+        // 3D tilt toward the cursor on cards + opted-in tiles. A snappy
+        // transition is applied inline only while tilting so it doesn't
+        // clobber the slower .reveal fade on these same elements.
+        const MAX_TILT = 6; // degrees
+        const tiltEls = document.querySelectorAll('.card, [data-tilt]');
+        tiltEls.forEach((el) => {
+          el.addEventListener('pointerenter', () => {
+            el.style.transition = 'transform 0.12s cubic-bezier(0.22,1,0.36,1)';
+          });
+          el.addEventListener('pointermove', (e) => {
+            const r = el.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width - 0.5;
+            const py = (e.clientY - r.top) / r.height - 0.5;
+            el.style.transform =
+              `perspective(760px) rotateX(${(-py * MAX_TILT).toFixed(2)}deg) ` +
+              `rotateY(${(px * MAX_TILT).toFixed(2)}deg) translateZ(0) scale(1.015)`;
+          });
+          el.addEventListener('pointerleave', () => {
+            el.style.transform = '';
+            // let the element settle back, then hand transitions back to CSS
+            window.setTimeout(() => { el.style.transition = ''; }, 200);
+          });
+        });
+      }
     </script>
   </body>
 </html>

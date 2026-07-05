@@ -93,8 +93,8 @@ const structColorMap: Record<string,string> = {
 
   <!-- ── Hero ── -->
   <section class="relative overflow-hidden bg-slate-950 pt-24 pb-20">
-    <!-- Background grid -->
-    <div class="absolute inset-0 grid-bg opacity-100 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_85%)]"></div>
+    <!-- Background grid (parallax) -->
+    <div class="parallax absolute inset-0 grid-bg opacity-100 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_85%)]" data-parallax-speed="0.10"></div>
     <!-- Slow aurora glow -->
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full pointer-events-none aurora opacity-70"></div>
     <!-- Radial glow centre-left -->
@@ -170,8 +170,8 @@ const structColorMap: Record<string,string> = {
         <!-- Live structure column -->
         <div class="reveal reveal-scale flex justify-center lg:justify-end">
           <div class="relative w-full max-w-lg">
-            <!-- Glow behind canvas -->
-            <div class="absolute inset-0 rounded-3xl blur-3xl"
+            <!-- Glow behind canvas (parallax) -->
+            <div class="parallax absolute inset-0 rounded-3xl blur-3xl" data-parallax-speed="0.18"
                  style="background: radial-gradient(ellipse, rgba(52,211,153,0.22) 0%, rgba(14,165,233,0.10) 50%, transparent 80%);"></div>
             <div class="structure-frame relative aspect-[820/560]">
               <!-- Interactive 3D dendrimer (canvas); falls back to image if JS is off -->
@@ -239,7 +239,7 @@ const structColorMap: Record<string,string> = {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
         {structures.map((s, i) => (
-          <div class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-sky-500/40 hover:shadow-[0_0_32px_rgba(14,165,233,0.12)] hover:-translate-y-1`}>
+          <div data-tilt class={`reveal reveal-up reveal-delay-${(i % 4) + 1} group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-sky-500/40 hover:shadow-[0_0_32px_rgba(14,165,233,0.12)]`}>
             <div class="overflow-hidden">
               <img src={s.src} alt={s.label + ' minimized structure'} class="w-full transition-transform duration-500 group-hover:scale-105" />
             </div>

@@ -305,8 +305,104 @@
   box-shadow: 0 0 22px rgba(14,165,233,0.3);
 }
 
+/* ──────────────────────────────────────────────────────────────────
+ * Scroll-driven atmosphere — a fixed backdrop whose colour is a pure
+ * function of scroll position, so scrolling up reverses it exactly.
+ * Two layers: an opaque base wash (behind everything) and a faint
+ * soft-light tint (over everything) so even dark sections pick up the
+ * moving hue while text stays readable. Colours are set from JS via the
+ * --atmo-* custom properties on <html>.
+ * ────────────────────────────────────────────────────────────────── */
+:root {
+  --atmo-1: #020617;   /* base wash colour A (top of the blend)    */
+  --atmo-2: #071021;   /* base wash colour B (bottom of the blend) */
+  --atmo-tint: #528faa;/* muted default accent (reduced-motion)    */
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--atmo-1) 0%, var(--atmo-2) 60%, #020617 100%);
+  transition: background 0.25s linear;
+}
+
+/* Drifting aurora blobs inside the atmosphere for depth */
+.atmosphere::before,
+.atmosphere::after {
+  content: '';
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  max-width: 820px;
+  max-height: 820px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+  background: radial-gradient(circle, var(--atmo-tint) 0%, transparent 70%);
+  will-change: transform;
+}
+.atmosphere::before { top: -12%; left: -8%;  animation: atmo-drift-a 26s ease-in-out infinite; }
+.atmosphere::after  { bottom: -14%; right: -10%; animation: atmo-drift-b 32s ease-in-out infinite; }
+
+@keyframes atmo-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(8vw, 6vh) scale(1.12); }
+}
+@keyframes atmo-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1.08); }
+  50%      { transform: translate(-7vw, -5vh) scale(1); }
+}
+
+/* Moving tint OVER the whole page — screen-blends so even opaque dark
+   sections pick up the scroll-driven hue. Sits below the nav (z-50) and
+   is click-through. Colour comes from --atmo-tint, updated per frame. */
+.atmosphere-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.6;
+  background:
+    radial-gradient(125% 105% at 50% var(--atmo-tint-y, 25%), var(--atmo-tint) 0%, transparent 78%);
+  transition: background 0.25s linear;
+}
+
+/* Give the page a solid dark floor so a negative-z atmosphere can't flash white */
+html { background: #020617; }
+body { background: transparent; }
+
+/* Pointer spotlight — a soft radial light that follows the cursor.
+   Position + strength set from JS via --spot-x / --spot-y / --spot-a. */
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: var(--spot-a, 0);
+  background: radial-gradient(
+    360px circle at var(--spot-x, 50%) var(--spot-y, 40%),
+    rgba(56, 189, 248, 0.14) 0%,
+    transparent 62%
+  );
+  transition: opacity 0.4s ease;
+}
+
+/* Parallax: elements drift at a fraction of scroll speed.
+   Translation set from JS via --parallax (px). */
+.parallax { will-change: transform; transform: translate3d(0, var(--parallax, 0px), 0); }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none; }
   .gradient-text-anim, .float-y, .shimmer::after, .aurora { animation: none; }
   .scroll-progress, .back-to-top { transition: none; }
+  .atmosphere, .atmosphere-tint { transition: none; }
+  .atmosphere::before, .atmosphere::after { animation: none; }
+  .spotlight { display: none; }
+  .parallax { transform: none !important; }
+  [data-tilt] { transform: none !important; transition: none; }
 }
