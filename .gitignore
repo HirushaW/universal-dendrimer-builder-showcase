@@ -28,3 +28,6 @@ Thumbs.db
 # Raw source assets (PPTX, loose images at repo root)
 *.pptx
 *_plan.md
+
+# Local scratch / backup scaffold (not part of the site)
+skills/
