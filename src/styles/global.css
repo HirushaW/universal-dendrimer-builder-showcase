@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,61 +27,98 @@
 
   /* ── Typography ── */
   .section-title {
-    @apply text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight leading-tight;
+    @apply text-3xl sm:text-4xl font-bold text-slate-50 tracking-tight leading-[1.05];
+    font-family: 'Chakra Petch', 'Inter', sans-serif;
   }
   .section-subtitle {
     @apply text-lg text-slate-400 mt-3 leading-relaxed;
   }
   .gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 60%, #818cf8 100%);
+    background-image: linear-gradient(100deg, #6ffff2 0%, #2ce8d8 55%, #3a9bd8 100%);
   }
   .mono {
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* ── Cards ── */
+  /* ── Cards → glass HUD panels w/ corner brackets ── */
   .card {
-    @apply bg-slate-900/80 border border-slate-700/60 rounded-2xl p-6
-           transition-all duration-300;
-    backdrop-filter: blur(4px);
+    position: relative;
+    background: linear-gradient(180deg, rgba(18,38,46,0.42), rgba(6,14,20,0.30));
+    border: 1px solid var(--hud-line);
+    border-radius: 14px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(120,255,245,0.08), 0 20px 50px rgba(0,0,0,0.5);
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease, box-shadow .35s ease;
+  }
+  /* corner brackets overlay (matches .hud-corners) */
+  .card::after {
+    content: '';
+    position: absolute; inset: -1px; pointer-events: none;
+    background-image:
+      linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+      linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+      linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+      linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy));
+    background-repeat: no-repeat;
+    background-size: 13px 2px, 2px 13px, 13px 2px, 2px 13px, 13px 2px, 2px 13px, 13px 2px, 2px 13px;
+    background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+    filter: drop-shadow(0 0 3px rgba(44,232,216,0.6));
+    opacity: 0.55; transition: opacity .35s ease;
   }
   .card:hover {
-    @apply border-teal-500/40;
-    box-shadow: 0 0 0 1px rgba(20,184,166,0.15), 0 8px 32px rgba(0,0,0,0.4), 0 0 24px rgba(20,184,166,0.08);
-    transform: translateY(-2px);
+    border-color: rgba(44,232,216,0.4);
+    box-shadow: inset 0 1px 0 rgba(120,255,245,0.12), 0 0 24px rgba(44,232,216,0.10), 0 24px 60px rgba(0,0,0,0.55);
+    transform: translateY(-3px);
   }
+  .card:hover::after { opacity: 0.95; }
 
   .card-accent {
-    @apply card border-l-2 border-l-teal-500;
+    @apply card;
+    border-left: 2px solid var(--hud-cy);
   }
 
   .card-dark {
-    @apply bg-slate-950/80 border border-slate-800 rounded-2xl p-6;
+    background: linear-gradient(180deg, rgba(9,22,29,0.9), rgba(5,11,16,0.92));
+    @apply border rounded-2xl p-6;
+    border-color: var(--hud-line);
   }
 
-  /* ── Buttons ── */
+  /* ── Buttons → HUD angled-clip ── */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl
-           font-semibold text-sm text-slate-950
-           focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-slate-950
-           transition-all duration-200;
-    background: linear-gradient(135deg, #14b8a6, #0ea5e9);
-    box-shadow: 0 4px 15px rgba(20,184,166,0.35);
+    @apply inline-flex items-center gap-2 px-6 py-3
+           text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950;
+    font-family: 'Chakra Petch', sans-serif; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #04121a;
+    background: linear-gradient(135deg, var(--hud-cy-bright), var(--hud-cy));
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 11px, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+    box-shadow: 0 0 22px rgba(44,232,216,0.35);
+    transition: box-shadow .25s ease, transform .25s ease, filter .25s ease;
   }
   .btn-primary:hover {
-    box-shadow: 0 6px 24px rgba(20,184,166,0.5);
-    transform: translateY(-1px);
+    box-shadow: 0 0 40px rgba(44,232,216,0.6);
+    transform: translateY(-1px); filter: brightness(1.08);
   }
 
   .btn-outline {
-    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl
-           border border-slate-600 text-slate-200 font-semibold text-sm
-           hover:border-teal-500 hover:text-teal-400
-           focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-950
-           transition-all duration-200;
+    @apply inline-flex items-center gap-2 px-6 py-3 text-sm
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950;
+    font-family: 'Chakra Petch', sans-serif; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--hud-cy);
+    border: 1px solid var(--hud-line);
+    background: rgba(44,232,216,0.04);
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 11px, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+    transition: color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   }
-  .btn-outline:hover { box-shadow: 0 0 16px rgba(20,184,166,0.12); }
+  .btn-outline:hover {
+    color: var(--hud-cy-bright); border-color: var(--hud-cy);
+    box-shadow: inset 0 0 18px rgba(44,232,216,0.08), 0 0 22px rgba(44,232,216,0.18);
+    transform: translateY(-1px);
+  }
 
   /* ── Nav ── */
   .nav-link {
@@ -93,32 +130,41 @@
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 
-  /* ── Code ── */
+  /* ── Code → terminal panel ── */
   .code-block {
-    @apply bg-slate-900 border border-slate-700/60 rounded-xl overflow-x-auto;
+    background: linear-gradient(180deg, rgba(9,22,29,0.92), rgba(5,11,16,0.94));
+    border: 1px solid var(--hud-line);
+    @apply rounded-xl overflow-x-auto;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
   }
 
-  /* ── Tables ── */
+  /* ── Tables → HUD telemetry ── */
   .table-scientific {
     @apply w-full text-sm text-left border-collapse;
   }
   .table-scientific th {
-    @apply bg-slate-800/80 text-slate-200 font-semibold px-4 py-3 border-b border-slate-700;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+    background: rgba(44,232,216,0.06);
+    @apply font-semibold px-4 py-3;
+    color: var(--hud-cy);
+    border-bottom: 1px solid var(--hud-line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
   .table-scientific td {
-    @apply px-4 py-3 border-b border-slate-800/80 text-slate-300;
+    @apply px-4 py-3 text-slate-300;
+    border-bottom: 1px solid var(--hud-line-soft);
   }
-  .table-scientific tr:hover td { @apply bg-teal-500/5; }
+  .table-scientific tr { transition: background .2s ease; }
+  .table-scientific tr:hover td { background: rgba(44,232,216,0.05); }
 
-  /* ── Section dividers ── */
+  /* ── Section dividers → glow rule ── */
   .section-rule {
-    @apply border-t border-slate-800;
-    box-shadow: 0 -1px 0 rgba(20,184,166,0.06);
+    border-top: 1px solid var(--hud-line-soft);
+    box-shadow: 0 -1px 12px rgba(44,232,216,0.08);
   }
 
   /* ── Stat numbers ── */
@@ -127,17 +173,21 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── Diagram frame ── */
+  /* ── Diagram frame → HUD frame ── */
   .diagram-frame {
-    @apply rounded-2xl overflow-hidden border border-slate-700/60;
-    box-shadow: 0 0 0 1px rgba(20,184,166,0.08), 0 24px 48px rgba(0,0,0,0.5);
+    position: relative;
+    @apply rounded-xl overflow-hidden;
+    border: 1px solid var(--hud-line);
+    box-shadow: 0 0 0 1px rgba(44,232,216,0.06), 0 0 30px rgba(44,232,216,0.08), 0 24px 48px rgba(0,0,0,0.5);
   }
   .diagram-frame img { @apply w-full block; }
 
-  /* ── Structure image ── */
+  /* ── Structure image → HUD frame ── */
   .structure-frame {
-    @apply rounded-2xl overflow-hidden border border-slate-700/40 bg-black;
-    box-shadow: 0 0 40px rgba(20,184,166,0.12), 0 24px 48px rgba(0,0,0,0.6);
+    position: relative;
+    @apply rounded-xl overflow-hidden bg-black;
+    border: 1px solid var(--hud-line);
+    box-shadow: 0 0 40px rgba(44,232,216,0.12), 0 24px 48px rgba(0,0,0,0.6);
   }
   .structure-frame img { @apply w-full block; }
 
@@ -150,14 +200,14 @@
   /* ── Grid bg ── */
   .grid-bg {
     background-image:
-      linear-gradient(rgba(20,184,166,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(20,184,166,0.06) 1px, transparent 1px);
-    background-size: 48px 48px;
+      linear-gradient(var(--hud-line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hud-line-soft) 1px, transparent 1px);
+    background-size: 46px 46px;
   }
 
   /* ── Dot bg ── */
   .dot-bg {
-    background-image: radial-gradient(rgba(20,184,166,0.15) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(44,232,216,0.15) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 }
@@ -167,3 +217,328 @@
 ::-webkit-scrollbar-track { background: #020617; }
 ::-webkit-scrollbar-thumb { background: #1e3a3a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
+
+/* ══════════════════════════════════════════════════════════════════
+   THEME 01 · FUSION HUD · GLASS · GLITCH
+   A holographic command-console layer. Additive - does not override
+   the base component classes above.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --hud-cy:        #2ce8d8;
+  --hud-cy-bright: #6ffff2;
+  --hud-cy-deep:   #0e8b86;
+  --hud-mag:       #ff3b8b;
+  --hud-ink:       #04070e;
+  --hud-ink-2:     #071018;
+  --hud-line:      rgba(44,232,216,0.16);
+  --hud-line-soft: rgba(44,232,216,0.08);
+  --hud-glass:     rgba(8,20,28,0.55);
+
+  /* ── Upgrade tokens (Phase 0) ─────────────────────────────────────── */
+  --hud-radius:    14px;                       /* standard panel radius   */
+  --ease-hud:      cubic-bezier(.2,.7,.2,1);   /* the house easing        */
+  --dur-fast:      200ms;
+  --dur-med:       350ms;
+  --dur-slow:      800ms;
+  --bg-veil:       rgba(4,7,14,0.55);          /* scrim to protect text over the living bg */
+}
+
+.font-display { font-family: 'Chakra Petch', 'Inter', sans-serif; }
+.font-hud     { font-family: 'Orbitron', 'Chakra Petch', sans-serif; letter-spacing: 0.02em; }
+.font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Deep-space HUD backdrop ────────────────────────────────────── */
+/* Homepage section wrapper: transparent base so the site-wide living
+   ScienceCanvas + body grid read through exactly like every other page.
+   Only faint radial glows remain for depth (no opaque fill, no local grid). */
+.hud-bg {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(20,110,120,0.10) 0%, transparent 55%),
+    radial-gradient(80% 60% at 85% 20%, rgba(30,60,140,0.07) 0%, transparent 60%);
+}
+.hud-bg > * { position: relative; z-index: 1; }
+
+/* Scanline film overlay */
+.scanlines::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(
+    0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.14) 3px, rgba(0,0,0,0) 4px);
+  mix-blend-mode: multiply; opacity: 0.5;
+}
+
+/* ── Glass panel ─────────────────────────────────────────────────── */
+.hud-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(18,38,46,0.42), rgba(6,14,20,0.30));
+  border: 1px solid var(--hud-line);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 rgba(120,255,245,0.10),
+    inset 0 0 32px rgba(44,232,216,0.04),
+    0 20px 60px rgba(0,0,0,0.55);
+}
+.hud-panel-solid {
+  background: linear-gradient(180deg, rgba(9,22,29,0.9), rgba(5,11,16,0.92));
+}
+
+/* Corner brackets (all 4) - drawn as an overlay so panel bg is free */
+.hud-corners::after {
+  content: '';
+  position: absolute; inset: -1px; pointer-events: none;
+  background-image:
+    linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+    linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+    linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy)),
+    linear-gradient(var(--hud-cy), var(--hud-cy)), linear-gradient(var(--hud-cy), var(--hud-cy));
+  background-repeat: no-repeat;
+  background-size: 15px 2px, 2px 15px, 15px 2px, 2px 15px, 15px 2px, 2px 15px, 15px 2px, 2px 15px;
+  background-position:
+    top left, top left, top right, top right,
+    bottom left, bottom left, bottom right, bottom right;
+  filter: drop-shadow(0 0 3px rgba(44,232,216,0.7));
+  opacity: 0.9;
+}
+
+/* Moving scan sweep inside framed media */
+.hud-scan { position: relative; overflow: hidden; }
+.hud-scan::before {
+  content: ''; position: absolute; left: 0; right: 0; height: 26%;
+  top: -30%; z-index: 3; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(44,232,216,0.10) 60%, rgba(111,255,242,0.22));
+  animation: hud-sweep 5.5s linear infinite;
+}
+@keyframes hud-sweep { 0% { top: -30%; } 100% { top: 110%; } }
+
+/* ── Glitch title ────────────────────────────────────────────────── */
+.glitch { position: relative; display: inline-block; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; left: 0; top: 0; width: 100%;
+  clip-path: inset(0 0 0 0);
+  opacity: 0.0;
+}
+.glitch:hover::before, .glitch.glitch-live::before {
+  opacity: 0.85; color: var(--hud-mag);
+  animation: glitch-a 2.4s infinite steps(2, jump-none);
+}
+.glitch:hover::after, .glitch.glitch-live::after {
+  opacity: 0.85; color: var(--hud-cy-bright);
+  animation: glitch-b 3.1s infinite steps(2, jump-none);
+}
+@keyframes glitch-a {
+  0%,92%,100% { transform: translate(0,0); clip-path: inset(0 0 0 0); }
+  93% { transform: translate(-2px,1px); clip-path: inset(20% 0 55% 0); }
+  96% { transform: translate(2px,-1px); clip-path: inset(65% 0 8% 0); }
+}
+@keyframes glitch-b {
+  0%,90%,100% { transform: translate(0,0); clip-path: inset(0 0 0 0); }
+  91% { transform: translate(2px,0); clip-path: inset(10% 0 70% 0); }
+  95% { transform: translate(-2px,0); clip-path: inset(50% 0 20% 0); }
+}
+
+/* ── Orbital rings ───────────────────────────────────────────────── */
+.orbit { position: absolute; border: 1px solid var(--hud-line); border-radius: 50%; }
+.orbit-spin  { animation: spin 26s linear infinite; }
+.orbit-spin-r { animation: spin 40s linear infinite reverse; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.orbit-dot {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--hud-cy-bright);
+  box-shadow: 0 0 10px 2px rgba(111,255,242,0.8);
+}
+
+/* ── HUD chips / badges ──────────────────────────────────────────── */
+.hud-chip {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.35rem 0.8rem; border-radius: 999px;
+  border: 1px solid var(--hud-line);
+  background: rgba(44,232,216,0.06);
+  color: var(--hud-cy);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.hud-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--hud-cy-bright);
+  box-shadow: 0 0 8px 1px var(--hud-cy-bright);
+}
+
+/* ── HUD buttons ─────────────────────────────────────────────────── */
+.hud-btn {
+  position: relative; display: inline-flex; align-items: center; gap: 0.55rem;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Chakra Petch', sans-serif; font-weight: 600;
+  font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #04121a;
+  background: linear-gradient(135deg, var(--hud-cy-bright), var(--hud-cy));
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 0 24px rgba(44,232,216,0.4);
+  transition: box-shadow .2s, transform .2s, filter .2s;
+}
+.hud-btn:hover { box-shadow: 0 0 40px rgba(44,232,216,0.65); transform: translateY(-1px); filter: brightness(1.08); }
+.hud-btn-ghost {
+  position: relative; display: inline-flex; align-items: center; gap: 0.55rem;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Chakra Petch', sans-serif; font-weight: 600;
+  font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--hud-cy);
+  border: 1px solid var(--hud-line);
+  background: rgba(44,232,216,0.04);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: border-color .2s, box-shadow .2s, color .2s, transform .2s;
+}
+.hud-btn-ghost:hover {
+  color: var(--hud-cy-bright); border-color: var(--hud-cy);
+  box-shadow: inset 0 0 20px rgba(44,232,216,0.08), 0 0 24px rgba(44,232,216,0.2);
+  transform: translateY(-1px);
+}
+
+/* ── Section eyebrow / divider ───────────────────────────────────── */
+.hud-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--hud-cy);
+}
+.hud-eyebrow::before {
+  content: ''; width: 26px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hud-cy));
+}
+.hud-title {
+  font-family: 'Chakra Petch', sans-serif; font-weight: 700;
+  color: #eaf9f7; letter-spacing: -0.01em; line-height: 1.05;
+}
+.hud-divider {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, var(--hud-line), transparent);
+  box-shadow: 0 0 12px rgba(44,232,216,0.15);
+}
+
+/* ── Data-stream terminal ────────────────────────────────────────── */
+.hud-terminal {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; line-height: 1.75;
+  color: rgba(120,220,210,0.5); white-space: pre;
+}
+.cursor-blink::after {
+  content: '▌'; color: var(--hud-cy-bright);
+  animation: blink 1.05s steps(1) infinite; margin-left: 2px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Global HUD atmosphere · behind every page ─────────────────────────
+   Layer stack (back → front):  bg color · z-3 radial glow · z-2 static grid
+   · z-1 <ScienceCanvas> living background · content. The living canvas is
+   mostly transparent, so the grid still reads through behind its motifs. */
+body { background: #04070e; }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -3; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% -5%, rgba(20,110,120,0.16), transparent 55%),
+    radial-gradient(70% 50% at 88% 12%, rgba(30,60,140,0.10), transparent 60%),
+    #04070e;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background-image:
+    linear-gradient(var(--hud-line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hud-line-soft) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(140% 120% at 50% 0%, #000 20%, transparent 85%);
+  -webkit-mask-image: radial-gradient(140% 120% at 50% 0%, #000 20%, transparent 85%);
+  opacity: 0.5;
+}
+
+/* Soften opaque inner-page hero bands so the HUD grid reads through */
+.hud-veil { background: linear-gradient(180deg, rgba(8,20,28,0.6), rgba(4,7,14,0.2)) !important; }
+
+/* ── Smooth motion ─────────────────────────────────────────────────── */
+/* Gentle page-load fade for main content */
+main { animation: page-in .6s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Reveal-on-scroll (progressive enhancement; visible by default) */
+.reveal {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform;
+}
+.reveal.in { opacity: 1; transform: none; }
+/* Stagger children of a .reveal-group */
+.reveal-group.in > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+.reveal-group.in > *:nth-child(2) { animation-delay: .06s; }
+.reveal-group.in > *:nth-child(3) { animation-delay: .12s; }
+.reveal-group.in > *:nth-child(4) { animation-delay: .18s; }
+.reveal-group.in > *:nth-child(5) { animation-delay: .24s; }
+.reveal-group.in > *:nth-child(6) { animation-delay: .30s; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* Reveal directional variants (opt-in; default rises from below) */
+.reveal-left  { transform: translateX(-26px); }
+.reveal-right { transform: translateX(26px); }
+.reveal-scale { transform: scale(.965); }
+.reveal-left.in, .reveal-right.in, .reveal-scale.in { transform: none; }
+
+/* Fallback: if JS never runs, never leave content hidden */
+.no-js .reveal, .no-js .reveal-left, .no-js .reveal-right, .no-js .reveal-scale {
+  opacity: 1 !important; transform: none !important;
+}
+
+/* ── Shared page hero band (Phase 0) ───────────────────────────────────
+   Replaces the per-page inline `bg-gradient-to-br from-slate-9xx` bands so
+   every inner page opens with the same HUD atmosphere as the homepage.
+   Transparent by design → the living background + body glow read through. */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 130% at 12% -20%, rgba(20,110,120,0.16), transparent 55%),
+    radial-gradient(90% 120% at 92% -10%, rgba(30,60,140,0.12), transparent 60%),
+    linear-gradient(180deg, rgba(8,20,28,0.42) 0%, rgba(4,7,14,0.08) 100%);
+}
+/* faint HUD grid inside the hero, masked to fade downward */
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(var(--hud-line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hud-line-soft) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(140% 120% at 20% 0%, #000 10%, transparent 80%);
+  -webkit-mask-image: radial-gradient(140% 120% at 20% 0%, #000 10%, transparent 80%);
+  opacity: 0.6;
+}
+
+/* ── Text-scrim utility ────────────────────────────────────────────────
+   Put on bare text blocks that float directly over the living background so
+   contrast never drops below AA. Panels already have their own fill. */
+.bg-veil {
+  background: var(--bg-veil);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: var(--hud-radius);
+}
+
+/* ── Parallax scaffolding (engine mounted in Phase 2) ──────────────────
+   A single shared scroll rAF loop sets --sy (scroll offset px). Elements
+   opt in with data-parallax="<factor>"; only transform is animated. */
+[data-parallax] { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-scan::before, .orbit-spin, .orbit-spin-r,
+  .glitch::before, .glitch::after, .cursor-blink::after,
+  main, .reveal-group.in > * { animation: none !important; }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  [data-parallax] { transform: none !important; }
+  html { scroll-behavior: auto; }
+}

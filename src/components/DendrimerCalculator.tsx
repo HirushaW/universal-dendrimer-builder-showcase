@@ -14,49 +14,49 @@ const TYPES: Record<string, DendrimerSpec> = {
   PAMAM: {
     label: 'PAMAM',
     f: 4, m: 2, g1Atoms: 84, massPerAtom: 14.0,
-    description: 'Polyamidoamine — EDA core, G1–G10',
+    description: 'Polyamidoamine - EDA core, G1-G10',
     color: '#14b8a6',
   },
   PPI: {
     label: 'PPI',
     f: 4, m: 3, g1Atoms: 72, massPerAtom: 13.5,
-    description: 'Polypropylenimine — DAB core',
+    description: 'Polypropylenimine - DAB core',
     color: '#0ea5e9',
   },
   Triazine: {
     label: 'Triazine',
     f: 6, m: 3, g1Atoms: 92, massPerAtom: 14.2,
-    description: 'Triazine-based — 6-arm symmetry',
+    description: 'Triazine-based - 6-arm symmetry',
     color: '#a78bfa',
   },
   Carbosilane: {
     label: 'Carbosilane',
     f: 4, m: 3, g1Atoms: 96, massPerAtom: 15.5,
-    description: 'Si-containing — use GAFF2 bypass',
+    description: 'Si-containing - use GAFF2 bypass',
     color: '#f59e0b',
   },
   PLL: {
     label: 'PLL',
     f: 2, m: 2, g1Atoms: 78, massPerAtom: 13.8,
-    description: 'Poly-L-Lysine — linear-branched',
+    description: 'Poly-L-Lysine - linear-branched',
     color: '#34d399',
   },
   Phosphorus: {
     label: 'Phosphorus',
     f: 6, m: 2, g1Atoms: 88, massPerAtom: 15.0,
-    description: 'Phosphorus-core — 6-arm P-based',
+    description: 'Phosphorus-core - 6-arm P-based',
     color: '#f87171',
   },
   Polyester: {
     label: 'Polyester',
     f: 4, m: 2, g1Atoms: 82, massPerAtom: 13.2,
-    description: 'Polyester — biodegradable scaffold',
+    description: 'Polyester - biodegradable scaffold',
     color: '#fb923c',
   },
   Polyglycerol: {
     label: 'Polyglycerol',
     f: 3, m: 2, g1Atoms: 68, massPerAtom: 12.8,
-    description: 'Polyglycerol — 3-arm compact',
+    description: 'Polyglycerol - 3-arm compact',
     color: '#e879f9',
   },
   Custom: {
@@ -136,7 +136,7 @@ export default function DendrimerCalculator() {
               className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 appearance-none cursor-pointer"
             >
               {Object.keys(TYPES).map(k => (
-                <option key={k} value={k}>{TYPES[k].label} — {TYPES[k].description}</option>
+                <option key={k} value={k}>{TYPES[k].label} - {TYPES[k].description}</option>
               ))}
             </select>
           </div>

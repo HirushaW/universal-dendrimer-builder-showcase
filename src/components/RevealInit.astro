@@ -1,0 +1,48 @@
+---
+/**
+ * RevealInit - one global IntersectionObserver that drives progressive
+ * scroll-reveal for the whole site. Mounted once in Layout.astro (end of
+ * <body>), so every page gains the homepage's fade/rise-in for free.
+ *
+ * Targets: .reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-group
+ * On intersection it adds `.in` (CSS in global.css does the animating) and
+ * stops observing that element.
+ *
+ * Safety:
+ *  - honours prefers-reduced-motion (reveals everything immediately, no rAF)
+ *  - falls back to revealing everything if IntersectionObserver is missing
+ *  - guarded against double-init (idempotent if mounted twice / re-run)
+ */
+---
+<script is:inline>
+  (function () {
+    if (window.__revealInit) return;      // idempotent guard
+    window.__revealInit = true;
+
+    var SEL = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-group';
+
+    function revealAll() {
+      document.querySelectorAll(SEL).forEach(function (el) { el.classList.add('in'); });
+    }
+
+    function start() {
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) { revealAll(); return; }
+
+      var io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          var e = entries[i];
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        }
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll(SEL).forEach(function (el) { io.observe(el); });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+    } else {
+      start();
+    }
+  })();
+</script>

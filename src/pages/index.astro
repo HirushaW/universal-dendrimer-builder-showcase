@@ -2,200 +2,273 @@
 import Layout from '../layouts/Layout.astro';
 import CitationBlock from '../components/CitationBlock.astro';
 import DendrimerCalculator from '../components/DendrimerCalculator.tsx';
+import DendrimerReactor from '../components/DendrimerReactor.astro';
+import MolViewer from '../components/MolViewer.astro';
+import MolViewerRuntime from '../components/MolViewerRuntime.astro';
+import { getStructure, formula } from '../data/structures';
 
 const features = [
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>`,
+    tag: 'MOD.01',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>`,
     title: '9 Dendrimer Types',
-    desc: 'PAMAM, PPI, Triazine, Carbosilane, PLL, Phosphorus, Polyester, Polyglycerol, and Custom — all from a single unified interface.',
+    desc: 'PAMAM, PPI, Triazine, Carbosilane, PLL, Phosphorus, Polyester, Polyglycerol, and Custom - all from one unified interface.',
   },
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>`,
+    tag: 'MOD.02',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>`,
     title: 'GUI-Driven Workflow',
-    desc: 'Full Tkinter GUI — build, parameterize, set up MD, and characterize from a single desktop application. No scripting required.',
+    desc: 'Full Tkinter GUI - build, parameterize, set up MD, and characterize from a single desktop application. No scripting required.',
   },
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/>`,
+    tag: 'MOD.03',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M13 10V3L4 14h7v7l9-11h-7z"/>`,
     title: 'AMBER & NAMD Integration',
     desc: 'Automated antechamber / parmchk2 parameterization with GAFF2 and CGenFF. Generates ready-to-run NAMD 3.x input files.',
   },
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>`,
+    tag: 'MOD.04',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>`,
     title: 'Automated Characterization',
     desc: 'Computes Rg, SASA, vdW volume, hydrodynamic radius, shape anisotropy (asphericity, acylindricity, Rg tensor), and density.',
   },
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>`,
+    tag: 'MOD.05',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>`,
     title: 'Fragment BCC Parameterization',
-    desc: 'Residue-level AM1-BCC charge assignment via antechamber. Bypasses whole-molecule limits — works at any generation size.',
+    desc: 'Residue-level AM1-BCC charge assignment via antechamber. Bypasses whole-molecule limits - works at any generation size.',
   },
   {
-    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`,
+    tag: 'MOD.06',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`,
     title: 'Seven-Stage Placement Engine',
     desc: 'Cone subdivision, Fibonacci S² sampling, and SO(3) Simulated Annealing produce well-packed, non-clashing 3D geometries.',
   },
 ];
 
 const stats = [
-  { value: '9', label: 'Dendrimer Types' },
-  { value: 'G1–G10', label: 'Generation Range' },
-  { value: '10/10', label: 'Validation Score' },
-  { value: '~5,900', label: 'Lines of Code' },
+  { value: '9',      label: 'Dendrimer Types' },
+  { value: 'G1-G10', label: 'Generation Range' },
+  { value: '10/10',  label: 'Validation Score' },
+  { value: '~5.9k',  label: 'Lines of Code' },
 ];
 
 const dendrimerTypes = [
-  { name: 'PAMAM',       full: 'Polyamidoamine',    core: 'EDA',     color: 'teal',    status: 'Full support' },
-  { name: 'PPI',         full: 'Polypropylenimine',  core: 'DAB',     color: 'sky',     status: 'Full support' },
-  { name: 'Triazine',    full: 'Triazine',           core: '6-arm',   color: 'violet',  status: 'Full support' },
-  { name: 'Carbosilane', full: 'Carbosilane',        core: 'Si-core', color: 'amber',   status: 'GAFF2 bypass' },
-  { name: 'PLL',         full: 'Poly-L-Lysine',      core: 'Lys',     color: 'emerald', status: 'Full support' },
-  { name: 'Phosphorus',  full: 'Phosphorus',         core: 'P-core',  color: 'red',     status: 'Full support' },
-  { name: 'Polyester',   full: 'Polyester',          core: 'ester',   color: 'orange',  status: 'Full support' },
-  { name: 'Polyglycerol',full: 'Polyglycerol',       core: 'glycerol',color: 'fuchsia', status: 'Full support' },
-  { name: 'Custom',      full: 'Custom Topology',    core: 'user',    color: 'slate',   status: 'User-defined' },
+  { name: 'PAMAM',        core: 'EDA',      status: 'FULL' },
+  { name: 'PPI',          core: 'DAB',      status: 'FULL' },
+  { name: 'Triazine',     core: '6-ARM',    status: 'FULL' },
+  { name: 'Carbosilane',  core: 'Si-CORE',  status: 'GAFF2' },
+  { name: 'PLL',          core: 'LYS',      status: 'FULL' },
+  { name: 'Phosphorus',   core: 'P-CORE',   status: 'FULL' },
+  { name: 'Polyester',    core: 'ESTER',    status: 'FULL' },
+  { name: 'Polyglycerol', core: 'GLYCEROL', status: 'FULL' },
+  { name: 'Custom',       core: 'USER',     status: 'DEF' },
 ];
 
-const colorMap: Record<string, string> = {
-  teal:    'bg-teal-500/10    text-teal-300    border border-teal-500/25    hover:border-teal-400/50',
-  sky:     'bg-sky-500/10     text-sky-300     border border-sky-500/25     hover:border-sky-400/50',
-  violet:  'bg-violet-500/10  text-violet-300  border border-violet-500/25  hover:border-violet-400/50',
-  amber:   'bg-amber-500/10   text-amber-300   border border-amber-500/25   hover:border-amber-400/50',
-  emerald: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 hover:border-emerald-400/50',
-  red:     'bg-red-500/10     text-red-300     border border-red-500/25     hover:border-red-400/50',
-  orange:  'bg-orange-500/10  text-orange-300  border border-orange-500/25  hover:border-orange-400/50',
-  fuchsia: 'bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/25 hover:border-fuchsia-400/50',
-  slate:   'bg-slate-700/20   text-slate-400   border border-slate-600/30   hover:border-slate-500/50',
+const galleryAccent: Record<string, string> = {
+  pamam: '#2ce8d8', ppi: '#38bdf8', carbosilane: '#fbbf24', phosphorus: '#f87171',
+  pll: '#34d399', polyester: '#fb923c', polyglycerol: '#e879f9',
 };
+const structures = ['pamam', 'ppi', 'carbosilane', 'phosphorus', 'pll', 'polyester', 'polyglycerol']
+  .map(id => {
+    const s = getStructure(id);
+    const gens = s?.generations ?? [];
+    const rep = gens.length ? gens[Math.min(2, gens.length - 1)] : null;
+    return { id, name: s?.name ?? id, rep, accent: galleryAccent[id] ?? '#2ce8d8' };
+  })
+  .filter(x => x.rep);
 
-const structures = [
-  { src: '/images/real-pamam-g3.png',       label: 'PAMAM G3',       sub: '516 atoms · EDA core · GAFF2',          color: 'teal' },
-  { src: '/images/real-ppi-g4.png',         label: 'PPI G4',         sub: '~1,400 atoms · DAB core · GAFF2+CGenFF', color: 'sky' },
-  { src: '/images/real-carbosilane-g2.png', label: 'Carbosilane G2', sub: '~280 atoms · Si-C backbone · GAFF2',    color: 'amber' },
-  { src: '/images/real-phosphorus-g3.png',  label: 'Phosphorus G3',  sub: '~650 atoms · P-N backbone · GAFF2',     color: 'red' },
-  { src: '/images/real-pll-g3.png',         label: 'PLL G3',         sub: '~850 atoms · Lys core · GAFF2',         color: 'emerald' },
-  { src: '/images/real-polyester-g3.png',   label: 'Polyester G3',   sub: '~760 atoms · ester backbone · GAFF2',   color: 'orange' },
-  { src: '/images/real-polyglycerol-g3.png',label: 'Polyglycerol G3',sub: '~650 atoms · glycerol core · GAFF2',    color: 'fuchsia' },
+const codeLines = [
+  'class UniversalDendrimerBuilder(PersistentTk):',
+  '    force_field   = "GAFF2 + CGenFF"',
+  '    charge_model  = "AM1-BCC / fragment"',
+  '',
+  '  def place_branches(self, gen):',
+  '    cones  = subdivide_S2(fibonacci(n))',
+  '    theta  = anneal_SO3(cones, T=1.8e3)',
+  '    return resolve_softcore(theta, k=4)',
+  '',
+  '  >> build PAMAM --gen 4 --solvate',
+  '  >> parameterize --fragment-bcc',
+  '  >> export NAMD3.conf ... OK',
 ];
 
-const structColorMap: Record<string,string> = {
-  teal:    'text-teal-400',
-  sky:     'text-sky-400',
-  amber:   'text-amber-400',
-  red:     'text-red-400',
-  emerald: 'text-emerald-400',
-  orange:  'text-orange-400',
-  fuchsia: 'text-fuchsia-400',
-};
+const telemetry = [
+  ['GEN', 'ATOMS', 'Rg/Å',  'ASPH'],
+  ['1',   '84',    '5.94',  '0.041'],
+  ['2',   '228',   '8.53',  '0.030'],
+  ['3',   '516',   '11.20', '0.021'],
+  ['4',   '1092',  '14.28', '0.015'],
+  ['5',   '2244',  '17.75', '0.011'],
+  ['6',   '4548',  '21.30', '0.008'],
+];
 ---
 
 <Layout title="Universal Dendrimer Builder" activeNav="home">
+  <MolViewerRuntime />
 
-  <!-- ── Hero ── -->
-  <section class="relative overflow-hidden bg-slate-950 pt-24 pb-20">
-    <!-- Background grid -->
-    <div class="absolute inset-0 grid-bg opacity-100"></div>
-    <!-- Radial glow centre-left -->
-    <div class="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-         style="background: radial-gradient(circle, rgba(20,184,166,0.10) 0%, transparent 70%);"></div>
+  <!-- ══════════════ HERO · COMMAND CONSOLE ══════════════ -->
+  <section class="hud-bg scanlines relative overflow-hidden pt-14 pb-20 lg:pt-20 lg:pb-28">
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-14 items-center">
 
-        <!-- Text column -->
-        <div>
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-400 text-xs font-semibold mb-7 mono">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
-            v1.0 — Stable Release
-          </div>
-
-          <h1 class="text-5xl sm:text-6xl font-extrabold text-slate-100 leading-[1.1] tracking-tight">
-            Build Any<br/>
-            <span class="gradient-text">Dendrimer.</span>
-          </h1>
-          <h2 class="text-2xl sm:text-3xl font-bold text-slate-400 mt-2 tracking-tight">
-            Parameterize. Simulate.
-          </h2>
-
-          <p class="mt-6 text-base text-slate-400 leading-relaxed max-w-lg">
-            Universal Dendrimer Builder is an open-source Python desktop application for
-            constructing, force-field parameterizing, and running molecular dynamics
-            simulations of dendrimer nanostructures — 9 types, G1–G10, from a single GUI.
-          </p>
-
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="/tools/udb/install/" class="btn-primary">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-              </svg>
-              Install UDB
-            </a>
-            <a href="/tools/udb/manual/" class="btn-outline">Read the Manual →</a>
-          </div>
-
-          <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {stats.map(s => (
-              <div class="bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 text-center">
-                <div class="stat-num gradient-text text-2xl">{s.value}</div>
-                <div class="text-slate-500 text-xs mt-1 leading-tight">{s.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div class="mt-7 flex flex-wrap items-center gap-4 text-xs text-slate-500">
-            {['Open Source', 'Linux / Ubuntu 20.04+', 'AmberTools25 · NAMD 3.x'].map(tag => (
-              <div class="flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                {tag}
-              </div>
-            ))}
-          </div>
+      <!-- Status strip -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-8 reveal">
+        <div class="hud-chip"><span class="hud-dot animate-pulse"></span>SYSTEM ONLINE · v1.0 STABLE</div>
+        <div class="font-mono text-[11px] text-[var(--hud-cy-deep)] tracking-[0.2em] hidden sm:block">
+          UDB//COMPUTATIONAL-CHEMISTRY · MD-SIMULATION-SUITE
         </div>
+      </div>
 
-        <!-- Structure image column -->
-        <div class="flex justify-center lg:justify-end">
-          <div class="relative w-full max-w-lg">
-            <!-- Glow behind image -->
-            <div class="absolute inset-0 rounded-3xl blur-3xl"
-                 style="background: radial-gradient(ellipse, rgba(20,184,166,0.20) 0%, rgba(14,165,233,0.10) 50%, transparent 80%);"></div>
-            <div class="structure-frame relative">
-              <img
-                src="/images/hero-dendrimer.png"
-                alt="PAMAM G3 dendrimer — radial node graph showing 4-arm EDA core with 3 generations"
-                class="w-full"
-                width="820" height="560"
-              />
-              <div class="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent">
-                <span class="mono text-teal-400 text-xs">PAMAM G3 · 516 atoms · 7-stage cone placement · UDB v1.0</span>
+      <!-- Main console panel -->
+      <div class="hud-panel hud-corners scanlines relative rounded-2xl p-6 sm:p-10 lg:p-12 reveal">
+
+        <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
+
+          <!-- LEFT · identity + CTA -->
+          <div>
+            <p class="hud-eyebrow mb-5">COMPUTATIONAL CHEMISTRY // MOLECULAR SIMULATION</p>
+
+            <h1 class="font-display font-bold text-slate-50 leading-[0.95] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[4.2rem]">
+              <span class="glitch glitch-live block" data-text="UNIVERSAL">UNIVERSAL</span>
+              <span class="glitch glitch-live block" data-text="DENDRIMER">DENDRIMER</span>
+              <span class="block bg-clip-text text-transparent"
+                    style="background-image:linear-gradient(100deg,#6ffff2,#2ce8d8 55%,#3a9bd8)">BUILDER</span>
+            </h1>
+
+            <p class="mt-6 text-slate-300/90 leading-relaxed max-w-lg">
+              An open-source Python desktop suite for constructing, force-field
+              parameterizing, and running molecular-dynamics simulations of dendrimer
+              nanostructures - 9 families, generations 1 through 10, from a single console.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="/tools/udb/install/" class="hud-btn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Deploy UDB
+              </a>
+              <a href="/tools/udb/manual/" class="hud-btn-ghost">
+                Access Manual
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <!-- Live reactor telemetry (driven by the canvas) -->
+            <div class="mt-8 flex items-center gap-3 font-mono text-xs" data-reactor="hero">
+              <span class="hud-dot animate-pulse"></span>
+              <span class="text-[var(--hud-cy-deep)] tracking-[0.15em]">REACTOR:</span>
+              <span class="text-[var(--hud-cy-bright)]" data-r="phase">BUILDING</span>
+              <span class="text-slate-600">·</span>
+              <span class="text-slate-400">GEN&nbsp;<span data-r="gen">0</span> · <span data-r="atoms">0</span>&nbsp;ATOMS</span>
+            </div>
+          </div>
+
+          <!-- RIGHT · live procedural reactor -->
+          <div class="relative flex items-center justify-center min-h-[360px] sm:min-h-[440px]">
+            <!-- ambient glow -->
+            <div class="absolute w-[440px] h-[440px] max-w-full rounded-full blur-3xl pointer-events-none"
+                 style="background:radial-gradient(circle,rgba(44,232,216,0.20),transparent 65%)"></div>
+
+            <!-- orbital rings -->
+            <div class="absolute w-[400px] h-[400px] max-w-[94%] max-h-[94%] pointer-events-none">
+              <div class="orbit orbit-spin inset-0" style="border-color:var(--hud-line-soft)">
+                <span class="orbit-dot" style="top:-3px;left:50%"></span>
               </div>
+              <div class="orbit orbit-spin-r" style="inset:12%; border-color:var(--hud-line)">
+                <span class="orbit-dot" style="bottom:-3px;left:30%;width:5px;height:5px"></span>
+              </div>
+              <div class="orbit orbit-spin" style="inset:28%; border-style:dashed; border-color:var(--hud-line)"></div>
+            </div>
+
+            <!-- reactor core -->
+            <div class="hud-scan relative w-[340px] h-[340px] sm:w-[400px] sm:h-[400px] max-w-[92%] rounded-full overflow-hidden"
+                 style="box-shadow:0 0 70px rgba(44,232,216,0.14), inset 0 0 40px rgba(0,0,0,0.55); border:1px solid var(--hud-line)">
+              <DendrimerReactor id="hero" maxGen={4} height="100%" compact />
             </div>
           </div>
         </div>
 
+        <!-- Console footer · stat bar -->
+        <div class="mt-10 pt-8 border-t border-[var(--hud-line-soft)] grid grid-cols-2 sm:grid-cols-4 gap-px bg-[var(--hud-line-soft)] rounded-lg overflow-hidden">
+          {stats.map(s => (
+            <div class="bg-[rgba(6,14,20,0.6)] px-4 py-5 text-center">
+              <div class="font-hud text-2xl sm:text-3xl font-bold text-transparent bg-clip-text"
+                   style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)">{s.value}</div>
+              <div class="font-mono text-[10px] text-slate-500 mt-1.5 uppercase tracking-[0.15em]">{s.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <!-- Twin telemetry panels -->
+      <div class="grid md:grid-cols-2 gap-5 mt-5">
+        <!-- Benchmarks -->
+        <div class="hud-panel hud-corners rounded-2xl p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <span class="font-mono text-[11px] text-[var(--hud-cy)] tracking-[0.2em]">// BENCHMARKS</span>
+            <span class="font-mono text-[10px] text-slate-500">GPU-ACCELERATED</span>
+          </div>
+          <div class="flex items-end gap-4">
+            <div class="font-hud text-5xl font-bold text-transparent bg-clip-text"
+                 style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)">3-4×</div>
+            <div class="font-mono text-xs text-slate-400 pb-1.5 leading-relaxed">FASTER<br/>SIMULATION</div>
+            <!-- mini bar chart -->
+            <div class="ml-auto flex items-end gap-1.5 h-16">
+              {[38,52,44,70,62,92].map(h => (
+                <span class="w-2.5 rounded-sm" style={`height:${h}%;background:linear-gradient(180deg,#6ffff2,rgba(44,232,216,0.25))`}></span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry table -->
+        <div class="hud-panel hud-corners rounded-2xl p-6 reveal overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-mono text-[11px] text-[var(--hud-cy)] tracking-[0.2em]">// TELEMETRY · PAMAM</span>
+            <span class="hud-dot animate-pulse"></span>
+          </div>
+          <table class="w-full font-mono text-[11px]">
+            <tbody>
+              {telemetry.map((row, i) => (
+                <tr class={i === 0 ? 'text-[var(--hud-cy-deep)]' : 'text-slate-400'}>
+                  {row.map(cell => (
+                    <td class={`py-[3px] ${i === 0 ? 'tracking-[0.15em]' : ''} ${i > 0 ? 'text-[var(--hud-cy)]/70 first:text-slate-500' : ''}`}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ── Features ── -->
-  <section class="py-24 bg-slate-950 section-rule">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Capabilities</p>
-        <h2 class="section-title">Everything you need for dendrimer MD</h2>
-        <p class="section-subtitle max-w-2xl mx-auto">
-          UDB handles the full pipeline — geometry construction, force-field parameterization,
-          solvation, MD input generation, and post-simulation structural analysis.
+  <!-- ══════════════ CAPABILITY MODULES ══════════════ -->
+  <section class="hud-bg relative py-24">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mb-14 reveal">
+        <p class="hud-eyebrow mb-4">SYSTEM CAPABILITIES</p>
+        <h2 class="hud-title text-3xl sm:text-4xl">Everything the dendrimer MD pipeline needs</h2>
+        <p class="text-slate-400 mt-4 leading-relaxed">
+          Geometry construction, force-field parameterization, solvation, MD input
+          generation, and post-simulation structural analysis - one console, end to end.
         </p>
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {features.map(f => (
-          <div class="card group border-l-2 border-l-teal-500/30 hover:border-l-teal-500">
-            <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-colors">
-              <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={f.icon}/>
+          <div class="hud-panel hud-corners group rounded-xl p-6 transition-transform duration-300 hover:-translate-y-1 reveal">
+            <div class="flex items-center justify-between mb-5">
+              <div class="w-11 h-11 rounded-lg flex items-center justify-center border border-[var(--hud-line)] bg-[rgba(44,232,216,0.06)] group-hover:bg-[rgba(44,232,216,0.14)] transition-colors">
+                <svg class="w-5 h-5 text-[var(--hud-cy)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={f.icon}
+                     style="filter:drop-shadow(0 0 4px rgba(44,232,216,0.5))"/>
+              </div>
+              <span class="font-mono text-[10px] text-[var(--hud-cy-deep)] tracking-[0.15em]">{f.tag}</span>
             </div>
-            <h3 class="text-slate-100 font-bold mb-2">{f.title}</h3>
+            <h3 class="font-display font-semibold text-slate-100 text-lg mb-2 group-hover:text-[var(--hud-cy-bright)] transition-colors">{f.title}</h3>
             <p class="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
           </div>
         ))}
@@ -203,175 +276,191 @@ const structColorMap: Record<string,string> = {
     </div>
   </section>
 
-  <!-- ── Structures Gallery ── -->
-  <section class="py-24 section-rule" style="background: linear-gradient(180deg, #020617 0%, #0b1221 50%, #020617 100%);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Output Structures</p>
-        <h2 class="section-title">Simulation-ready at every generation</h2>
-        <p class="section-subtitle max-w-2xl mx-auto">
-          Radial topology diagrams for each supported dendrimer family — color-coded by type.
-          Each is exported as AMBER-compatible .prmtop / .inpcrd ready for NAMD.
-        </p>
-      </div>
+  <!-- ══════════════ BUILD ENGINE · SPLIT ══════════════ -->
+  <section class="hud-bg scanlines relative py-24">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
-        {structures.map(s => (
-          <div class="group rounded-2xl overflow-hidden border border-slate-700/40 bg-black transition-all duration-300 hover:border-teal-500/40 hover:shadow-[0_0_32px_rgba(20,184,166,0.12)]">
-            <img src={s.src} alt={s.label + ' minimized structure'} class="w-full" />
-            <div class="px-4 py-3 bg-slate-950/80">
-              <div class={`font-bold text-sm mb-0.5 ${structColorMap[s.color]}`}>{s.label}</div>
-              <div class="mono text-slate-500 text-xs">{s.sub}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <p class="text-center mt-8 text-slate-600 text-sm">
-        All topologies built and parameterized by UDB v1.0 — GAFF2 + Fragment BCC charge assignment.
-        <a href="/tools/udb/structures/" class="text-teal-500 hover:text-teal-400 ml-1">Full structure gallery →</a>
-      </p>
-    </div>
-  </section>
-
-  <!-- ── Dendrimer Types ── -->
-  <section class="py-24 bg-slate-950 section-rule">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-14">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Supported Topologies</p>
-        <h2 class="section-title">9 Dendrimer Families</h2>
-        <p class="section-subtitle max-w-2xl mx-auto">
-          Each type has a dedicated parameterization pathway —
-          GAFF2, CGenFF, or mixed force fields depending on backbone chemistry.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
-        {dendrimerTypes.map(t => (
-          <div class={`rounded-2xl p-4 text-center transition-all duration-200 cursor-default ${colorMap[t.color]}`}>
-            <div class="text-lg font-extrabold mb-1 tracking-tight">{t.name}</div>
-            <div class="text-xs opacity-60 leading-tight mono">{t.core}</div>
-          </div>
-        ))}
-      </div>
-
-      <p class="text-center mt-6 text-slate-500 text-sm">
-        All types support G1–G10.
-        <a href="/tools/udb/" class="text-teal-500 hover:text-teal-400 ml-1">Force-field support matrix →</a>
-      </p>
-    </div>
-  </section>
-
-  <!-- ── GUI Screenshot ── -->
-  <section class="py-24 section-rule" style="background: linear-gradient(135deg, #020617 0%, #0b1221 100%);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-14 items-center">
-
-        <div>
-          <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-4">Build Engine</p>
-          <h2 class="section-title">One application,<br/>complete pipeline</h2>
-          <p class="mt-4 text-slate-400 leading-relaxed">
-            The Build tab constructs 3D dendrimer geometry using a seven-stage cone-subdivision
+        <div class="reveal">
+          <p class="hud-eyebrow mb-4">BUILD ENGINE</p>
+          <h2 class="hud-title text-3xl sm:text-4xl leading-tight">One application,<br/>complete pipeline</h2>
+          <p class="mt-5 text-slate-400 leading-relaxed">
+            The Build tab constructs 3D dendrimer geometry via a seven-stage cone-subdivision
             algorithm with Fibonacci S² sphere sampling. Branches are placed clash-free by
             Simulated Annealing over SO(3) rotation space, then resolved by collective
             soft-core gradient descent.
           </p>
-          <ul class="mt-6 space-y-3">
+          <ul class="mt-7 space-y-3">
             {[
-              'Select type and generation → geometry ready in seconds',
+              'Select type + generation → geometry ready in seconds',
               'Fragment BCC assigns AM1-BCC partial charges per residue',
               'CGenFF integration covers heteroatom-rich branches automatically',
               'NAMD 3.x input deck (PSF, PDB, .conf, solvation) in one step',
               'Characterization: Rg, SASA, asphericity, Rh, density',
             ].map(item => (
               <li class="flex items-start gap-3 text-slate-300 text-sm">
-                <svg class="w-4 h-4 text-teal-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-[var(--hud-cy)] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"/>
                 </svg>
                 {item}
               </li>
             ))}
           </ul>
-          <div class="mt-8 flex gap-3">
-            <a href="/tools/udb/manual/" class="btn-primary">Read the Manual</a>
-            <a href="/tools/udb/examples/" class="btn-outline">Worked Examples</a>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/tools/udb/manual/" class="hud-btn">Read the Manual</a>
+            <a href="/tools/udb/structures/" class="hud-btn-ghost">Structure Gallery</a>
           </div>
         </div>
 
-        <div>
-          <div class="diagram-frame">
-            <img
-              src="/images/gui-pamam.png"
-              alt="UDB v1.0 GUI — PAMAM G6 build complete, 9,156 atoms, Generation Preview table"
-              class="w-full"
-              width="800" height="500"
-            />
+        <div class="space-y-4 reveal">
+          <!-- GUI capture in HUD frame -->
+          <div class="hud-panel hud-corners hud-scan rounded-xl overflow-hidden p-1.5">
+            <img src="/images/gui-pamam.png"
+                 alt="UDB v1.0 GUI - PAMAM G6 build complete, 9,156 atoms, Generation Preview table"
+                 class="w-full block rounded-lg" width="800" height="500" loading="lazy" />
           </div>
-          <p class="mono text-slate-600 text-xs text-center mt-3">
-            UDB v1.0 · PAMAM G6 · 9,156 atoms · Generation 6 of 6 complete
-          </p>
+          <!-- terminal readout -->
+          <div class="hud-panel hud-panel-solid hud-corners rounded-xl p-5">
+            <div class="flex items-center gap-1.5 mb-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-[var(--hud-mag)]/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[var(--hud-cy)]/80"></span>
+              <span class="font-mono text-[10px] text-slate-500 ml-2">udb@console - build.log</span>
+            </div>
+            <div class="hud-terminal overflow-x-auto"><code>{codeLines.join('\n')}</code><span class="cursor-blink"></span></div>
+          </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ── Dendrimer Size Estimator ── -->
-  <section class="py-24 bg-slate-950 section-rule">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3">Interactive Tool</p>
-        <h2 class="section-title">Dendrimer Size Estimator</h2>
-        <p class="section-subtitle max-w-xl mx-auto">
+  <!-- ══════════════ OUTPUT STRUCTURES ══════════════ -->
+  <section class="hud-bg relative py-24">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mb-14 reveal">
+        <p class="hud-eyebrow mb-4">OUTPUT STRUCTURES</p>
+        <h2 class="hud-title text-3xl sm:text-4xl">Simulation-ready at every generation</h2>
+        <p class="text-slate-400 mt-4 leading-relaxed">
+          Minimized topologies for each supported family - each exported as AMBER-compatible
+          .prmtop / .inpcrd, ready to stream into NAMD.
+        </p>
+      </div>
+
+      <div class="grid gap-5" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+        {structures.map(s => (
+          <div class="hud-panel hud-corners group rounded-xl overflow-hidden transition-transform duration-300 hover:-translate-y-1 reveal">
+            <MolViewer id={`home-${s.id}`} url={s.rep.file} height="220px" accent={s.accent} spin={true} zoom={0.82} />
+            <div class="px-4 py-3 border-t border-[var(--hud-line-soft)]">
+              <div class="font-display font-semibold text-sm mb-0.5" style={`color:${s.accent}`}>{s.name} G{s.rep.gen}</div>
+              <div class="font-mono text-[10px] text-slate-500">{s.rep.n_atoms.toLocaleString()} atoms · {formula(s.rep.composition)}</div>
+            </div>
+          </div>
+        ))}
+        <a href="/tools/udb/structures/"
+           class="hud-panel hud-corners group rounded-xl flex flex-col items-center justify-center text-center p-6 transition-transform duration-300 hover:-translate-y-1 reveal">
+          <div class="w-12 h-12 rounded-full border border-[var(--hud-line)] flex items-center justify-center mb-3 group-hover:border-[var(--hud-cy)] transition-colors">
+            <svg class="w-5 h-5 text-[var(--hud-cy)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 7l5 5-5 5"/></svg>
+          </div>
+          <div class="font-display font-semibold text-slate-200 text-sm group-hover:text-[var(--hud-cy-bright)] transition-colors">Full Gallery</div>
+          <div class="font-mono text-[10px] text-slate-500 mt-1">ALL FAMILIES · G1-G10</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SUPPORTED TOPOLOGIES ══════════════ -->
+  <section class="hud-bg scanlines relative py-24">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-14 reveal">
+        <p class="hud-eyebrow justify-center mb-4">SUPPORTED TOPOLOGIES</p>
+        <h2 class="hud-title text-3xl sm:text-4xl">9 Dendrimer Families</h2>
+        <p class="text-slate-400 mt-4 leading-relaxed">
+          Each type routes through a dedicated parameterization pathway - GAFF2, CGenFF,
+          or a mixed force field, selected by backbone chemistry.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-9 gap-3 max-w-5xl mx-auto">
+        {dendrimerTypes.map((t, i) => (
+          <div class="hud-panel hud-corners group rounded-lg px-2 py-4 text-center transition-transform duration-200 hover:-translate-y-1 reveal">
+            <div class="font-mono text-[9px] text-[var(--hud-cy-deep)] mb-1">{String(i + 1).padStart(2, '0')}</div>
+            <div class="font-display font-bold text-slate-100 text-sm mb-1 group-hover:text-[var(--hud-cy-bright)] transition-colors leading-tight">{t.name}</div>
+            <div class="font-mono text-[9px] text-slate-500">{t.core}</div>
+            <div class="mt-2 inline-block font-mono text-[8px] px-1.5 py-0.5 rounded border border-[var(--hud-line-soft)] text-[var(--hud-cy)]/70">{t.status}</div>
+          </div>
+        ))}
+      </div>
+
+      <p class="text-center mt-8 font-mono text-xs text-slate-500">
+        All types support G1-G10 ·
+        <a href="/tools/udb/" class="text-[var(--hud-cy)] hover:text-[var(--hud-cy-bright)] ml-1">FORCE-FIELD MATRIX →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════ INTERACTIVE ESTIMATOR ══════════════ -->
+  <section class="hud-bg relative py-24">
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 reveal">
+        <p class="hud-eyebrow justify-center mb-4">INTERACTIVE MODULE</p>
+        <h2 class="hud-title text-3xl sm:text-4xl">Dendrimer Size Estimator</h2>
+        <p class="text-slate-400 mt-4 max-w-xl mx-auto leading-relaxed">
           Select a type and generation for instant structural estimates.
           Formulas calibrated against Maiti et al. 2004 PAMAM benchmarks.
         </p>
       </div>
-      <DendrimerCalculator client:load />
+      <div class="hud-panel hud-corners rounded-2xl p-4 sm:p-6 reveal">
+        <DendrimerCalculator client:load />
+      </div>
     </div>
   </section>
 
-  <!-- ── Citation ── -->
-  <section class="py-24 section-rule" style="background: linear-gradient(180deg, #020617 0%, #0b1221 100%);">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <CitationBlock />
+  <!-- ══════════════ CITATION ══════════════ -->
+  <section class="hud-bg scanlines relative py-24">
+    <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal">
+        <CitationBlock />
+      </div>
     </div>
   </section>
 
-  <!-- ── Quick links ── -->
-  <section class="py-16 bg-slate-950 section-rule">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- ══════════════ QUICK ACCESS ══════════════ -->
+  <section class="hud-bg relative py-16 pb-24">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid sm:grid-cols-3 gap-5">
         {[
           {
-            href: '/tools/udb/install/',
+            href: '/tools/udb/install/', tag: 'ACS.01', title: 'Install',
             icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>`,
-            title: 'Install',
             desc: 'Linux conda setup, dependencies, NAMD binary configuration',
           },
           {
-            href: '/tools/udb/manual/',
+            href: '/tools/udb/manual/', tag: 'ACS.02', title: 'Manual',
             icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>`,
-            title: 'Manual',
             desc: 'Workflow overview, tab-by-tab guide, key parameters',
           },
           {
-            href: '/tools/udb/validation/',
+            href: '/tools/udb/validation/', tag: 'ACS.03', title: 'Benchmarks',
             icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>`,
-            title: 'Benchmarks',
             desc: 'Atom counts, Rg, and asphericity vs. literature values',
           },
         ].map(card => (
-          <a href={card.href} class="card group flex flex-col">
-            <div class="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-3 group-hover:bg-teal-500/20 transition-colors">
-              <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={card.icon}/>
+          <a href={card.href} class="hud-panel hud-corners group rounded-xl p-6 flex flex-col transition-transform duration-300 hover:-translate-y-1 reveal">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-11 h-11 rounded-lg flex items-center justify-center border border-[var(--hud-line)] bg-[rgba(44,232,216,0.06)] group-hover:bg-[rgba(44,232,216,0.14)] transition-colors">
+                <svg class="w-5 h-5 text-[var(--hud-cy)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={card.icon}/>
+              </div>
+              <span class="font-mono text-[10px] text-[var(--hud-cy-deep)]">{card.tag}</span>
             </div>
-            <h3 class="text-slate-200 font-bold mb-1 group-hover:text-teal-400 transition-colors">{card.title}</h3>
-            <p class="text-slate-500 text-sm leading-relaxed">{card.desc}</p>
+            <h3 class="font-display font-semibold text-slate-100 text-lg mb-1 group-hover:text-[var(--hud-cy-bright)] transition-colors">{card.title}</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
+            <span class="mt-4 font-mono text-[11px] text-[var(--hud-cy)] group-hover:translate-x-1 transition-transform">ACCESS →</span>
           </a>
         ))}
       </div>
     </div>
   </section>
+
+  <!-- scroll-reveal now handled globally by RevealInit.astro (mounted in Layout) -->
 
 </Layout>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 const sections = [
   {
@@ -19,9 +20,9 @@ const sections = [
     ],
   },
   {
-    title: 'Examples & Validation',
+    title: 'Structures & Validation',
     links: [
-      { href: '/tools/udb/examples/', label: 'Worked Examples', desc: 'End-to-end walkthroughs for PAMAM, Carbosilane, PPI, Phosphorus' },
+      { href: '/tools/udb/structures/', label: 'Structure Gallery', desc: 'Interactive 3D library of all 7 dendrimer families' },
       { href: '/tools/udb/validation/', label: 'Benchmarks', desc: 'Atom counts and shape descriptors vs. Maiti 2004' },
     ],
   },
@@ -41,21 +42,19 @@ const sections = [
 ];
 ---
 
-<Layout title="Documentation" description="UDB documentation index — manuals, examples, benchmarks, and reference materials." activeNav="docs">
+<Layout title="Documentation" description="UDB documentation index - manuals, examples, benchmarks, and reference materials." activeNav="docs">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Documentation</h1>
-      <p class="text-lg text-slate-400 max-w-xl">
-        Everything you need to install, use, and understand UDB.
-        Start with the Install guide or jump straight to Worked Examples.
-      </p>
-      <div class="mt-6 flex gap-3">
-        <a href="/tools/udb/install/" class="btn-primary">Install Guide</a>
-        <a href="/tools/udb/examples/" class="btn-outline">Examples</a>
-      </div>
-    </div>
-  </div>
+  <PageHero
+    eyebrow="// DOCUMENTATION"
+    title="Documentation"
+    subtitle="Everything you need to install, use, and understand UDB. Start with the Install guide or jump straight to the Structure Gallery."
+    glitch
+  >
+    <Fragment slot="actions">
+      <a href="/tools/udb/install/" class="btn-primary">Install Guide</a>
+      <a href="/tools/udb/structures/" class="btn-outline">Structure Gallery</a>
+    </Fragment>
+  </PageHero>
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
@@ -64,7 +63,7 @@ const sections = [
       {[
         { href: '/tools/udb/install/', title: 'Install', icon: '↓', color: 'teal' },
         { href: '/tools/udb/manual/', title: 'Manual', icon: '📖', color: 'sky' },
-        { href: '/tools/udb/examples/', title: 'Examples', icon: '▶', color: 'violet' },
+        { href: '/tools/udb/structures/', title: 'Gallery', icon: '◎', color: 'violet' },
         { href: '/tools/udb/validation/', title: 'Benchmarks', icon: '✓', color: 'emerald' },
         { href: '/tools/udb/changelog/', title: 'Changelog', icon: '📋', color: 'slate' },
       ].map(card => (

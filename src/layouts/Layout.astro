@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import RevealInit from '../components/RevealInit.astro';
+import ScienceCanvas from '../components/ScienceCanvas.astro';
 
 interface Props {
   title: string;
@@ -12,7 +14,7 @@ interface Props {
 
 const {
   title,
-  description = 'Universal Dendrimer Builder (UDB) — open-source Python application for building, parameterizing, and simulating dendrimer nanostructures with AMBER and NAMD.',
+  description = 'Universal Dendrimer Builder (UDB) - open-source Python application for building, parameterizing, and simulating dendrimer nanostructures with AMBER and NAMD.',
   image = '/images/og-default.png',
   activeNav,
 } = Astro.props;
@@ -21,9 +23,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
   <head>
     <meta charset="UTF-8" />
+    <!-- Remove the no-js guard before paint so JS users get scroll-reveal;
+         if JS is disabled, `.no-js .reveal` keeps all content visible. -->
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
@@ -56,11 +61,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       rel="stylesheet"
     />
   </head>
-  <body class="min-h-screen flex flex-col bg-slate-950">
+  <body class="min-h-screen flex flex-col" style="background:#04070e">
+    <ScienceCanvas intensity={0.82} />
     <Nav activeNav={activeNav} />
     <main class="flex-1">
       <slot />
     </main>
     <Footer />
+    <RevealInit />
   </body>
 </html>

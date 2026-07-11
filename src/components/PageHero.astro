@@ -1,0 +1,91 @@
+---
+/**
+ * PageHero - the shared HUD hero band for every inner page.
+ *
+ * Replaces the per-page `bg-gradient-to-br from-slate-950 …` bands so all
+ * pages open with the same atmosphere as the homepage. Transparent-ish by
+ * design: the living background + body glow read through the `.page-hero`
+ * surface (see global.css).
+ *
+ * Props:
+ *   eyebrow   short mono label, e.g. "// USER MANUAL"  (optional)
+ *   title     the H1 text (required)
+ *   subtitle  supporting line (optional)
+ *   glitch    render the title with the HUD glitch effect (default false)
+ *   align     'left' | 'center'  (default 'left')
+ *   reactor   show a compact DendrimerReactor on the right (default false, ≥lg only)
+ *
+ * Slots:
+ *   breadcrumb  rendered above the title (optional)
+ *   actions     rendered below the subtitle (buttons/links, optional)
+ */
+import DendrimerReactor from './DendrimerReactor.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  glitch?: boolean;
+  align?: 'left' | 'center';
+  reactor?: boolean;
+}
+
+const {
+  eyebrow,
+  title,
+  subtitle,
+  glitch = false,
+  align = 'left',
+  reactor = false,
+} = Astro.props;
+
+const centered = align === 'center';
+const hasBreadcrumb = Astro.slots.has('breadcrumb');
+const hasActions = Astro.slots.has('actions');
+---
+
+<div class="page-hero">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+    <div class={`flex flex-col gap-8 ${reactor ? 'lg:flex-row lg:items-center lg:justify-between' : ''}`}>
+
+      <!-- Text column -->
+      <div class={`reveal max-w-2xl ${centered ? 'mx-auto text-center items-center flex flex-col' : ''}`}>
+        {hasBreadcrumb && (
+          <div class="mb-4 font-mono text-[11px] text-[var(--hud-cy-deep)] tracking-[0.16em]">
+            <slot name="breadcrumb" />
+          </div>
+        )}
+
+        {eyebrow && (
+          <p class={`hud-eyebrow mb-4 ${centered ? 'justify-center' : ''}`}>{eyebrow}</p>
+        )}
+
+        <h1 class="hud-title text-4xl sm:text-5xl leading-[1.04] text-slate-50">
+          {glitch
+            ? <span class="glitch glitch-live inline-block" data-text={title}>{title}</span>
+            : title}
+        </h1>
+
+        {subtitle && (
+          <p class="section-subtitle mt-4 text-slate-400 text-lg leading-relaxed">{subtitle}</p>
+        )}
+
+        {hasActions && (
+          <div class={`mt-7 flex flex-wrap gap-3 ${centered ? 'justify-center' : ''}`}>
+            <slot name="actions" />
+          </div>
+        )}
+      </div>
+
+      <!-- Optional compact reactor (desktop only, decorative) -->
+      {reactor && (
+        <div class="reveal reveal-scale hidden lg:block shrink-0 w-[300px]" aria-hidden="true">
+          <div class="hud-panel hud-corners rounded-2xl p-3 overflow-hidden">
+            <DendrimerReactor id="page-hero" maxGen={3} height="220px" compact />
+          </div>
+        </div>
+      )}
+
+    </div>
+  </div>
+</div>
