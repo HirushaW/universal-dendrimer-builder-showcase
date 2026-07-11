@@ -1,10 +1,11 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHero from '../../../../components/PageHero.astro';
 
 const pamamAtomCounts = [
-  { gen: 'G1', atoms: 84,   terminal: 8,   mw: '~1.2 kDa', rg_udb: '7.4', rg_lit: '—',    source: 'Maiti 2004' },
-  { gen: 'G2', atoms: 228,  terminal: 16,  mw: '~3.2 kDa', rg_udb: '10.1', rg_lit: '—',   source: 'Maiti 2004' },
-  { gen: 'G3', atoms: 516,  terminal: 32,  mw: '~6.9 kDa', rg_udb: '12.4', rg_lit: '11.7–13.2', source: 'Maiti 2004' },
+  { gen: 'G1', atoms: 84,   terminal: 8,   mw: '~1.2 kDa', rg_udb: '7.4', rg_lit: '-',    source: 'Maiti 2004' },
+  { gen: 'G2', atoms: 228,  terminal: 16,  mw: '~3.2 kDa', rg_udb: '10.1', rg_lit: '-',   source: 'Maiti 2004' },
+  { gen: 'G3', atoms: 516,  terminal: 32,  mw: '~6.9 kDa', rg_udb: '12.4', rg_lit: '11.7-13.2', source: 'Maiti 2004' },
   { gen: 'G4', atoms: 1108, terminal: 64,  mw: '~14.4 kDa',rg_udb: '15.3', rg_lit: '15.1', source: 'Maiti 2004' },
   { gen: 'G5', atoms: 2420, terminal: 128, mw: '~28.8 kDa',rg_udb: '19.2', rg_lit: '20.3', source: 'Maiti 2004' },
   { gen: 'G6', atoms: 4548, terminal: 256, mw: '~58 kDa',  rg_udb: '23.8', rg_lit: '24.5', source: 'Maiti 2004' },
@@ -20,24 +21,22 @@ const asphericityData = [
 ];
 ---
 
-<Layout title="Benchmarks & Validation" description="UDB validation data — atom counts, Rg, and asphericity vs. Maiti et al. 2004 and other literature." activeNav="tools">
+<Layout title="Benchmarks & Validation" description="UDB validation data - atom counts, Rg, and asphericity vs. Maiti et al. 2004 and other literature." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Benchmarks</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Benchmarks & Validation</h1>
-      <p class="text-lg text-slate-400 max-w-2xl">
-        Structural metrics produced by UDB compared against published MD simulation data.
-        PAMAM atom counts and shape descriptors are primary validation targets.
-      </p>
-    </div>
-  </div>
+  <PageHero
+    eyebrow="// BENCHMARKS"
+    title="Benchmarks & Validation"
+    subtitle="Structural metrics produced by UDB compared against published MD simulation data. PAMAM atom counts and shape descriptors are primary validation targets."
+    glitch
+  >
+    <Fragment slot="breadcrumb">
+      <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <a href="/tools/udb/" class="hover:text-[var(--hud-cy)] transition-colors">UDB</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <span class="text-slate-300">Benchmarks</span>
+    </Fragment>
+  </PageHero>
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
 
@@ -59,9 +58,9 @@ const asphericityData = [
     <section>
       <h2 class="text-2xl font-bold text-slate-100 mb-4">Benchmark Summary</h2>
       <div class="rounded-2xl overflow-hidden border border-slate-700">
-        <img src="/images/ai-validation-benchmarks.png" alt="UDB validation benchmarks — atom counts and asphericity vs Maiti 2004 literature values" class="w-full" />
+        <img src="/images/ai-validation-benchmarks.png" alt="UDB validation benchmarks - atom counts and asphericity vs Maiti 2004 literature values" class="w-full" />
       </div>
-      <p class="mono text-slate-600 text-xs text-center mt-3">Atom count match and asphericity convergence vs. Maiti et al. (2004) across G1–G6</p>
+      <p class="mono text-slate-600 text-xs text-center mt-3">Atom count match and asphericity convergence vs. Maiti et al. (2004) across G1-G6</p>
     </section>
 
     <!-- PAMAM atom counts -->
@@ -70,7 +69,7 @@ const asphericityData = [
       <p class="text-slate-400 text-sm mb-1">
         Reference: <cite>Maiti, P.K.; Caçin, T.; Wang, G.; Goddard, W.A. III.
         <em>Structure of PAMAM dendrimers: Generations 1 through 11.</em>
-        Macromolecules <strong>2004</strong>, 37, 6236–6254.</cite>
+        Macromolecules <strong>2004</strong>, 37, 6236-6254.</cite>
       </p>
       <p class="text-slate-500 text-xs mb-6">DOI: 10.1021/ma035629b</p>
 
@@ -119,7 +118,7 @@ const asphericityData = [
 
     <!-- Shape descriptors -->
     <section>
-      <h2 class="text-2xl font-bold text-slate-100 mb-2">Shape Descriptors — PAMAM</h2>
+      <h2 class="text-2xl font-bold text-slate-100 mb-2">Shape Descriptors - PAMAM</h2>
       <p class="text-slate-400 text-sm mb-1">
         Asphericity (δ) and acylindricity (κ) computed from the Rg tensor.
         Values approach zero as the dendrimer becomes spherically symmetric with increasing generation.
@@ -192,8 +191,8 @@ const asphericityData = [
       </p>
       <div class="space-y-3">
         {[
-          { item: 'Solvated PAMAM G3 density vs. published values (target: 0.995–1.05 g/cm³)', status: 'In progress' },
-          { item: 'Rg vs. experimental DLS hydrodynamic radius for G4–G6', status: 'Pending' },
+          { item: 'Solvated PAMAM G3 density vs. published values (target: 0.995-1.05 g/cm³)', status: 'In progress' },
+          { item: 'Rg vs. experimental DLS hydrodynamic radius for G4-G6', status: 'Pending' },
           { item: 'PPI dendrimer atom counts vs. de Brabander-van den Berg 1993', status: 'Pending' },
           { item: 'Carbosilane G2 structure vs. Majoral et al. 1999', status: 'Pending' },
           { item: 'SASA comparison for PAMAM G3 vs. Goddard MD data', status: 'Pending' },
@@ -215,23 +214,23 @@ const asphericityData = [
         <p>
           [1] Maiti, P.K.; Caçin, T.; Wang, G.; Goddard, W.A. III.
           Structure of PAMAM dendrimers: Generations 1 through 11.
-          <em>Macromolecules</em> <strong>2004</strong>, 37, 6236–6254.
+          <em>Macromolecules</em> <strong>2004</strong>, 37, 6236-6254.
           DOI: 10.1021/ma035629b
         </p>
         <p>
           [2] Tomalia, D.A. et al. A new class of polymers: starburst-dendritic macromolecules.
-          <em>Polymer Journal</em> <strong>1985</strong>, 17, 117–132.
+          <em>Polymer Journal</em> <strong>1985</strong>, 17, 117-132.
         </p>
         <p>
           [3] Tomalia, D.A.; Baker, H.; Dewald, J.R.; Hall, M.; Kallos, G.; Martin, S.; Roeck, J.;
           Ryder, J.; Smith, P. Dendritic macromolecules: Synthesis of starburst dendrimers.
-          <em>Macromolecules</em> <strong>1986</strong>, 19, 2466–2468.
+          <em>Macromolecules</em> <strong>1986</strong>, 19, 2466-2468.
         </p>
       </div>
     </section>
 
     <div class="flex gap-4 pt-4 border-t border-slate-800">
-      <a href="/tools/udb/examples/" class="btn-primary">Worked Examples</a>
+      <a href="/tools/udb/structures/" class="btn-primary">Structure Gallery</a>
     </div>
 
   </div>

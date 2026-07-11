@@ -1,71 +1,83 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
-import Mol2Viewer from '../../../../components/Mol2Viewer.astro';
-import { dendrimers, colorBadge, colorAccent, colorBorder } from '../../../../data/dendrimers';
+import MolViewer from '../../../../components/MolViewer.astro';
+import MolViewerRuntime from '../../../../components/MolViewerRuntime.astro';
+import { dendrimers, colorBadge, colorAccent } from '../../../../data/dendrimers';
+import { getStructure, metricRows, formula, ELEMENT_COLORS } from '../../../../data/structures';
 
 export function getStaticPaths() {
   return dendrimers.map(d => ({ params: { type: d.id }, props: { d } }));
 }
 
 const { d } = Astro.props;
+const struct = getStructure(d.id);
 
 const allTypes = dendrimers.map(x => ({ id: x.id, name: x.name, color: x.color }));
 const currentIdx = dendrimers.findIndex(x => x.id === d.id);
 const prev = dendrimers[currentIdx - 1] ?? null;
 const next = dendrimers[currentIdx + 1] ?? null;
+
+const accentHex: Record<string, string> = {
+  teal: '#2ce8d8', sky: '#38bdf8', amber: '#fbbf24', red: '#f87171',
+  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9',
+};
+const accent = accentHex[d.color] ?? '#2ce8d8';
+
+const gens = struct?.generations ?? [];
+const maxGen = gens.length ? gens[gens.length - 1].gen : null;
+
+// elements present across this family's structures (for the legend)
+const elementsPresent = new Set<string>();
+[struct?.core, struct?.monomer, ...gens].forEach(m => {
+  if (m?.composition) Object.keys(m.composition).forEach(e => elementsPresent.add(e));
+});
 ---
 
 <Layout
-  title={`${d.name} — ${d.full}`}
-  description={`${d.name} (${d.full}) dendrimer — Avogadro renders G1–G4, interactive 3D monomer and core viewer, chemistry and applications.`}
+  title={`${d.name} - ${d.full}`}
+  description={`${d.name} (${d.full}) dendrimer - live interactive 3D of the AMBER-minimised generation series (G1-G${maxGen ?? '?'}), core and monomer, with full characterization data.`}
   activeNav="tools"
 >
+  <MolViewerRuntime />
 
   <!-- Page header -->
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+  <div class="hud-veil py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-      <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-5 flex-wrap">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <a href="/tools/udb/structures/" class="hover:text-teal-400 transition-colors">Structure Gallery</a>
-        <span>/</span>
-        <span class={colorAccent[d.color]}>{d.name}</span>
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-5 flex-wrap font-mono">
+        <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a><span class="text-slate-700">/</span>
+        <a href="/tools/udb/" class="hover:text-[var(--hud-cy)] transition-colors">UDB</a><span class="text-slate-700">/</span>
+        <a href="/tools/udb/structures/" class="hover:text-[var(--hud-cy)] transition-colors">Structure Gallery</a><span class="text-slate-700">/</span>
+        <span style={`color:${accent}`}>{d.name}</span>
       </div>
 
       <div class="flex flex-col lg:flex-row lg:items-start gap-8">
-        <!-- Title + meta -->
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-2 mb-3">
-            <span class={`badge border ${colorBadge[d.color]}`}>{d.name}</span>
-            <span class="badge bg-slate-800 text-slate-400 border border-slate-700">{d.full}</span>
-            <span class="badge bg-slate-800 text-slate-500 border border-slate-700 mono text-xs">{d.coreLabel}</span>
+            <span class="hud-chip" style={`color:${accent};border-color:${accent}55`}>{d.name}</span>
+            <span class="hud-chip">{d.full}</span>
+            <span class="hud-chip">{d.coreLabel}</span>
           </div>
-          <h1 class={`text-4xl font-extrabold mb-3 ${colorAccent[d.color]}`}>{d.name}</h1>
+          <h1 class="hud-title text-4xl sm:text-5xl mb-3" style={`color:${accent}`}>{d.name}</h1>
           <p class="text-lg text-slate-300 font-semibold mb-3">{d.full}</p>
           <p class="text-slate-400 leading-relaxed max-w-2xl">{d.description}</p>
         </div>
 
-        <!-- Quick facts -->
-        <div class="lg:w-80 shrink-0 bg-slate-900/60 rounded-2xl border border-slate-700 p-5 space-y-3">
-          <h3 class="text-slate-300 font-semibold text-sm uppercase tracking-wider mb-3">Quick Facts</h3>
+        <div class="lg:w-80 shrink-0 hud-panel hud-corners rounded-2xl p-5 space-y-3">
+          <h3 class="font-mono text-[11px] tracking-[0.2em] uppercase mb-3" style={`color:${accent}`}>// Quick Facts</h3>
           {[
-            { label: 'Full name',     value: d.full },
-            { label: 'Core',          value: d.coreLabel },
-            { label: 'Force field',   value: d.forceField },
-            { label: 'Generations',   value: `G1 – G${d.generations[d.generations.length - 1].gen.replace('G','')} (rendered)` },
+            { label: 'Full name',   value: d.full },
+            { label: 'Core',        value: d.coreLabel },
+            { label: 'Force field', value: d.forceField },
+            { label: 'Series',      value: maxGen ? `G1 - G${maxGen} (AMBER-minimised)` : '-' },
           ].map(row => (
             <div class="flex flex-col gap-0.5">
-              <span class="text-slate-500 text-xs uppercase tracking-wider">{row.label}</span>
+              <span class="font-mono text-[10px] text-slate-500 uppercase tracking-wider">{row.label}</span>
               <span class="text-slate-200 text-sm">{row.value}</span>
             </div>
           ))}
           <div class="flex flex-col gap-0.5 pt-1">
-            <span class="text-slate-500 text-xs uppercase tracking-wider">Chemistry</span>
-            <span class="text-slate-400 text-xs leading-relaxed mono">{d.chemistry}</span>
+            <span class="font-mono text-[10px] text-slate-500 uppercase tracking-wider">Chemistry</span>
+            <span class="text-slate-400 text-xs leading-relaxed font-mono">{d.chemistry}</span>
           </div>
         </div>
       </div>
@@ -73,18 +85,14 @@ const next = dendrimers[currentIdx + 1] ?? null;
   </div>
 
   <!-- Type nav bar -->
-  <div class="bg-slate-900/80 border-b border-slate-800 sticky top-16 z-40">
+  <div class="bg-[rgba(6,14,20,0.8)] border-b border-[var(--hud-line)] sticky top-16 z-40 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
       <div class="flex gap-1 py-2 min-w-max">
         {allTypes.map(t => (
-          <a
-            href={`/tools/udb/structures/${t.id}/`}
-            class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              t.id === d.id
-                ? `${colorBadge[t.color]} border`
-                : 'text-slate-500 hover:text-slate-300'
-            }`}
-          >
+          <a href={`/tools/udb/structures/${t.id}/`}
+             class={`px-3 py-1.5 rounded-lg text-xs font-display font-semibold uppercase tracking-wider transition-colors ${
+               t.id === d.id ? '' : 'text-slate-500 hover:text-slate-200'}`}
+             style={t.id === d.id ? `color:${accentHex[t.color]};background:${accentHex[t.color]}18;border:1px solid ${accentHex[t.color]}44` : ''}>
             {t.name}
           </a>
         ))}
@@ -92,95 +100,130 @@ const next = dendrimers[currentIdx + 1] ?? null;
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
 
-    <!-- Generation series -->
+    <!-- Building blocks: pure core + monomer -->
     <section>
-      <h2 class="text-2xl font-bold text-slate-100 mb-2">Generation Series</h2>
-      <p class="text-slate-400 text-sm mb-6">
-        Avogadro-rendered, AMBER-minimised structures. Each generation adds one shell of branching units,
-        doubling the number of surface groups and roughly doubling atom count.
-      </p>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        {d.generations.map(g => (
-          <div class={`rounded-2xl overflow-hidden border bg-black transition-all duration-300 ${colorBorder[d.color]}`}>
-            <img
-              src={g.src}
-              alt={`${d.name} ${g.gen} — Avogadro minimized structure, ${g.atoms} atoms`}
-              class="w-full object-contain"
-              style="min-height: 300px; max-height: 360px;"
-              loading="lazy"
-            />
-            <div class="px-4 py-3 bg-slate-950/90 border-t border-slate-800">
-              <div class={`font-bold ${colorAccent[d.color]}`}>{d.name} {g.gen}</div>
-              <div class="mono text-slate-500 text-xs mt-0.5">{g.atoms} atoms</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Applications -->
-    <section class="bg-slate-900/40 rounded-2xl border border-slate-700/50 p-6">
-      <h2 class="text-slate-200 font-bold text-lg mb-3">Applications</h2>
-      <p class="text-slate-400 leading-relaxed">{d.applications}</p>
-    </section>
-
-    <!-- 3D interactive building blocks -->
-    <section>
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
         <div>
-          <h2 class="text-2xl font-bold text-slate-100">Building Blocks — Interactive 3D</h2>
-          <p class="text-slate-400 text-sm mt-1">
-            Loaded from actual UDB output files. Coloured by element (Jmol scheme).
-            Drag to rotate · Scroll to zoom.
+          <p class="hud-eyebrow mb-3">Building Blocks</p>
+          <h2 class="hud-title text-2xl sm:text-3xl">Core &amp; Monomer - Live 3D</h2>
+          <p class="text-slate-400 text-sm mt-2 max-w-2xl">
+            The pure initiator core and a single repeat unit, loaded from UDB's typed MOL2 output.
+            Drag to rotate · scroll to zoom · click any atom to read its index &amp; element.
           </p>
         </div>
-        <!-- Atom colour legend -->
-        <div class="flex flex-wrap items-center gap-3 text-xs mono shrink-0">
+        <div class="flex flex-wrap items-center gap-3 text-xs font-mono shrink-0">
           <span class="text-slate-500">Atoms:</span>
-          {[
-            { el: 'C',  bg: '#606060' },
-            { el: 'H',  bg: '#d0d0d0' },
-            { el: 'N',  bg: '#3050F8' },
-            { el: 'O',  bg: '#FF2010' },
-            { el: 'P',  bg: '#FF8000' },
-            { el: 'S',  bg: '#FFFF30' },
-            { el: 'Si', bg: '#F0C8A0' },
-          ].map(a => (
+          {[...elementsPresent].map(el => (
             <span class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-full inline-block shrink-0" style={`background:${a.bg};box-shadow:0 0 4px ${a.bg}60`}></span>
-              <span class="text-slate-300">{a.el}</span>
+              <span class="w-3 h-3 rounded-full inline-block shrink-0" style={`background:${ELEMENT_COLORS[el] ?? '#aaa'};box-shadow:0 0 5px ${ELEMENT_COLORS[el] ?? '#aaa'}80`}></span>
+              <span class="text-slate-300">{el}</span>
             </span>
           ))}
         </div>
       </div>
-      <Mol2Viewer id={d.id} monomerUrl={d.monomerUrl} coreUrl={d.coreUrl} />
+
+      <div class="grid md:grid-cols-2 gap-6">
+        {struct?.core && (
+          <div>
+            <MolViewer id={`${d.id}-core`} url={struct.core.file} height="320px" accent={accent} zoom={0.85}
+              label="Initiator Core" sublabel={`${struct.core.n_atoms} atoms · ${formula(struct.core.composition)} · ${struct.core.mw?.toFixed(1)} Da`} />
+          </div>
+        )}
+        {struct?.monomer && (
+          <div>
+            <MolViewer id={`${d.id}-monomer`} url={struct.monomer.file} height="320px" accent={accent} zoom={0.85}
+              label="Repeat Unit (Monomer)" sublabel={`${struct.monomer.n_atoms} atoms · ${formula(struct.monomer.composition)} · ${struct.monomer.mw?.toFixed(1)} Da`} />
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- Generation series: live minimised structures + full characterization -->
+    <section>
+      <p class="hud-eyebrow mb-3">Generation Series</p>
+      <h2 class="hud-title text-2xl sm:text-3xl">AMBER-Minimised Structures</h2>
+      <p class="text-slate-400 text-sm mt-2 mb-8 max-w-3xl">
+        Each generation below is the actual GAFF2/AMBER energy-minimised structure ({maxGen ? `G1-G${maxGen}` : ''}).
+        All metrics are computed by UDB's characterization module directly from these minimised coordinates.
+      </p>
+
+      <div class="space-y-6">
+        {gens.map(g => {
+          const rows = metricRows(g);
+          return (
+            <div class="hud-panel hud-corners rounded-2xl p-5 sm:p-6">
+              <div class="grid lg:grid-cols-[minmax(0,1fr)_1.25fr] gap-6 items-start">
+                <!-- live viewer -->
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="font-hud text-2xl font-bold" style={`color:${accent}`}>{d.name} G{g.gen}</span>
+                    <span class="hud-chip">{g.n_atoms.toLocaleString()} atoms</span>
+                  </div>
+                  <MolViewer id={`${d.id}-g${g.gen}`} url={g.file} height="360px" accent={accent} zoom={0.92} />
+                </div>
+
+                <!-- characterization data -->
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="font-mono text-[11px] tracking-[0.2em] uppercase" style={`color:${accent}`}>// Characterization</span>
+                    <span class="font-mono text-[10px] text-slate-500">GAFF2 · AM1-BCC · minimised</span>
+                  </div>
+                  <!-- composition chips -->
+                  {g.composition && (
+                    <div class="flex flex-wrap gap-2 mb-4">
+                      {Object.entries(g.composition).map(([el, n]) => (
+                        <span class="flex items-center gap-1.5 font-mono text-[11px] px-2 py-1 rounded border border-[var(--hud-line)]">
+                          <span class="w-2.5 h-2.5 rounded-full" style={`background:${ELEMENT_COLORS[el] ?? '#aaa'}`}></span>
+                          <span class="text-slate-200">{el}</span><span class="text-slate-500">{n}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div class="grid sm:grid-cols-2 gap-x-6 gap-y-0">
+                    {rows.map(r => (
+                      <div class="flex items-baseline justify-between gap-3 py-1.5 border-b border-[var(--hud-line-soft)]">
+                        <span class="font-mono text-[11px] text-slate-500">{r.label}</span>
+                        <span class="font-mono text-[11px] text-slate-200 text-right">
+                          {r.value}{r.note && <span class="text-slate-500"> · {r.note}</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Applications -->
+    <section class="hud-panel hud-corners rounded-2xl p-6">
+      <h2 class="font-display text-slate-100 font-bold text-lg mb-3">Applications</h2>
+      <p class="text-slate-400 leading-relaxed">{d.applications}</p>
     </section>
 
   </div>
 
-  <!-- Prev / Next navigation -->
+  <!-- Prev / Next -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
-    <div class="flex items-center justify-between gap-4 pt-8 border-t border-slate-800">
+    <div class="flex items-center justify-between gap-4 pt-8 border-t border-[var(--hud-line)]">
       <div>
         {prev && (
-          <a href={`/tools/udb/structures/${prev.id}/`} class="flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
+          <a href={`/tools/udb/structures/${prev.id}/`} class="flex items-center gap-2 text-slate-400 hover:text-[var(--hud-cy)] transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             <span class="text-sm">{prev.name}</span>
           </a>
         )}
       </div>
-      <a href="/tools/udb/structures/" class="text-slate-500 hover:text-teal-400 text-sm transition-colors">All types ↑</a>
+      <a href="/tools/udb/structures/" class="font-mono text-slate-500 hover:text-[var(--hud-cy)] text-sm transition-colors">ALL TYPES ↑</a>
       <div>
         {next && (
-          <a href={`/tools/udb/structures/${next.id}/`} class="flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors">
+          <a href={`/tools/udb/structures/${next.id}/`} class="flex items-center gap-2 text-slate-400 hover:text-[var(--hud-cy)] transition-colors">
             <span class="text-sm">{next.name}</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </a>
         )}
       </div>
@@ -188,48 +231,3 @@ const next = dendrimers[currentIdx + 1] ?? null;
   </div>
 
 </Layout>
-
-<!-- 3Dmol.js -->
-<script is:inline src="https://3dmol.org/build/3Dmol-min.js"></script>
-<script is:inline>
-(async function () {
-  if (typeof $3Dmol === 'undefined') return;
-
-  const pairs = document.querySelectorAll('.mol2-viewer-pair');
-  for (const pair of pairs) {
-    const monomerUrl = pair.dataset.monomer;
-    const coreUrl    = pair.dataset.core;
-    const id         = pair.dataset.id;
-
-    async function initViewer(containerId, url) {
-      const el = document.getElementById(containerId);
-      if (!el) return;
-      try {
-        const data = await fetch(url).then(r => r.text());
-        el.querySelector('.viewer-loading')?.remove();
-
-        const viewer = $3Dmol.createViewer(el, { backgroundColor: '#0b1221', antialias: true });
-        const fmt = url.endsWith('.pdb') ? 'pdb' : 'mol2';
-        viewer.addModel(data, fmt);
-        viewer.setStyle({}, {
-          stick:  { colorscheme: 'Jmol', radius: 0.18 },
-          sphere: { colorscheme: 'Jmol', scale: 0.38 },
-        });
-        viewer.setStyle({ elem: 'H' }, {
-          stick:  { colorscheme: 'Jmol', radius: 0.08 },
-          sphere: { colorscheme: 'Jmol', scale: 0.18 },
-        });
-        viewer.zoomTo();
-        viewer.zoom(0.88);
-        viewer.render();
-      } catch {
-        const el2 = document.getElementById(containerId);
-        if (el2) el2.innerHTML = '<p class="text-slate-500 text-xs text-center p-4">Failed to load structure</p>';
-      }
-    }
-
-    initViewer(`viewer-${id}-monomer`, monomerUrl);
-    initViewer(`viewer-${id}-core`, coreUrl);
-  }
-})();
-</script>

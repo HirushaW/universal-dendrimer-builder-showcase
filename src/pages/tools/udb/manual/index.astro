@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHero from '../../../../components/PageHero.astro';
 
 const tabs = [
   { id: 'build', label: 'Build Tab', icon: '⬡' },
@@ -10,24 +11,22 @@ const tabs = [
 ];
 ---
 
-<Layout title="User Manual" description="Complete UDB manual — workflow overview, tab-by-tab guide, and key parameters." activeNav="tools">
+<Layout title="User Manual" description="Complete UDB manual - workflow overview, tab-by-tab guide, and key parameters." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Manual</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">User Manual</h1>
-      <p class="text-lg text-slate-400 max-w-2xl">
-        Complete reference for UDB v1.0 — workflow overview, tab-by-tab guide,
-        key parameters, expected outputs, and output file formats.
-      </p>
-    </div>
-  </div>
+  <PageHero
+    eyebrow="// USER MANUAL"
+    title="User Manual"
+    subtitle="Complete reference for UDB v1.0 - workflow overview, tab-by-tab guide, key parameters, expected outputs, and output file formats."
+    glitch
+  >
+    <Fragment slot="breadcrumb">
+      <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <a href="/tools/udb/" class="hover:text-[var(--hud-cy)] transition-colors">UDB</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <span class="text-slate-300">Manual</span>
+    </Fragment>
+  </PageHero>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <div class="grid lg:grid-cols-4 gap-10">
@@ -55,7 +54,7 @@ const tabs = [
           </nav>
           <div class="mt-4 pt-4 border-t border-slate-700 space-y-2">
             <a href="/tools/udb/install/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">← Installation</a>
-            <a href="/tools/udb/examples/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">Worked Examples →</a>
+            <a href="/tools/udb/structures/" class="block text-xs text-slate-500 hover:text-teal-400 transition-colors">Structure Gallery →</a>
           </div>
         </div>
       </aside>
@@ -85,7 +84,7 @@ const tabs = [
             </svg>
             <span>
               A typical PAMAM G3 build takes under 30 seconds on modern hardware.
-              Parameterization (antechamber + tleap) takes 1–5 minutes depending on
+              Parameterization (antechamber + tleap) takes 1-5 minutes depending on
               generation. NAMD MD runs depend on system size and simulation length.
             </span>
           </div>
@@ -105,7 +104,7 @@ const tabs = [
             </li>
             <li class="flex gap-3">
               <span class="text-teal-400 font-bold shrink-0">3.</span>
-              <span>Set the <strong class="text-slate-200">Generation</strong> slider to G1 – G10.</span>
+              <span>Set the <strong class="text-slate-200">Generation</strong> slider to G1 - G10.</span>
             </li>
             <li class="flex gap-3">
               <span class="text-teal-400 font-bold shrink-0">4.</span>
@@ -221,7 +220,7 @@ const tabs = [
             </p>
             <div class="grid sm:grid-cols-2 gap-3">
               {[
-                { metric: 'Rg', desc: 'Radius of gyration — overall size' },
+                { metric: 'Rg', desc: 'Radius of gyration - overall size' },
                 { metric: 'SASA', desc: 'Solvent-accessible surface area' },
                 { metric: 'vdW Volume', desc: 'van der Waals volume (Å³)' },
                 { metric: 'Rh', desc: 'Hydrodynamic radius estimate' },
@@ -293,7 +292,7 @@ const tabs = [
         <section id="parameters">
           <h2 class="text-2xl font-bold text-slate-100 mb-4">Key Parameters Reference</h2>
           <p class="text-slate-400 text-sm mb-4">
-            Default values are chosen to work well for PAMAM G1–G6.
+            Default values are chosen to work well for PAMAM G1-G6.
             Adjust for larger generations or alternative chemistries.
           </p>
           <div class="overflow-x-auto rounded-xl border border-slate-700">
@@ -308,7 +307,7 @@ const tabs = [
                   ['BOND_SCALE', '1.0', 'Multiplier on equilibrium bond lengths. >1.0 loosens structure.'],
                   ['BCC_CHARGE_METHOD', 'bcc', 'Charge method: bcc, gas, cm2. bcc = AM1-BCC.'],
                   ['FRAG_MAX_BONDS', '500', 'Fragment size limit for BCC. Residues above this use Gasteiger.'],
-                  ['WATER_PAD', '12 Å', 'Solvation box padding. 10–15 Å recommended.'],
+                  ['WATER_PAD', '12 Å', 'Solvation box padding. 10-15 Å recommended.'],
                   ['ION_CONC', '0.15 M', 'NaCl concentration for solvation.'],
                 ].map(([param, def, notes]) => (
                   <tr>
@@ -324,7 +323,7 @@ const tabs = [
 
         <!-- Next steps -->
         <div class="flex gap-4 pt-4 border-t border-slate-800">
-          <a href="/tools/udb/examples/" class="btn-primary">Worked Examples →</a>
+          <a href="/tools/udb/structures/" class="btn-primary">Structure Gallery →</a>
           <a href="/tools/udb/validation/" class="btn-outline">Benchmarks</a>
         </div>
 

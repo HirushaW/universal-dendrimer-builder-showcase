@@ -1,25 +1,24 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import PageHero from '../../../../components/PageHero.astro';
 ---
 
-<Layout title="Changelog" description="UDB version history — features added, algorithms changed, bugs fixed." activeNav="tools">
+<Layout title="Changelog" description="UDB version history - features added, algorithms changed, bugs fixed." activeNav="tools">
 
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
-        <span class="text-slate-300">Changelog</span>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Changelog</h1>
-      <p class="text-lg text-slate-400 max-w-xl">
-        Version history for Universal Dendrimer Builder.
-        All significant algorithmic changes, new features, and bug fixes are documented here.
-      </p>
-    </div>
-  </div>
+  <PageHero
+    eyebrow="// RELEASE LOG"
+    title="Changelog"
+    subtitle="Version history for Universal Dendrimer Builder. All significant algorithmic changes, new features, and bug fixes are documented here."
+    glitch
+  >
+    <Fragment slot="breadcrumb">
+      <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <a href="/tools/udb/" class="hover:text-[var(--hud-cy)] transition-colors">UDB</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <span class="text-slate-300">Changelog</span>
+    </Fragment>
+  </PageHero>
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
@@ -66,7 +65,7 @@ import Layout from '../../../../layouts/Layout.astro';
                 },
                 {
                   item: 'Simulated Annealing over SO(3)',
-                  detail: 'SA with exponential cooling schedule operates over the special orthogonal group SO(3) for branch rotation — resolves steric clashes without breaking covalent geometry.',
+                  detail: 'SA with exponential cooling schedule operates over the special orthogonal group SO(3) for branch rotation - resolves steric clashes without breaking covalent geometry.',
                 },
                 {
                   item: 'Collective Minimisation',
@@ -199,7 +198,7 @@ import Layout from '../../../../layouts/Layout.astro';
                 <span class="badge bg-teal-500/10 text-teal-400 border border-teal-500/20">{type}</span>
               ))}
             </div>
-            <p class="text-slate-400 text-sm mt-2">All 9 types support G1–G10.</p>
+            <p class="text-slate-400 text-sm mt-2">All 9 types support G1-G10.</p>
           </div>
 
         </div>
@@ -212,7 +211,7 @@ import Layout from '../../../../layouts/Layout.astro';
         <span class="text-slate-600 text-xs">?</span>
       </div>
       <div class="pb-8">
-        <h2 class="text-xl font-bold text-slate-600 mb-2">v2.0 — Planned</h2>
+        <h2 class="text-xl font-bold text-slate-600 mb-2">v2.0 - Planned</h2>
         <p class="text-slate-600 text-sm">
           Planned improvements for v2.0 include: parallel SA placement engine, GPU-accelerated
           antechamber calls, COF builder integration, and ARM64 NAMD support. No release date set.

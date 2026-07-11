@@ -1,0 +1,126 @@
+---
+/** Loads 3Dmol.js once and lazily initialises every <MolViewer> on the page.
+ *  Include once per page that uses MolViewer. */
+---
+<script is:inline src="https://3Dmol.org/build/3Dmol-min.js"></script>
+<script is:inline>
+(function () {
+  const JMOL = {
+    H:'#e6e6e6', C:'#909090', N:'#3050F8', O:'#FF2010', P:'#FF8000',
+    S:'#FFFF30', Si:'#F0C8A0', Cl:'#1FF01F', F:'#90E050', Br:'#A62929'
+  };
+
+  function whenReady(cb) {
+    if (typeof window.$3Dmol !== 'undefined') return cb();
+    let n = 0;
+    const t = setInterval(() => {
+      if (typeof window.$3Dmol !== 'undefined') { clearInterval(t); cb(); }
+      else if (++n > 100) clearInterval(t);   // ~10s give up
+    }, 100);
+  }
+
+  const TWO = { SI: 'Si', CL: 'Cl', BR: 'Br' };
+  // GAFF atom types (c3, hc, oh, …) confuse 3Dmol's element inference, so derive
+  // the element from the clean atom NAME (C1, N4, H12, Si2 …) and set it explicitly.
+  function fixElements(model) {
+    const atoms = model.selectedAtoms({});
+    for (const a of atoms) {
+      const nm = (a.atom || a.elem || 'C').replace(/[^A-Za-z]/g, '');
+      const two = nm.slice(0, 2).toUpperCase();
+      a.elem = TWO[two] || (nm.charAt(0).toUpperCase());
+    }
+  }
+
+  function styleModel(viewer) {
+    viewer.setStyle({}, {
+      stick:  { colorscheme: 'Jmol', radius: 0.16 },
+      sphere: { colorscheme: 'Jmol', scale: 0.30 },
+    });
+    viewer.setStyle({ elem: 'H' }, {
+      stick:  { colorscheme: 'Jmol', radius: 0.07 },
+      sphere: { colorscheme: 'Jmol', scale: 0.16 },
+    });
+  }
+
+  function initViewer(el) {
+    if (el.dataset.init === '1') return;
+    el.dataset.init = '1';
+    // Free the GPU for 3Dmol: freeze the ambient ScienceCanvas while a WebGL
+    // viewer is live (it keeps its last frame - visible but no longer animating).
+    try { window.dispatchEvent(new CustomEvent('sci-bg', { detail: { pause: true } })); } catch (_) {}
+    const url  = el.dataset.url;
+    const zoom = parseFloat(el.dataset.zoom || '0.9');
+    const spin = el.dataset.spin === '1';
+
+    fetch(url).then(r => r.text()).then(text => {
+      const loading = el.querySelector('.mv-loading');
+      if (loading) loading.remove();
+
+      const viewer = window.$3Dmol.createViewer(el, {
+        backgroundColor: '#060e16', antialias: true,
+      });
+      el._viewer = viewer;
+      const model = viewer.addModel(text, 'mol2');
+      fixElements(model);
+      styleModel(viewer);
+      viewer.zoomTo();
+      viewer.zoom(zoom);
+
+      // click an atom -> label index / element / name
+      const chip = el.querySelector('.mv-atom');
+      viewer.setClickable({}, true, (atom) => {
+        const idx = (atom.serial ?? atom.index ?? 0) + 1;
+        const elem = atom.elem || '?';
+        const nm = atom.atom || '';
+        if (chip) {
+          chip.textContent = `#${idx} · ${elem}${nm && nm !== elem ? ' · ' + nm : ''}`;
+          chip.style.opacity = '1';
+        }
+        viewer.removeAllLabels();
+        viewer.addLabel(`${elem}${idx}`, {
+          position: { x: atom.x, y: atom.y, z: atom.z },
+          backgroundColor: '#04070e', backgroundOpacity: 0.85,
+          fontColor: JMOL[elem] || '#6ffff2', fontSize: 12,
+          borderColor: '#2ce8d8', borderThickness: 1,
+        });
+        viewer.render();
+      });
+
+      viewer.render();
+      if (spin) viewer.spin('y', 0.6);
+
+      // controls
+      const bSpin  = el.querySelector('[data-act="spin"]');
+      const bReset = el.querySelector('[data-act="reset"]');
+      let spinning = spin;
+      bSpin && bSpin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        spinning = !spinning;
+        viewer.spin(spinning ? 'y' : false, 0.6);
+      });
+      bReset && bReset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewer.removeAllLabels();
+        if (chip) chip.style.opacity = '0';
+        viewer.zoomTo(); viewer.zoom(zoom); viewer.render();
+      });
+    }).catch(() => {
+      el.innerHTML = '<div class="absolute inset-0 flex items-center justify-center">' +
+        '<p style="color:#64748b;font:11px monospace;text-align:center;padding:1rem">' +
+        'Structure unavailable</p></div>';
+    });
+  }
+
+  function boot() {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { whenReady(() => initViewer(e.target)); io.unobserve(e.target); }
+      }
+    }, { rootMargin: '150px' });
+    document.querySelectorAll('.mol-viewer').forEach((el) => io.observe(el));
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>

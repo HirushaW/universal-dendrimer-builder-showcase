@@ -1,88 +1,83 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
-import { dendrimers, colorBadge, colorAccent, colorBorder, colorGlow } from '../../../../data/dendrimers';
+import MolViewer from '../../../../components/MolViewer.astro';
+import MolViewerRuntime from '../../../../components/MolViewerRuntime.astro';
+import { dendrimers, colorAccent } from '../../../../data/dendrimers';
+import { getStructure, formula } from '../../../../data/structures';
+
+const accentHex: Record<string, string> = {
+  teal: '#2ce8d8', sky: '#38bdf8', amber: '#fbbf24', red: '#f87171',
+  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9',
+};
+
+// pick a representative minimised generation for each type's card
+const cards = dendrimers.map(d => {
+  const s = getStructure(d.id);
+  const gens = s?.generations ?? [];
+  const rep = gens.length ? gens[Math.min(2, gens.length - 1)] : null;
+  return { d, s, rep, maxGen: gens.length ? gens[gens.length - 1].gen : null };
+});
 ---
 
-<Layout title="Structure Gallery" description="Avogadro-rendered molecular structures for all 7 UDB dendrimer types — individual pages with generation series, interactive 3D viewers, and building block analysis." activeNav="tools">
+<Layout title="Structure Gallery" description="Live interactive 3D of all 7 UDB dendrimer families - AMBER-minimised generation series, core and monomer viewers, and full characterization data." activeNav="tools">
+  <MolViewerRuntime />
 
   <!-- Header -->
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
+  <div class="hud-veil py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors">UDB</a>
-        <span>/</span>
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4 font-mono">
+        <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a><span class="text-slate-700">/</span>
+        <a href="/tools/udb/" class="hover:text-[var(--hud-cy)] transition-colors">UDB</a><span class="text-slate-700">/</span>
         <span class="text-slate-300">Structure Gallery</span>
       </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Structure Gallery</h1>
+      <p class="hud-eyebrow mb-3">Interactive 3D Library</p>
+      <h1 class="hud-title text-4xl sm:text-5xl mb-3">Structure Gallery</h1>
       <p class="text-lg text-slate-400 max-w-2xl">
-        Seven dendrimer families supported by UDB v1.0 — each with Avogadro-rendered generation
-        series, interactive 3D building-block viewers, chemistry, and applications.
+        Seven dendrimer families - each with a live, rotatable AMBER-minimised generation
+        series, core &amp; monomer viewers, and full characterization data. Every structure
+        is loaded from real UDB output. Drag to rotate · scroll to zoom · click atoms to inspect.
       </p>
     </div>
   </div>
 
-  <!-- All-types comparison banner -->
-  <div class="bg-slate-900/60 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-3 text-center">All 7 Types at G3 — Avogadro Renders</p>
-      <div class="rounded-2xl overflow-hidden border border-slate-700">
-        <img src="/images/ai-dendrimer-comparison.png" alt="All 7 dendrimer types compared at Generation 3" class="w-full" />
-      </div>
-    </div>
-  </div>
-
-  <!-- Type cards grid -->
+  <!-- Type cards grid with live viewers -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-    <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-8 text-center">Select a Dendrimer Type</p>
+    <p class="hud-eyebrow justify-center mb-8" style="justify-content:center">Select a dendrimer family</p>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {dendrimers.map(d => (
-        <a
-          href={`/tools/udb/structures/${d.id}/`}
-          class={`group relative rounded-2xl border bg-slate-900/60 overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_var(--glow)] hover:-translate-y-1 ${colorBorder[d.color]}`}
-          style={`--glow: ${colorGlow[d.color]}`}
-        >
-          <!-- Preview image (G3 or highest available) -->
-          <div class="aspect-square bg-black overflow-hidden">
-            <img
-              src={d.generations[Math.min(2, d.generations.length - 1)].src}
-              alt={`${d.name} ${d.generations[Math.min(2, d.generations.length - 1)].gen}`}
-              class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          </div>
-
-          <!-- Info -->
-          <div class="p-5">
-            <div class="flex flex-wrap gap-1.5 mb-3">
-              <span class={`badge border text-xs ${colorBadge[d.color]}`}>{d.name}</span>
-              <span class="badge bg-slate-800 text-slate-500 border border-slate-700 text-xs mono">{d.coreLabel}</span>
-            </div>
-            <h2 class={`font-bold text-base mb-1 ${colorAccent[d.color]}`}>{d.name}</h2>
-            <p class="text-slate-500 text-xs mb-3">{d.full}</p>
-            <p class="text-slate-400 text-xs leading-relaxed line-clamp-3">{d.description}</p>
-
-            <div class="mt-4 flex items-center gap-1.5 text-xs">
-              <span class="text-slate-500">{d.generations.length} generations rendered</span>
-              <span class="text-slate-700">·</span>
-              <span class="text-slate-500">3D viewer</span>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cards.map(({ d, rep, maxGen }) => {
+        const accent = accentHex[d.color] ?? '#2ce8d8';
+        return (
+          <div class="hud-panel hud-corners rounded-2xl overflow-hidden flex flex-col">
+            {rep ? (
+              <MolViewer id={`gal-${d.id}`} url={rep.file} height="260px" accent={accent} spin={true} zoom={0.85} />
+            ) : (
+              <div class="h-[260px] flex items-center justify-center text-slate-600 font-mono text-xs">no structure</div>
+            )}
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="hud-chip" style={`color:${accent};border-color:${accent}55`}>{d.name}</span>
+                <span class="hud-chip">{d.coreLabel}</span>
+              </div>
+              <h2 class="font-display font-bold text-lg mb-1" style={`color:${accent}`}>{d.full}</h2>
+              {rep && <p class="font-mono text-[10px] text-slate-500 mb-3">Showing G{rep.gen} · {rep.n_atoms.toLocaleString()} atoms · {formula(rep.composition)}</p>}
+              <p class="text-slate-400 text-xs leading-relaxed line-clamp-3 flex-1">{d.description}</p>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="font-mono text-[10px] text-slate-500">{maxGen ? `G1-G${maxGen} series` : ''}</span>
+                <a href={`/tools/udb/structures/${d.id}/`}
+                   class="inline-flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-transform hover:translate-x-0.5"
+                   style={`color:${accent}`}>
+                  Open <span aria-hidden="true">→</span>
+                </a>
+              </div>
             </div>
           </div>
-
-          <!-- Arrow -->
-          <div class={`absolute top-4 right-4 w-7 h-7 rounded-full border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${colorBadge[d.color]} border-current`}>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
-      ))}
+        );
+      })}
     </div>
 
     <div class="mt-14 flex gap-4">
-      <a href="/tools/udb/examples/" class="btn-outline">← Worked Examples</a>
+      <a href="/tools/udb/manual/" class="btn-outline">← User Manual</a>
       <a href="/tools/udb/validation/" class="btn-primary">Benchmarks →</a>
     </div>
   </div>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import PageHero from '../../../components/PageHero.astro';
 import CitationBlock from '../../../components/CitationBlock.astro';
 
 const forceFieldMatrix = [
@@ -22,29 +23,27 @@ function statusClass(status: string) {
 }
 ---
 
-<Layout title="UDB Overview" description="Universal Dendrimer Builder — features, force-field matrix, and workflow overview." activeNav="tools">
+<Layout title="UDB Overview" description="Universal Dendrimer Builder - features, force-field matrix, and workflow overview." activeNav="tools">
 
   <!-- Page header -->
-  <div class="bg-gradient-to-br from-slate-950 to-slate-900 border-b border-slate-800 py-14">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="/" class="hover:text-teal-400 transition-colors">Home</a>
-        <span>/</span>
-        <a href="/tools/udb/" class="hover:text-teal-400 transition-colors text-slate-300">UDB</a>
-      </div>
-      <h1 class="text-4xl font-bold text-slate-100 mb-3">Universal Dendrimer Builder</h1>
-      <p class="text-lg text-slate-400 max-w-2xl">
-        An open-source Python desktop application for constructing, parameterizing,
-        and simulating dendrimer nanostructures — G1 to G10, 9 types, AMBER + NAMD pipeline.
-      </p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <a href="/tools/udb/install/" class="btn-primary">Install v1.0</a>
-        <a href="/tools/udb/manual/" class="btn-outline">User Manual</a>
-        <a href="/tools/udb/examples/" class="btn-outline">Examples</a>
-        <a href="https://github.com/HirushaW/universal-dendrimer-builder" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
-      </div>
-    </div>
-  </div>
+  <PageHero
+    eyebrow="// UDB OVERVIEW"
+    title="Universal Dendrimer Builder"
+    subtitle="An open-source Python desktop application for constructing, parameterizing, and simulating dendrimer nanostructures - G1 to G10, 9 types, AMBER + NAMD pipeline."
+    glitch
+  >
+    <Fragment slot="breadcrumb">
+      <a href="/" class="hover:text-[var(--hud-cy)] transition-colors">Home</a>
+      <span class="mx-1.5 opacity-50">/</span>
+      <span class="text-slate-300">UDB</span>
+    </Fragment>
+    <Fragment slot="actions">
+      <a href="/tools/udb/install/" class="btn-primary">Install v1.0</a>
+      <a href="/tools/udb/manual/" class="btn-outline">User Manual</a>
+      <a href="/tools/udb/structures/" class="btn-outline">Structure Gallery</a>
+      <a href="https://github.com/HirushaW/universal-dendrimer-builder" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
+    </Fragment>
+  </PageHero>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
@@ -63,7 +62,7 @@ function statusClass(status: string) {
           </p>
           <p>
             UDB was developed to address the lack of a single tool covering multiple dendrimer
-            chemistries — PAMAM-focused tools exist, but switching to PPI, Phosphorus, or
+            chemistries - PAMAM-focused tools exist, but switching to PPI, Phosphorus, or
             Carbosilane dendrimers requires either manual scripting or switching platforms.
             UDB handles all nine supported types through one workflow with type-specific
             force-field routing.
@@ -84,7 +83,7 @@ function statusClass(status: string) {
             { label: 'Python', value: '3.8+' },
             { label: 'Dependencies', value: 'AmberTools25, NAMD 3.x' },
             { label: 'Supported types', value: '9 dendrimer families' },
-            { label: 'Generations', value: 'G1 – G10' },
+            { label: 'Generations', value: 'G1 - G10' },
           ].map(row => (
             <div class="flex justify-between items-center py-2 border-b border-slate-800">
               <span class="text-slate-500 text-sm">{row.label}</span>
@@ -121,7 +120,7 @@ function statusClass(status: string) {
                 <td class={statusClass(row.gaff2)}>{row.gaff2}</td>
                 <td class={statusClass(row.cgenff)}>{row.cgenff}</td>
                 <td class={statusClass(row.mixed)}>{row.mixed}</td>
-                <td class="text-slate-500 text-xs">{row.notes || '—'}</td>
+                <td class="text-slate-500 text-xs">{row.notes || '-'}</td>
               </tr>
             ))}
           </tbody>
@@ -136,7 +135,7 @@ function statusClass(status: string) {
     <!-- Workflow diagram -->
     <section class="mb-16">
       <h2 class="section-title mb-4">Complete Pipeline</h2>
-      <p class="text-slate-400 text-sm mb-5">From dendrimer type selection through final NAMD trajectory — all 6 stages handled inside a single GUI.</p>
+      <p class="text-slate-400 text-sm mb-5">From dendrimer type selection through final NAMD trajectory - all 6 stages handled inside a single GUI.</p>
       <div class="rounded-2xl overflow-hidden border border-slate-700">
         <img src="/images/ai-workflow-diagram.png" alt="UDB complete 6-stage workflow: Build → Parameterize → Solvate → MD Setup → Run → Characterize" class="w-full" />
       </div>
@@ -177,8 +176,7 @@ function statusClass(status: string) {
         {[
           { href: '/tools/udb/install/', title: 'Installation', desc: 'Conda environment setup, AmberTools25, NAMD 3.x, Python dependencies, known install errors.' },
           { href: '/tools/udb/manual/', title: 'User Manual', desc: 'Complete tab-by-tab reference with parameter explanations and expected outputs.' },
-          { href: '/tools/udb/examples/', title: 'Worked Examples', desc: 'End-to-end walkthroughs: PAMAM G3, Carbosilane, Phosphorus, and more.' },
-          { href: '/tools/udb/structures/', title: 'Structure Gallery', desc: 'Avogadro-rendered structures for all 7 types across G1–G5, with interactive 3D monomer/core viewers.' },
+          { href: '/tools/udb/structures/', title: 'Structure Gallery', desc: 'Interactive 3D library of all 7 dendrimer families across their AMBER-minimised generation series, with core/monomer viewers.' },
           { href: '/tools/udb/validation/', title: 'Benchmarks', desc: 'Atom counts, Rg, and asphericity validated against Maiti et al. 2004 and other literature.' },
           { href: '/tools/udb/changelog/', title: 'Changelog', desc: 'Version-by-version history of features added, bugs fixed, and algorithms changed.' },
         ].map(card => (

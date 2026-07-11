@@ -1,0 +1,241 @@
+---
+/**
+ * DendrimerReactor - a live, procedural PAMAM dendrimer that builds itself
+ * generation-by-generation on a <canvas>, then shimmers with thermal (MD)
+ * motion before collapsing and rebuilding. No static image; fully generated.
+ *
+ * Props let it be dropped anywhere (hero, cards) at any size.
+ */
+interface Props {
+  height?: string;   // css height of the stage
+  maxGen?: number;   // generations to build (visual density)
+  compact?: boolean; // hide the HUD readout overlay
+  id?: string;
+}
+const { height = '340px', maxGen = 4, compact = false, id = 'reactor' } = Astro.props;
+---
+
+<div class="reactor-stage relative w-full" style={`height:${height}`} data-reactor={id} data-maxgen={maxGen}>
+  <canvas class="reactor-canvas absolute inset-0 w-full h-full"></canvas>
+
+  {!compact && (
+    <div class="pointer-events-none absolute inset-0 flex flex-col justify-between p-3">
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-[10px] tracking-[0.18em] text-[var(--hud-cy-deep)]">PAMAM // EDA-CORE</span>
+        <span class="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-[var(--hud-cy)]">
+          <span class="hud-dot" data-r="phase-dot"></span><span data-r="phase">BUILDING</span>
+        </span>
+      </div>
+      <div class="flex items-end justify-between">
+        <div class="leading-none">
+          <div class="font-hud text-3xl font-bold text-transparent bg-clip-text"
+               style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)">
+            G<span data-r="gen">0</span>
+          </div>
+          <div class="font-mono text-[9px] text-slate-500 tracking-[0.15em] mt-1">GENERATION</div>
+        </div>
+        <div class="text-right leading-none">
+          <div class="font-hud text-2xl font-bold text-[var(--hud-cy-bright)]" data-r="atoms">0</div>
+          <div class="font-mono text-[9px] text-slate-500 tracking-[0.15em] mt-1">ATOMS</div>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
+<script>
+  type RNode = { gen: number; ang: number; R: number; parent: number; seed: number; bx: number; by: number };
+
+  // Approx PAMAM heavy-atom counts by generation (for the live readout)
+  const ATOMS = [14, 84, 228, 516, 1092, 2244];
+
+  function initReactor(stage: HTMLElement) {
+    const canvas = stage.querySelector<HTMLCanvasElement>('.reactor-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const MAX_GEN = Math.max(1, parseInt(stage.dataset.maxgen || '4', 10));
+    const CORE_ARMS = 4;
+    const BRANCH = 2;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Readout targets: inside the stage AND anywhere else tagged with the same
+    // reactor id (e.g. a status line elsewhere in the hero).
+    const rid = stage.dataset.reactor || 'reactor';
+    const roots = new Set<Element>([stage, ...document.querySelectorAll(`[data-reactor="${rid}"]`)]);
+    const collect = (sel: string) => {
+      const out: HTMLElement[] = [];
+      roots.forEach((r) => r.querySelectorAll<HTMLElement>(sel).forEach((e) => out.push(e)));
+      return out;
+    };
+    const elGen = collect('[data-r="gen"]');
+    const elAtoms = collect('[data-r="atoms"]');
+    const elPhase = collect('[data-r="phase"]');
+    const elDot = collect('[data-r="phase-dot"]');
+
+    // ── build the dendrimer tree (positions in a centered unit-ish space) ──
+    const nodes: RNode[] = [];
+    let maxR = 1;
+    function buildTree() {
+      nodes.length = 0;
+      nodes.push({ gen: 0, ang: 0, R: 0, parent: -1, seed: Math.random() * 1e3, bx: 0, by: 0 });
+      let prev = [0];
+      const rot0 = Math.random() * Math.PI * 2;
+      for (let g = 1; g <= MAX_GEN; g++) {
+        const R = 62 * Math.pow(g, 0.92);
+        const next: number[] = [];
+        for (const pIdx of prev) {
+          const p = nodes[pIdx];
+          const count = g === 1 ? CORE_ARMS : BRANCH;
+          const spread = g === 1 ? 0 : (Math.PI * 0.62) / g;
+          for (let k = 0; k < count; k++) {
+            const ang =
+              g === 1
+                ? rot0 + (k / CORE_ARMS) * Math.PI * 2
+                : p.ang + (k - (count - 1) / 2) * spread;
+            const n: RNode = { gen: g, ang, R, parent: pIdx, seed: Math.random() * 1e3, bx: 0, by: 0 };
+            n.bx = Math.cos(ang) * R;
+            n.by = Math.sin(ang) * R;
+            next.push(nodes.push(n) - 1);
+          }
+        }
+        prev = next;
+      }
+      maxR = 62 * Math.pow(MAX_GEN, 0.92) + 10;
+    }
+    buildTree();
+
+    // ── responsive canvas ──
+    let W = 0, H = 0, dpr = 1;
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = r.width; H = r.height;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    new ResizeObserver(resize).observe(stage);
+
+    // ── timeline (ms within one cycle) ──
+    const T_BUILD = 3000, T_HOLD = 3600, T_FADE = 1100, T_GAP = 400;
+    const CYCLE = T_BUILD + T_HOLD + T_FADE + T_GAP;
+    const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
+    const easeInOut = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+    let start = performance.now();
+    let rot = 0;
+
+    function cycleState(now: number) {
+      let t = (now - start) % CYCLE;
+      let reveal: number, phase: string, held: boolean;
+      if (t < T_BUILD) { reveal = easeOut(t / T_BUILD) * MAX_GEN; phase = 'BUILDING'; held = false; }
+      else if (t < T_BUILD + T_HOLD) { reveal = MAX_GEN; phase = 'SIMULATING'; held = true; }
+      else if (t < T_BUILD + T_HOLD + T_FADE) {
+        reveal = MAX_GEN * (1 - easeInOut((t - T_BUILD - T_HOLD) / T_FADE)); phase = 'RESET'; held = false;
+      } else { reveal = 0; phase = 'RESET'; held = false; if (t > CYCLE - 16) buildTree(); }
+      return { reveal, phase, held };
+    }
+
+    // smooth counters for the readout
+    let shownGen = 0, shownAtoms = 0, lastGen = -1, lastPhase = '';
+
+    function draw(now: number, dt: number) {
+      const { reveal, phase, held } = reduce
+        ? { reveal: MAX_GEN, phase: 'SIMULATING', held: true }
+        : cycleState(now);
+
+      if (!reduce) rot += dt * 0.00007;
+
+      ctx.clearRect(0, 0, W, H);
+      const cx = W / 2, cy = H / 2;
+      const scale = (Math.min(W, H) * 0.46) / maxR;
+
+      // node live position (rotation + thermal jitter)
+      const pos = (n: RNode) => {
+        const a = n.ang + rot;
+        let x = Math.cos(a) * n.R * scale;
+        let y = Math.sin(a) * n.R * scale;
+        const appear = Math.max(0, Math.min(1, reveal - (n.gen - 1)));
+        const amp = held ? 3.2 : 1.4;
+        x += Math.sin(now * 0.0024 + n.seed) * amp * appear;
+        y += Math.cos(now * 0.0021 + n.seed * 1.3) * amp * appear;
+        return { x: cx + x, y: cy + y, appear };
+      };
+
+      // 1) edges (drawn first, glowing)
+      ctx.lineCap = 'round';
+      for (let i = 1; i < nodes.length; i++) {
+        const n = nodes[i];
+        const appear = Math.max(0, Math.min(1, reveal - (n.gen - 1)));
+        if (appear <= 0) continue;
+        const p = pos(nodes[n.parent]);
+        const c = pos(n);
+        const ex = p.x + (c.x - p.x) * appear;
+        const ey = p.y + (c.y - p.y) * appear;
+        ctx.strokeStyle = `rgba(44,232,216,${0.10 + 0.30 * appear})`;
+        ctx.lineWidth = Math.max(0.6, (1.7 - n.gen * 0.18) * appear);
+        ctx.shadowColor = 'rgba(44,232,216,0.55)';
+        ctx.shadowBlur = 6 * appear;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+      }
+
+      // 2) nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        const c = pos(n);
+        if (c.appear <= 0) continue;
+        const rad = (n.gen === 0 ? 7 : Math.max(1.6, 5 - n.gen * 0.6)) * (0.4 + 0.6 * c.appear);
+        const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rad * 2.4);
+        g.addColorStop(0, `rgba(190,255,250,${0.95 * c.appear})`);
+        g.addColorStop(0.4, `rgba(111,255,242,${0.85 * c.appear})`);
+        g.addColorStop(1, 'rgba(44,232,216,0)');
+        ctx.fillStyle = g;
+        ctx.shadowColor = 'rgba(111,255,242,0.8)';
+        ctx.shadowBlur = (n.gen === 0 ? 22 : 12) * c.appear;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, rad, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      // 3) readouts
+      const targetGen = Math.max(0, Math.min(MAX_GEN, Math.round(reveal)));
+      const targetAtoms = ATOMS[targetGen] ?? 0;
+      shownGen += (targetGen - shownGen) * Math.min(1, dt * 0.02);
+      shownAtoms += (targetAtoms - shownAtoms) * Math.min(1, dt * 0.012);
+      const gRound = Math.round(shownGen);
+      if (gRound !== lastGen) { elGen.forEach((e) => (e.textContent = String(gRound))); lastGen = gRound; }
+      const atomsTxt = Math.round(shownAtoms).toLocaleString();
+      elAtoms.forEach((e) => (e.textContent = atomsTxt));
+      if (phase !== lastPhase) {
+        elPhase.forEach((e) => (e.textContent = phase));
+        elDot.forEach((e) => (e.style.background = phase === 'SIMULATING' ? '#6ffff2' : 'var(--hud-cy-deep)'));
+        lastPhase = phase;
+      }
+    }
+
+    let prev = performance.now();
+    function frame(now: number) {
+      const dt = Math.min(48, now - prev); prev = now;
+      draw(now, dt);
+      raf = requestAnimationFrame(frame);
+    }
+    let raf = requestAnimationFrame(frame);
+
+    // pause when off-screen (perf)
+    new IntersectionObserver((es) => {
+      for (const e of es) {
+        if (e.isIntersecting && !raf) { prev = performance.now(); start = performance.now(); raf = requestAnimationFrame(frame); }
+        else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = 0 as unknown as number; }
+      }
+    }, { threshold: 0.05 }).observe(stage);
+  }
+
+  document.querySelectorAll<HTMLElement>('.reactor-stage').forEach(initReactor);
+</script>

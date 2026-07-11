@@ -1,0 +1,363 @@
+---
+/**
+ * ScienceCanvas - the site-wide *living* scientific background.
+ *
+ * A single fixed full-viewport <canvas> at z-index -1 (behind all content,
+ * pointer-events:none) rendering a slow, low-opacity, multi-domain scene that
+ * gently parallaxes with scroll. It supersedes the static CSS grid ambience
+ * and the orphaned ScienceBackground.astro.
+ *
+ * Layers (back → front), all cyan-tinted and subordinate to content:
+ *   1. Deep particle "atom cloud"     - pre-rendered glow sprite (no per-frame gradients)
+ *   2. Molecular graph                - nodes + proximity bonds
+ *   3. Signature motifs               - dendrimer branches, DNA helix, carbon/hex rings
+ *   4. (vignette handled in CSS)
+ *
+ * Performance contract (§10 of NEW_GRAPHICS_PLAN.md):
+ *   - device tiers gate richness: HIGH / MED / LOW / STATIC
+ *   - counts scale with viewport area, hard-capped
+ *   - one rAF loop; dt-clamped; pauses when tab hidden
+ *   - DPR capped at 1.5; glow is a cached sprite
+ *   - prefers-reduced-motion / save-data / low cores → one static frame, no rAF
+ *   - never intercepts pointer/touch; never rendered above content
+ *
+ * Props:
+ *   variant    'mixed' | 'chem' | 'bio' | 'data'  - weights the motif mix (default 'mixed')
+ *   intensity  0..1 overall opacity multiplier (default 1)
+ */
+interface Props {
+  variant?: 'mixed' | 'chem' | 'bio' | 'data';
+  intensity?: number;
+}
+const { variant = 'mixed', intensity = 1 } = Astro.props;
+---
+<canvas id="sci-canvas" aria-hidden="true" data-variant={variant} data-intensity={intensity}></canvas>
+<style>
+  #sci-canvas {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: -1; pointer-events: none; display: block;
+    /* soft vignette so motifs never crowd the reading column edges */
+    -webkit-mask-image: radial-gradient(130% 115% at 50% 40%, #000 55%, rgba(0,0,0,0.35) 100%);
+            mask-image: radial-gradient(130% 115% at 50% 40%, #000 55%, rgba(0,0,0,0.35) 100%);
+  }
+</style>
+<script is:inline>
+(function () {
+  var canvas = document.getElementById('sci-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
+
+  var variant   = canvas.dataset.variant || 'mixed';
+  var intensity = Math.max(0, Math.min(1, parseFloat(canvas.dataset.intensity || '1')));
+
+  // ── Palette (cyan HUD) ──────────────────────────────────────────────
+  var CY = [111, 255, 242];       // bright core
+  var LINE = '44,232,216';        // bonds / strokes rgb
+
+  // ── Device tier ─────────────────────────────────────────────────────
+  var mqReduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var mqCoarse = window.matchMedia ? matchMedia('(pointer: coarse)') : { matches: false };
+  function detectTier() {
+    if (mqReduce.matches) return 'static';
+    var conn = navigator.connection || {};
+    if (conn.saveData) return 'low';
+    var cores = navigator.hardwareConcurrency || 4;
+    var mem   = navigator.deviceMemory || 4;
+    var narrow = window.innerWidth < 640;
+    if (cores <= 4 || mem <= 2 || (narrow && mqCoarse.matches)) return 'low';
+    if (cores <= 6 || mem <= 4 || mqCoarse.matches || window.innerWidth < 1024) return 'med';
+    return 'high';
+  }
+  var tier = detectTier();
+
+  // Per-tier budgets (richer, slightly more visible motion - still subtle)
+  var BUD = {
+    high: { field: 19000, capF: 92, dend: 3, helix: 2, ring: 4, chain: 3, drift: 1.3, bonds: true },
+    med:  { field: 30000, capF: 56, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.95, bonds: true },
+    low:  { field: 52000, capF: 26, dend: 1, helix: 0, ring: 1, chain: 0, drift: 0.55, bonds: false },
+    static:{ field: 34000, capF: 44, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.0, bonds: true },
+  }[tier];
+
+  // Variant weighting → drop motifs the page doesn't emphasise
+  if (variant === 'bio')  { BUD = Object.assign({}, BUD, { dend: Math.max(0, BUD.dend - 1) }); }
+  if (variant === 'chem') { BUD = Object.assign({}, BUD, { helix: 0 }); }
+  if (variant === 'data') { BUD = Object.assign({}, BUD, { dend: 0, helix: 0, ring: Math.min(1, BUD.ring) }); }
+
+  var W = 0, H = 0, dpr = 1, scrollY = 0, raf = 0, last = 0, glow = null;
+  var nodes = [], dends = [], helices = [], rings = [], chains = [];
+
+  // ── Cached glow sprite (one radial gradient, ever) ──────────────────
+  function makeGlow() {
+    var s = 40, c = document.createElement('canvas'); c.width = c.height = s;
+    var g = c.getContext('2d');
+    var grd = g.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+    grd.addColorStop(0,    'rgba(' + CY[0] + ',' + CY[1] + ',' + CY[2] + ',0.85)');
+    grd.addColorStop(0.35, 'rgba(' + CY[0] + ',' + CY[1] + ',' + CY[2] + ',0.26)');
+    grd.addColorStop(1,    'rgba(' + LINE + ',0)');
+    g.fillStyle = grd; g.fillRect(0, 0, s, s);
+    return c;
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  // ── Build scene ─────────────────────────────────────────────────────
+  function build() {
+    var area = W * H;
+
+    // 1) particle field + graph nodes
+    var count = Math.max(10, Math.min(BUD.capF, Math.round(area / BUD.field)));
+    nodes = [];
+    for (var i = 0; i < count; i++) {
+      var hub = Math.random() < 0.16;
+      nodes.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: rand(-0.12, 0.12), vy: rand(-0.12, 0.12),
+        r: hub ? rand(2.4, 4.0) : rand(1.0, 2.2),
+        p: rand(0.3, 1.0),
+      });
+    }
+
+    // 2) dendrimer motifs (recursive radial branches)
+    dends = [];
+    for (var d = 0; d < BUD.dend; d++) {
+      dends.push({
+        x: rand(0.1, 0.9) * W, y: rand(0.12, 0.88) * H,
+        scale: rand(44, 82) * (H < 700 ? 0.8 : 1),
+        gen: tier === 'high' ? 3 : 2,
+        rot: Math.random() * Math.PI * 2, rs: rand(-0.07, 0.07),
+        p: rand(0.4, 0.95), a: rand(0.32, 0.54),
+      });
+    }
+
+    // 3) DNA helices
+    helices = [];
+    for (var hx = 0; hx < BUD.helix; hx++) {
+      helices.push({
+        x: rand(0.08, 0.92) * W, y: rand(0.08, 0.7) * H,
+        len: rand(180, 340), amp: rand(15, 27), turns: rand(2.4, 3.6),
+        phase: Math.random() * Math.PI * 2, ps: rand(0.22, 0.4),
+        tilt: rand(-0.6, 0.6), p: rand(0.45, 0.9), a: rand(0.3, 0.48),
+      });
+    }
+
+    // 4) carbon / hex rings
+    rings = [];
+    for (var rr = 0; rr < BUD.ring; rr++) {
+      rings.push({
+        x: rand(0.06, 0.94) * W, y: rand(0.08, 0.92) * H,
+        R: rand(24, 54), rot: Math.random() * Math.PI, rs: rand(-0.08, 0.08),
+        p: rand(0.35, 0.9), a: rand(0.28, 0.46),
+      });
+    }
+
+    // 5) molecular chains (zig-zag polymer backbones with side nodes)
+    chains = [];
+    for (var cc = 0; cc < (BUD.chain || 0); cc++) {
+      chains.push({
+        x: rand(0.05, 0.95) * W, y: rand(0.1, 0.9) * H,
+        n: Math.round(rand(6, 10)), seg: rand(24, 40),
+        rot: Math.random() * Math.PI * 2, rs: rand(-0.05, 0.05),
+        zig: rand(0.5, 0.85), p: rand(0.4, 0.9), a: rand(0.24, 0.42),
+      });
+    }
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    build();
+  }
+
+  // wrap a parallaxed y back into view
+  function wrapY(y) {
+    var m = 80, span = H + m * 2;
+    y = ((y + m) % span + span) % span - m;
+    return y;
+  }
+
+  // ── Motif drawing ───────────────────────────────────────────────────
+  var GRAPH_D = 140, GRAPH_D2 = GRAPH_D * GRAPH_D;
+
+  function drawField(off) {
+    // bonds
+    if (BUD.bonds) {
+      ctx.lineWidth = 1;
+      for (var i = 0; i < nodes.length; i++) {
+        var a = nodes[i], ay = wrapY(a.y - off * a.p * 0.05);
+        for (var j = i + 1; j < nodes.length; j++) {
+          var b = nodes[j];
+          var dx = a.x - b.x, dy = ay - wrapY(b.y - off * b.p * 0.05);
+          var d2 = dx * dx + dy * dy;
+          if (d2 < GRAPH_D2) {
+            var al = (1 - d2 / GRAPH_D2) * 0.14 * intensity;
+            ctx.strokeStyle = 'rgba(' + LINE + ',' + al + ')';
+            ctx.beginPath(); ctx.moveTo(a.x, ay); ctx.lineTo(b.x, wrapY(b.y - off * b.p * 0.05)); ctx.stroke();
+          }
+        }
+      }
+    }
+    // node glows
+    for (var k = 0; k < nodes.length; k++) {
+      var n = nodes[k], y = wrapY(n.y - off * n.p * 0.05), s = n.r * 7;
+      ctx.globalAlpha = (0.4 + n.p * 0.35) * intensity;
+      ctx.drawImage(glow, n.x - s / 2, y - s / 2, s, s);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function branch(x, y, ang, len, gen, a) {
+    if (gen === 0 || len < 4) return;
+    var n = 3;
+    for (var i = 0; i < n; i++) {
+      var na = ang + (i - (n - 1) / 2) * 0.7;
+      var ex = x + Math.cos(na) * len, ey = y + Math.sin(na) * len;
+      ctx.strokeStyle = 'rgba(' + LINE + ',' + (a * 0.5) + ')';
+      ctx.lineWidth = Math.max(0.6, gen * 0.5);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
+      var s = 2.2 * intensity;
+      ctx.globalAlpha = a; ctx.drawImage(glow, ex - s * 2, ey - s * 2, s * 4, s * 4); ctx.globalAlpha = 1;
+      branch(ex, ey, na, len * 0.62, gen - 1, a * 0.85);
+    }
+  }
+
+  function drawDends(off, t) {
+    for (var i = 0; i < dends.length; i++) {
+      var d = dends[i], cy = wrapY(d.y - off * d.p * 0.05);
+      ctx.save(); ctx.translate(d.x, cy); ctx.rotate(d.rot + t * d.rs * 0.001);
+      var a = d.a * intensity;
+      // core
+      ctx.globalAlpha = a; ctx.drawImage(glow, -6, -6, 12, 12); ctx.globalAlpha = 1;
+      for (var b = 0; b < 4; b++) branch(0, 0, b * Math.PI / 2, d.scale, d.gen, a);
+      ctx.restore();
+    }
+  }
+
+  function drawHelices(off, t) {
+    for (var i = 0; i < helices.length; i++) {
+      var hx = helices[i], cy = wrapY(hx.y - off * hx.p * 0.05);
+      ctx.save(); ctx.translate(hx.x, cy); ctx.rotate(hx.tilt);
+      var a = hx.a * intensity, N = 26;
+      var ph = hx.phase + t * hx.ps * 0.001;
+      var s1 = [], s2 = [];
+      for (var k = 0; k <= N; k++) {
+        var yy = (k / N - 0.5) * hx.len;
+        var ang = ph + (k / N) * hx.turns * Math.PI * 2;
+        s1.push([Math.cos(ang) * hx.amp, yy]);
+        s2.push([Math.cos(ang + Math.PI) * hx.amp, yy]);
+      }
+      // rungs
+      for (var r = 0; r <= N; r += 2) {
+        ctx.strokeStyle = 'rgba(' + LINE + ',' + (a * 0.35) + ')'; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(s1[r][0], s1[r][1]); ctx.lineTo(s2[r][0], s2[r][1]); ctx.stroke();
+      }
+      // strands
+      function strand(pts, alpha) {
+        ctx.strokeStyle = 'rgba(' + LINE + ',' + alpha + ')'; ctx.lineWidth = 1.1;
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+        for (var q = 1; q < pts.length; q++) ctx.lineTo(pts[q][0], pts[q][1]);
+        ctx.stroke();
+      }
+      strand(s1, a * 0.7); strand(s2, a * 0.55);
+      ctx.restore();
+    }
+  }
+
+  function drawRings(off, t) {
+    for (var i = 0; i < rings.length; i++) {
+      var g = rings[i], cy = wrapY(g.y - off * g.p * 0.05);
+      ctx.save(); ctx.translate(g.x, cy); ctx.rotate(g.rot + t * g.rs * 0.001);
+      ctx.strokeStyle = 'rgba(' + LINE + ',' + (g.a * 0.5 * intensity) + ')'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (var s = 0; s < 6; s++) {
+        var ang = s * Math.PI / 3, px = Math.cos(ang) * g.R, py = Math.sin(ang) * g.R;
+        s === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath(); ctx.stroke();
+      // vertices
+      for (var v = 0; v < 6; v++) {
+        var va = v * Math.PI / 3, vx = Math.cos(va) * g.R, vy = Math.sin(va) * g.R, sz = 6 * intensity;
+        ctx.globalAlpha = g.a * 0.7 * intensity; ctx.drawImage(glow, vx - sz, vy - sz, sz * 2, sz * 2); ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawChains(off, t) {
+    for (var i = 0; i < chains.length; i++) {
+      var ch = chains[i], cy = wrapY(ch.y - off * ch.p * 0.05);
+      ctx.save(); ctx.translate(ch.x, cy); ctx.rotate(ch.rot + t * ch.rs * 0.001);
+      var a = ch.a * intensity;
+      var pts = [], px = -(ch.n - 1) * ch.seg / 2;
+      for (var k = 0; k < ch.n; k++) {
+        pts.push([px, (k % 2 === 0 ? -1 : 1) * ch.seg * ch.zig * 0.5]);
+        px += ch.seg;
+      }
+      // backbone
+      ctx.strokeStyle = 'rgba(' + LINE + ',' + (a * 0.55) + ')'; ctx.lineWidth = 1; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (var q = 1; q < pts.length; q++) ctx.lineTo(pts[q][0], pts[q][1]);
+      ctx.stroke();
+      // atoms
+      for (var m = 0; m < pts.length; m++) {
+        var sz = (m % 2 === 0 ? 5 : 3.4) * intensity;
+        ctx.globalAlpha = a * (m % 2 === 0 ? 0.85 : 0.6);
+        ctx.drawImage(glow, pts[m][0] - sz, pts[m][1] - sz, sz * 2, sz * 2);
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+  }
+
+  // ── Frame ───────────────────────────────────────────────────────────
+  function frame(now, animate) {
+    var dt = animate ? Math.min(40, now - last) : 0; last = now;
+    ctx.clearRect(0, 0, W, H);
+
+    if (animate && BUD.drift > 0) {
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        n.x += n.vx * dt * 0.06 * BUD.drift; n.y += n.vy * dt * 0.06 * BUD.drift;
+        if (n.x < -20) n.x = W + 20; else if (n.x > W + 20) n.x = -20;
+        if (n.y < -20) n.y = H + 20; else if (n.y > H + 20) n.y = -20;
+      }
+      for (var d = 0; d < dends.length; d++)   dends[d].rot   += dends[d].rs   * dt * 0.001;
+      for (var g = 0; g < rings.length; g++)   rings[g].rot   += rings[g].rs   * dt * 0.001;
+      for (var h = 0; h < helices.length; h++) helices[h].phase += helices[h].ps * dt * 0.001;
+      for (var c = 0; c < chains.length; c++)  chains[c].rot  += chains[c].rs  * dt * 0.001;
+    }
+
+    var off = scrollY;
+    drawField(off);
+    if (chains.length)  drawChains(off, now);
+    if (dends.length)   drawDends(off, now);
+    if (helices.length) drawHelices(off, now);
+    if (rings.length)   drawRings(off, now);
+  }
+
+  function loop(now) { frame(now, true); raf = requestAnimationFrame(loop); }
+  function start() { if (!raf && tier !== 'static') { last = performance.now(); raf = requestAnimationFrame(loop); } }
+  function stop()  { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+  // ── Init ────────────────────────────────────────────────────────────
+  glow = makeGlow();
+  resize();
+  if (tier === 'static') { frame(performance.now(), false); }   // one still frame
+  else start();
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { resize(); if (tier === 'static') frame(performance.now(), false); }, 160); }, { passive: true });
+  window.addEventListener('scroll', function () { scrollY = window.scrollY || window.pageYOffset || 0; }, { passive: true });
+  document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+
+  // Allow other components (e.g. WebGL MOL2 viewers) to dim the background
+  // while they render, protecting the GPU. Dispatch 'sci-bg' CustomEvents.
+  window.addEventListener('sci-bg', function (e) {
+    if (!e || !e.detail) return;
+    if (e.detail.pause) stop(); else start();
+  });
+})();
+</script>
