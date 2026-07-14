@@ -16,8 +16,10 @@ import os, re, sys, json, shutil
 
 HERE      = os.path.dirname(os.path.abspath(__file__))
 WEB       = os.path.dirname(HERE)
-BUILDS    = "/home/hirushawalgampaya/Downloads/udb-software/v1.0/Builds"
-CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/v1.0/Tests"
+# Structures live in the website repo itself (the newly produced set). Do NOT read
+# from any external build folder — the site visualises exactly what is in ./Structures.
+BUILDS    = os.path.join(WEB, "Structures")
+CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/v1.0/mods"
 GOLDEN    = os.path.join(CHAR_DIR, "golden")
 PUB_MOL2  = os.path.join(WEB, "public", "mol2")
 OUT_JSON  = os.path.join(WEB, "src", "data", "structures.generated.json")
@@ -25,7 +27,9 @@ OUT_JSON  = os.path.join(WEB, "src", "data", "structures.generated.json")
 sys.path.insert(0, CHAR_DIR)
 import udb_characterization as U  # noqa: E402
 
-# folder -> site id / display name
+# folder -> site id / display name. Mol2 file prefix is auto-detected per folder
+# (e.g. Triazene's files are named dendrimer_triazine_*), so the site id need not
+# match the on-disk stem.
 TYPES = [
     ("PAMAM",        "pamam",        "PAMAM"),
     ("PPI",          "ppi",          "PPI"),
@@ -34,7 +38,18 @@ TYPES = [
     ("PLL",          "pll",          "PLL"),
     ("Polyester",    "polyester",    "Polyester"),
     ("Polyglycerol", "polyglycerol", "Polyglycerol"),
+    ("Triazene",     "triazine",     "Triazine"),
 ]
+
+
+def detect_stem(folder):
+    """Auto-detect the 'dendrimer_<stem>' prefix from the gen1 minimised mol2 in a
+    folder. Falls back to any gen*_min_gaff file. Returns e.g. 'dendrimer_triazine'."""
+    for f in sorted(os.listdir(folder)):
+        mo = re.match(r"(dendrimer_.+?)_gen\d+_min_gaff\.mol2$", f)
+        if mo:
+            return mo.group(1)
+    return None
 
 
 def parse_mol2(path):
@@ -153,7 +168,8 @@ def main():
 
         # contiguous minimised generations
         gens = gens_for(fdir)
-        prefix = f"dendrimer_{tid}_gen"
+        stem = detect_stem(fdir) or f"dendrimer_{tid}"
+        prefix = f"{stem}_gen"
         for n in gens:
             src = os.path.join(fdir, f"{prefix}{n}_min_gaff.mol2")
             atoms, nb = parse_mol2(src)
@@ -174,6 +190,9 @@ def main():
 
     # ---- validate against golden (match by n_atoms) ----
     print("\n=== validation vs golden ===")
+    if not os.path.isdir(GOLDEN):
+        print(f"  (skipped: no golden dir at {GOLDEN})")
+        return
     by_atoms = {}
     for e in dataset.values():
         for g in e["generations"]:

@@ -31,3 +31,8 @@ Thumbs.db
 
 # Local scratch / backup scaffold (not part of the site)
 skills/
+
+# Raw dendrimer build outputs (source for scripts/build_structures.py). 45MB of
+# AMBER/NAMD files — the site only ships the generated public/mol2 + JSON, so keep
+# the raw set local rather than bloating the repo/deploy.
+Structures/

@@ -153,6 +153,20 @@ export const dendrimers: DendrimerType[] = [
     monomerUrl: '/mol2/polyglycerol-monomer.pdb',
     coreUrl: '/mol2/polyglycerol-core.pdb',
   },
+  {
+    id: 'triazine',
+    name: 'Triazine',
+    full: 'Triazine (s-triazine scaffold)',
+    coreLabel: 'Triazine core',
+    color: 'violet',
+    description: 'Dendrimer built on the 1,3,5-triazine (s-triazine) scaffold, classically derived from cyanuric chloride whose three chlorines are substituted sequentially by amine linkers. High nitrogen content and rigid aromatic branch points give well-defined, chemically robust architectures.',
+    chemistry: '1,3,5-triazine branching units · amine linker arms · high N content · rigid aromatic scaffold · branching factor 2',
+    applications: 'Drug delivery conjugates, gene delivery, well-defined multivalent scaffolds, imaging agents',
+    forceField: 'GAFF2 + CGenFF (full support)',
+    generations: [],
+    monomerUrl: '/mol2/triazine-monomer.mol2',
+    coreUrl: '/mol2/triazine-core.mol2',
+  },
 ];
 
 export const colorBadge: Record<string, string> = {
@@ -163,6 +177,7 @@ export const colorBadge: Record<string, string> = {
   emerald: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
   orange:  'bg-orange-500/10  text-orange-300  border-orange-500/25',
   fuchsia: 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/25',
+  violet:  'bg-violet-500/10  text-violet-300  border-violet-500/25',
 };
 
 export const colorAccent: Record<string, string> = {
@@ -173,6 +188,7 @@ export const colorAccent: Record<string, string> = {
   emerald: 'text-emerald-400',
   orange:  'text-orange-400',
   fuchsia: 'text-fuchsia-400',
+  violet:  'text-violet-400',
 };
 
 export const colorBorder: Record<string, string> = {
@@ -183,6 +199,7 @@ export const colorBorder: Record<string, string> = {
   emerald: 'border-emerald-500/30 hover:border-emerald-500/70',
   orange:  'border-orange-500/30  hover:border-orange-500/70',
   fuchsia: 'border-fuchsia-500/30 hover:border-fuchsia-500/70',
+  violet:  'border-violet-500/30  hover:border-violet-500/70',
 };
 
 export const colorGlow: Record<string, string> = {
@@ -193,4 +210,5 @@ export const colorGlow: Record<string, string> = {
   emerald: 'rgba(16,185,129,0.12)',
   orange:  'rgba(249,115,22,0.12)',
   fuchsia: 'rgba(217,70,239,0.12)',
+  violet:  'rgba(139,92,246,0.12)',
 };
