@@ -12,14 +12,14 @@ For every dendrimer type it:
 
 Run:  python3 scripts/build_structures.py
 """
-import os, re, sys, json, shutil
+import os, re, sys, json, glob, shutil
 
 HERE      = os.path.dirname(os.path.abspath(__file__))
 WEB       = os.path.dirname(HERE)
 # Structures live in the website repo itself (the newly produced set). Do NOT read
 # from any external build folder — the site visualises exactly what is in ./Structures.
 BUILDS    = os.path.join(WEB, "Structures")
-CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/v1.0/mods"
+CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/Old/v1.0/mods"
 GOLDEN    = os.path.join(CHAR_DIR, "golden")
 PUB_MOL2  = os.path.join(WEB, "public", "mol2")
 OUT_JSON  = os.path.join(WEB, "src", "data", "structures.generated.json")
@@ -40,6 +40,20 @@ TYPES = [
     ("Polyglycerol", "polyglycerol", "Polyglycerol"),
     ("Triazene",     "triazine",     "Triazine"),
 ]
+
+
+def resolve_folder(folder):
+    """Return the on-disk path for a type folder. Tolerates a trailing marker the
+    user may append to an unchanged set (e.g. 'PPI *'), so the pipeline works
+    whether or not folders were tagged. Prefers an exact match."""
+    exact = os.path.join(BUILDS, folder)
+    if os.path.isdir(exact):
+        return exact
+    for h in sorted(glob.glob(os.path.join(BUILDS, folder + " *"))) + \
+             sorted(glob.glob(os.path.join(BUILDS, folder + "*"))):
+        if os.path.isdir(h):
+            return h
+    return None
 
 
 def detect_stem(folder):
@@ -145,11 +159,28 @@ def gens_for(folder):
 
 
 def main():
+    # `--only a,b,c` rebuilds just those site ids and keeps every other family's
+    # entry from the existing dataset untouched (geometry + any enrichment).
+    only = None
+    argv = sys.argv[1:]
+    for i, a in enumerate(argv):
+        if a == "--only" and i + 1 < len(argv):
+            only = {t.strip().lower() for t in argv[i + 1].split(",") if t.strip()}
+
     os.makedirs(PUB_MOL2, exist_ok=True)
     dataset = {}
+    if only and os.path.exists(OUT_JSON):
+        try:
+            dataset = json.load(open(OUT_JSON))
+            print(f"subset rebuild: {sorted(only)} (keeping "
+                  f"{sorted(set(dataset) - only)})")
+        except Exception:                                # noqa: BLE001
+            dataset = {}
     for folder, tid, name in TYPES:
-        fdir = os.path.join(BUILDS, folder)
-        if not os.path.isdir(fdir):
+        if only and tid not in only:
+            continue
+        fdir = resolve_folder(folder)
+        if not fdir:
             print(f"skip {name}: no folder"); continue
         print(f"\n=== {name} ({tid}) ===")
         entry = {"id": tid, "name": name, "core": None, "monomer": None, "generations": []}

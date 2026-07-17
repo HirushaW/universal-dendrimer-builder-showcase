@@ -3,7 +3,7 @@ import Layout from '../../../../layouts/Layout.astro';
 import MolViewer from '../../../../components/MolViewer.astro';
 import MolViewerRuntime from '../../../../components/MolViewerRuntime.astro';
 import { dendrimers, colorBadge, colorAccent } from '../../../../data/dendrimers';
-import { getStructure, metricRows, formula, ELEMENT_COLORS } from '../../../../data/structures';
+import { getStructure, metricRows, mdRows, buildRows, formula, ELEMENT_COLORS } from '../../../../data/structures';
 
 export function getStaticPaths() {
   return dendrimers.map(d => ({ params: { type: d.id }, props: { d } }));
@@ -25,6 +25,7 @@ const accent = accentHex[d.color] ?? '#2ce8d8';
 
 const gens = struct?.generations ?? [];
 const maxGen = gens.length ? gens[gens.length - 1].gen : null;
+const bRows = buildRows(struct?.build);
 
 // elements present across this family's structures (for the legend)
 const elementsPresent = new Set<string>();
@@ -140,6 +141,31 @@ const elementsPresent = new Set<string>();
       </div>
     </section>
 
+    <!-- Build parameters (from UDB build log) -->
+    {bRows.length > 0 && (
+      <section class="hud-panel hud-corners rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <p class="hud-eyebrow mb-2">Build Recipe</p>
+            <h2 class="hud-title text-2xl sm:text-3xl">How UDB Assembled This Family</h2>
+          </div>
+          <span class="font-mono text-[10px] text-slate-500 uppercase tracking-wider">
+            {struct?.build?.force_field ?? 'GAFF2'} · {struct?.build?.parameterization ?? 'Fragment BCC'}
+          </span>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-0">
+          {bRows.map(r => (
+            <div class="flex items-baseline justify-between gap-3 py-2 border-b border-[var(--hud-line-soft)]">
+              <span class="font-mono text-[11px] text-slate-500">{r.label}</span>
+              <span class="font-mono text-[11px] text-slate-200 text-right">
+                {r.value}{r.note && <span class="text-slate-500"> · {r.note}</span>}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     <!-- Generation series: live minimised structures + full characterization -->
     <section>
       <p class="hud-eyebrow mb-3">Generation Series</p>
@@ -152,6 +178,7 @@ const elementsPresent = new Set<string>();
       <div class="space-y-6">
         {gens.map(g => {
           const rows = metricRows(g);
+          const mRows = mdRows(g.md);
           return (
             <div class="hud-panel hud-corners rounded-2xl p-5 sm:p-6">
               <div class="grid lg:grid-cols-[minmax(0,1fr)_1.25fr] gap-6 items-start">
@@ -191,6 +218,22 @@ const elementsPresent = new Set<string>();
                       </div>
                     ))}
                   </div>
+
+                  {mRows.length > 0 && (
+                    <div class="mt-5 pt-4 border-t border-[var(--hud-line)]">
+                      <span class="font-mono text-[11px] tracking-[0.2em] uppercase text-slate-400 block mb-2">// MD Simulation Setup</span>
+                      <div class="grid sm:grid-cols-2 gap-x-6 gap-y-0">
+                        {mRows.map(r => (
+                          <div class="flex items-baseline justify-between gap-3 py-1.5 border-b border-[var(--hud-line-soft)]">
+                            <span class="font-mono text-[11px] text-slate-500">{r.label}</span>
+                            <span class="font-mono text-[11px] text-slate-200 text-right">
+                              {r.value}{r.note && <span class="text-slate-500"> · {r.note}</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

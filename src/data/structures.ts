@@ -1,10 +1,41 @@
 import generated from './structures.generated.json';
 
+/** MD-simulation setup for one generation, parsed from the UDB build log. */
+export interface GenMD {
+  box?: number;            // solvation box edge, Å
+  temperature?: number;    // K
+  production_ns?: number;  // production run length, ns
+  timestep_fs?: number;    // integration timestep, fs
+  rigid_bonds?: string;    // rigidBonds mode (all | water)
+  piston_ps?: number;      // Langevin piston period, ps
+  force_field?: string;
+  water_model?: string;
+  sites?: number;          // founding core sites (G1)
+  monomers?: number;       // monomers grafted at G1
+}
+
+/** Type-level build parameters, parsed from the UDB build log. */
+export interface BuildParams {
+  core_binding_atoms?: number[];
+  monomer_attach?: string;
+  labile_atoms?: string[];
+  labile_mode?: string;
+  terminal_atoms?: string[];
+  bond_length?: number;    // Å
+  bond_angle?: number;     // degrees
+  branching_factor?: number;
+  output_formats?: string[];
+  parameterization?: string;
+  force_field?: string;
+  water_model?: string;
+}
+
 export interface StructureMetrics {
   file: string;
   n_atoms: number;
   n_bonds: number;
   gen?: number;
+  md?: GenMD;
   composition?: Record<string, number>;
   mw?: number;
   rg_heavy?: number;
@@ -29,6 +60,7 @@ export interface StructureEntry {
   core: StructureMetrics | null;
   monomer: StructureMetrics | null;
   generations: StructureMetrics[];
+  build?: BuildParams;
 }
 
 export const structures = generated as unknown as Record<string, StructureEntry>;
@@ -77,6 +109,32 @@ export function metricRows(m: StructureMetrics): MetricRow[] {
   if (m.void_fraction != null) rows.push({ label: 'Void fraction', value: `${(m.void_fraction * 100).toFixed(1)} %` });
   if (m.sasa != null) rows.push({ label: 'SASA', value: `${m.sasa.toFixed(0)} Å²` });
   if (m.density != null) rows.push({ label: 'Density', value: `${m.density.toFixed(3)} g/cm³` });
+  return rows;
+}
+
+/** Display-ready MD-setup rows for one generation (from the build log). */
+export function mdRows(md?: GenMD): MetricRow[] {
+  if (!md) return [];
+  const rows: MetricRow[] = [];
+  if (md.box != null) rows.push({ label: 'Solvent box', value: `~${md.box.toFixed(0)} Å`, note: `${md.water_model ?? 'TIP3P'} water` });
+  if (md.temperature != null) rows.push({ label: 'Temperature', value: `${md.temperature.toFixed(0)} K` });
+  if (md.production_ns != null) rows.push({ label: 'Production', value: `${md.production_ns} ns` });
+  if (md.timestep_fs != null) rows.push({ label: 'Timestep', value: `${md.timestep_fs} fs`, note: md.rigid_bonds ? `rigidBonds: ${md.rigid_bonds}` : undefined });
+  if (md.piston_ps != null) rows.push({ label: 'Langevin piston', value: `${md.piston_ps} ps` });
+  if (md.monomers != null) rows.push({ label: 'G1 shell', value: `${md.monomers} monomers`, note: md.sites != null ? `${md.sites} core sites` : undefined });
+  return rows;
+}
+
+/** Display-ready build-parameter rows for a type (from the build log). */
+export function buildRows(b?: BuildParams): MetricRow[] {
+  if (!b) return [];
+  const rows: MetricRow[] = [];
+  if (b.branching_factor != null) rows.push({ label: 'Branching factor', value: String(b.branching_factor) });
+  if (b.bond_length != null) rows.push({ label: 'Graft bond', value: `${b.bond_length} Å`, note: b.bond_angle != null ? `${b.bond_angle}°` : undefined });
+  if (b.terminal_atoms?.length) rows.push({ label: 'Terminal atoms', value: b.terminal_atoms.join(', ') });
+  if (b.monomer_attach) rows.push({ label: 'Monomer attach', value: b.monomer_attach, note: b.labile_atoms?.length ? `labile ${b.labile_atoms.join(', ')}` : undefined });
+  if (b.core_binding_atoms?.length) rows.push({ label: 'Core sites', value: `${b.core_binding_atoms.length}`, note: `idx ${b.core_binding_atoms.join(', ')}` });
+  if (b.parameterization) rows.push({ label: 'Charges', value: b.parameterization });
   return rows;
 }
 

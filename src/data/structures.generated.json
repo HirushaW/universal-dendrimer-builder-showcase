@@ -12,24 +12,24 @@
     "O": 4
    },
    "mw": 516.692,
-   "rg_heavy": 6.202677532714858,
-   "rg_all": 6.599735333605391,
+   "rg_heavy": 6.404233908235152,
+   "rg_all": 6.822717739635252,
    "eigenvalues": [
-    0.39900584607423156,
-    4.657073332049341,
-    33.41712939672212
+    0.29624641333480334,
+    7.899992549345854,
+    32.81797298870825
    ],
-   "asphericity": 0.6537915239788934,
-   "acylindricity": 4.2580674859751095,
-   "kappa2": 0.6537915239788934,
-   "R_sphere": 8.007622262033186,
-   "Rh": 8.007622262033186,
-   "diameter": 16.01524452406637,
-   "V_sphere": 2150.796614298174,
-   "vdw_volume": 583.4658539828581,
-   "void_fraction": 0.7287210468418703,
-   "density": 0.398916032316779,
-   "sasa": 913.9755291756364,
+   "asphericity": 0.516116077545409,
+   "acylindricity": 7.6037461360110505,
+   "kappa2": 0.516116077545409,
+   "R_sphere": 8.267830423937193,
+   "Rh": 8.267830423937193,
+   "diameter": 16.535660847874386,
+   "V_sphere": 2367.3544702054373,
+   "vdw_volume": 622.8005984417346,
+   "void_fraction": 0.7369212738184965,
+   "density": 0.3624244964133883,
+   "sasa": 1023.8783018277167,
    "file": "/mol2/pamam-core.mol2"
   },
   "monomer": {
@@ -56,10 +56,10 @@
    "Rh": 3.144251455202282,
    "diameter": 6.288502910404564,
    "V_sphere": 130.20882535966388,
-   "vdw_volume": 145.85818602946117,
+   "vdw_volume": 154.7243204190143,
    "void_fraction": 0.0,
    "density": 1.4814269283696169,
-   "sasa": 346.58274159121777,
+   "sasa": 352.82194953616556,
    "file": "/mol2/pamam-monomer.mol2"
   },
   "generations": [
@@ -73,26 +73,36 @@
      "O": 12
     },
     "mw": 1429.876,
-    "rg_heavy": 9.791340104811546,
-    "rg_all": 10.079114334498493,
+    "rg_heavy": 10.323014342967998,
+    "rg_all": 10.670328125238829,
     "eigenvalues": [
-     5.052679855579665,
-     10.576972405270729,
-     80.24068878724061
+     3.0881459632094526,
+     17.410486688413968,
+     86.06599247349956
     ],
-    "asphericity": 0.5732046392106254,
-    "acylindricity": 5.524292549691063,
-    "kappa2": 0.5732046392106254,
-    "R_sphere": 12.640565720995967,
-    "Rh": 12.640565720995967,
-    "diameter": 25.281131441991935,
-    "V_sphere": 8460.346343213563,
-    "vdw_volume": 1595.526735110402,
-    "void_fraction": 0.8114111798283237,
-    "density": 0.28064630724235773,
-    "sasa": 1834.5544646530166,
+    "asphericity": 0.5197257326242444,
+    "acylindricity": 14.322340725204516,
+    "kappa2": 0.5197257326242444,
+    "R_sphere": 13.326954210991785,
+    "Rh": 13.326954210991785,
+    "diameter": 26.65390842198357,
+    "V_sphere": 9914.739910151666,
+    "vdw_volume": 1679.5462777483767,
+    "void_fraction": 0.8306010754726207,
+    "density": 0.239478289973413,
+    "sasa": 2074.259631520744,
     "gen": 1,
-    "file": "/mol2/pamam-g1.mol2"
+    "file": "/mol2/pamam-g1.mol2",
+    "md": {
+     "box": 81.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0,
+     "sites": 4,
+     "monomers": 8
+    }
    },
    {
     "n_atoms": 516,
@@ -104,26 +114,34 @@
      "O": 28
     },
     "mw": 3256.2439999999997,
-    "rg_heavy": 13.57497368299558,
-    "rg_all": 13.78627499159241,
+    "rg_heavy": 13.420939248037811,
+    "rg_all": 13.641294912799403,
     "eigenvalues": [
-     10.584720931488048,
-     22.329965005134767,
-     151.36522455739984
+     7.202781070649185,
+     33.352114722391136,
+     139.5667145064815
     ],
-    "asphericity": 0.5389897684735514,
-    "acylindricity": 11.745244073646719,
-    "kappa2": 0.5389897684735514,
-    "R_sphere": 17.525215666481948,
-    "Rh": 17.525215666481948,
-    "diameter": 35.050431332963896,
-    "V_sphere": 22546.4786541238,
-    "vdw_volume": 3616.244319199643,
-    "void_fraction": 0.8396093520999465,
-    "density": 0.2398210584099997,
-    "sasa": 3387.6683818208894,
+    "asphericity": 0.4544095440987017,
+    "acylindricity": 26.14933365174195,
+    "kappa2": 0.4544095440987017,
+    "R_sphere": 17.32635806603731,
+    "Rh": 17.32635806603731,
+    "diameter": 34.65271613207462,
+    "V_sphere": 21787.653764397528,
+    "vdw_volume": 3781.762100097665,
+    "void_fraction": 0.8264263724312843,
+    "density": 0.24817359559320834,
+    "sasa": 3505.3285005991097,
     "gen": 2,
-    "file": "/mol2/pamam-g2.mol2"
+    "file": "/mol2/pamam-g2.mol2",
+    "md": {
+     "box": 100.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 1092,
@@ -135,26 +153,34 @@
      "O": 60
     },
     "mw": 6908.98,
-    "rg_heavy": 17.009276514970125,
-    "rg_all": 17.230004530595014,
+    "rg_heavy": 16.178655118693328,
+    "rg_all": 16.40434665075377,
     "eigenvalues": [
-     21.894950437638403,
-     37.144897702626196,
-     230.27563942244967
+     13.025287723687232,
+     49.36500300691708,
+     199.3585907190175
     ],
-    "asphericity": 0.4835795569423621,
-    "acylindricity": 15.249947264987792,
-    "kappa2": 0.4835795569423621,
-    "R_sphere": 21.95888155783874,
-    "Rh": 21.95888155783874,
-    "diameter": 43.91776311567748,
-    "V_sphere": 44352.61778949998,
-    "vdw_volume": 7579.093731871718,
-    "void_fraction": 0.8291173303942843,
-    "density": 0.25866863730056516,
-    "sasa": 6014.7349655582075,
+    "asphericity": 0.42721233913290935,
+    "acylindricity": 36.33971528322985,
+    "kappa2": 0.42721233913290935,
+    "R_sphere": 20.886553946244213,
+    "Rh": 20.886553946244213,
+    "diameter": 41.773107892488426,
+    "V_sphere": 38167.08441164203,
+    "vdw_volume": 7996.582459087003,
+    "void_fraction": 0.7904848488597724,
+    "density": 0.30058966727946584,
+    "sasa": 5859.835377575059,
     "gen": 3,
-    "file": "/mol2/pamam-g3.mol2"
+    "file": "/mol2/pamam-g3.mol2",
+    "md": {
+     "box": 122.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 2244,
@@ -166,28 +192,63 @@
      "O": 124
     },
     "mw": 14214.452,
-    "rg_heavy": 20.36609568958122,
-    "rg_all": 20.564406165077788,
+    "rg_heavy": 19.373120076652764,
+    "rg_all": 19.57778584876976,
     "eigenvalues": [
-     37.96382927279266,
-     60.840555837565155,
-     315.9734685268206
+     27.564699909474754,
+     75.02897754843198,
+     272.72410404649963
     ],
-    "asphericity": 0.41532478641484805,
-    "acylindricity": 22.876726564772497,
-    "kappa2": 0.41532478641484805,
-    "R_sphere": 26.292516477671573,
-    "Rh": 26.292516477671573,
-    "diameter": 52.585032955343145,
-    "V_sphere": 76135.12648929897,
-    "vdw_volume": 15764.30175552551,
-    "void_fraction": 0.7929431199179628,
-    "density": 0.31002316477119124,
-    "sasa": 10197.701257962482,
+    "asphericity": 0.3600627537152936,
+    "acylindricity": 47.46427763895723,
+    "kappa2": 0.3600627537152936,
+    "R_sphere": 25.010590473650904,
+    "Rh": 25.010590473650904,
+    "diameter": 50.02118094730181,
+    "V_sphere": 65533.05957582852,
+    "vdw_volume": 16270.779127993601,
+    "void_fraction": 0.7517164735889276,
+    "density": 0.3601793204413958,
+    "sasa": 9919.789243490028,
     "gen": 4,
-    "file": "/mol2/pamam-g4.mol2"
+    "file": "/mol2/pamam-g4.mol2",
+    "md": {
+     "box": 148.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    28,
+    44,
+    49,
+    76
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "H1"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "N2"
+   ],
+   "bond_length": 1.47,
+   "bond_angle": 109.5,
+   "branching_factor": 2,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "ppi": {
   "id": "ppi",
@@ -279,7 +340,17 @@
     "density": 0.48782623893376365,
     "sasa": 677.5908795670638,
     "gen": 1,
-    "file": "/mol2/ppi-g1.mol2"
+    "file": "/mol2/ppi-g1.mol2",
+    "md": {
+     "box": 64.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0,
+     "sites": 2,
+     "monomers": 4
+    }
    },
    {
     "n_atoms": 150,
@@ -309,7 +380,15 @@
     "density": 0.4884990459465062,
     "sasa": 1209.752845280229,
     "gen": 2,
-    "file": "/mol2/ppi-g2.mol2"
+    "file": "/mol2/ppi-g2.mol2",
+    "md": {
+     "box": 80.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 326,
@@ -339,7 +418,15 @@
     "density": 0.5849771521620624,
     "sasa": 1977.5007379492884,
     "gen": 3,
-    "file": "/mol2/ppi-g3.mol2"
+    "file": "/mol2/ppi-g3.mol2",
+    "md": {
+     "box": 97.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 678,
@@ -369,7 +456,15 @@
     "density": 0.6655712098045999,
     "sasa": 3243.3127877432926,
     "gen": 4,
-    "file": "/mol2/ppi-g4.mol2"
+    "file": "/mol2/ppi-g4.mol2",
+    "md": {
+     "box": 118.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 1382,
@@ -399,9 +494,42 @@
     "density": 0.6999845349903998,
     "sasa": 5337.50002053246,
     "gen": 5,
-    "file": "/mol2/ppi-g5.mol2"
+    "file": "/mol2/ppi-g5.mol2",
+    "md": {
+     "box": 143.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    5,
+    12
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "H1"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "N1"
+   ],
+   "bond_length": 1.47,
+   "bond_angle": 109.5,
+   "branching_factor": 2,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "carbosilane": {
   "id": "carbosilane",
@@ -474,26 +602,36 @@
      "H": 100
     },
     "mw": 817.758,
-    "rg_heavy": 5.882699456780352,
-    "rg_all": 6.334973743607143,
+    "rg_heavy": 5.94681408591932,
+    "rg_all": 6.39729686682753,
     "eigenvalues": [
-     3.4956434326617893,
-     14.064732323731718,
-     17.045777142410337
+     3.18540751746617,
+     14.35209257025895,
+     17.827097684763316
     ],
-    "asphericity": 0.12700484051436,
-    "acylindricity": 10.569088891069928,
-    "kappa2": 0.12700484051436,
-    "R_sphere": 7.594532342284573,
-    "Rh": 7.594532342284573,
-    "diameter": 15.189064684569146,
-    "V_sphere": 1834.8126138819825,
-    "vdw_volume": 1197.9882444837458,
-    "void_fraction": 0.3470786959824106,
-    "density": 0.7400859881930667,
-    "sasa": 1354.0905333399878,
+    "asphericity": 0.14038630540469554,
+    "acylindricity": 11.16668505279278,
+    "kappa2": 0.14038630540469554,
+    "R_sphere": 7.677303972585737,
+    "Rh": 7.677303972585737,
+    "diameter": 15.354607945171473,
+    "V_sphere": 1895.4608473779788,
+    "vdw_volume": 1193.7242749023558,
+    "void_fraction": 0.37021950279075744,
+    "density": 0.7164057798251976,
+    "sasa": 1333.6736614396261,
     "gen": 1,
-    "file": "/mol2/carbosilane-g1.mol2"
+    "file": "/mol2/carbosilane-g1.mol2",
+    "md": {
+     "box": 85.0,
+     "temperature": 300.0,
+     "production_ns": 5.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 250.0,
+     "sites": 4,
+     "monomers": 4
+    }
    },
    {
     "n_atoms": 393,
@@ -504,26 +642,34 @@
      "H": 260
     },
     "mw": 2068.518,
-    "rg_heavy": 9.04585401583327,
-    "rg_all": 9.414028685129576,
+    "rg_heavy": 8.872621736597011,
+    "rg_all": 9.24734926586504,
     "eigenvalues": [
-     10.924285153315532,
-     28.735536032095776,
-     42.16765369035555
+     11.2587647373134,
+     30.39036526118136,
+     37.07428648223903
     ],
-    "asphericity": 0.11005590710517055,
-    "acylindricity": 17.811250878780243,
-    "kappa2": 0.11005590710517055,
-    "R_sphere": 11.678147318515245,
-    "Rh": 11.678147318515245,
-    "diameter": 23.35629463703049,
-    "V_sphere": 6671.299801990619,
-    "vdw_volume": 3000.1715987940065,
-    "void_fraction": 0.5502867974995219,
-    "density": 0.5148704228713272,
-    "sasa": 2892.4029786942783,
+    "asphericity": 0.08690242869711884,
+    "acylindricity": 19.13160052386796,
+    "kappa2": 0.08690242869711884,
+    "R_sphere": 11.454505407679385,
+    "Rh": 11.454505407679385,
+    "diameter": 22.90901081535877,
+    "V_sphere": 6295.317438406909,
+    "vdw_volume": 2991.9614314612127,
+    "void_fraction": 0.5247322377728489,
+    "density": 0.5456206114717442,
+    "sasa": 2837.5359156275795,
     "gen": 2,
-    "file": "/mol2/carbosilane-g2.mol2"
+    "file": "/mol2/carbosilane-g2.mol2",
+    "md": {
+     "box": 99.0,
+     "temperature": 300.0,
+     "production_ns": 5.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 250.0
+    }
    },
    {
     "n_atoms": 873,
@@ -534,26 +680,34 @@
      "H": 580
     },
     "mw": 4570.038,
-    "rg_heavy": 11.99490684091441,
-    "rg_all": 12.307433165504237,
+    "rg_heavy": 11.841692430257119,
+    "rg_all": 12.155317646592534,
     "eigenvalues": [
-     21.201974842633785,
-     45.75249702739293,
-     76.92331825218861
+     23.177451869281363,
+     51.85509361818178,
+     65.19313412534562
     ],
-    "asphericity": 0.11302008055614432,
-    "acylindricity": 24.550522184759142,
-    "kappa2": 0.11302008055614432,
-    "R_sphere": 15.485358144723643,
-    "Rh": 15.485358144723643,
-    "diameter": 30.970716289447285,
-    "V_sphere": 15554.368074215083,
-    "vdw_volume": 6572.1857084541725,
-    "void_fraction": 0.5774700921891471,
-    "density": 0.48788395653624006,
-    "sasa": 5523.732714055958,
+    "asphericity": 0.07032482551946606,
+    "acylindricity": 28.67764174890042,
+    "kappa2": 0.07032482551946606,
+    "R_sphere": 15.287559191098751,
+    "Rh": 15.287559191098751,
+    "diameter": 30.575118382197502,
+    "V_sphere": 14965.907753839989,
+    "vdw_volume": 6501.733121308456,
+    "void_fraction": 0.565563731365361,
+    "density": 0.5070675806832965,
+    "sasa": 5380.876937084968,
     "gen": 3,
-    "file": "/mol2/carbosilane-g3.mol2"
+    "file": "/mol2/carbosilane-g3.mol2",
+    "md": {
+     "box": 109.0,
+     "temperature": 300.0,
+     "production_ns": 5.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 250.0
+    }
    },
    {
     "n_atoms": 1833,
@@ -564,28 +718,64 @@
      "H": 1220
     },
     "mw": 9573.078,
-    "rg_heavy": 14.90745771898931,
-    "rg_all": 15.185395355188023,
+    "rg_heavy": 14.909336124945877,
+    "rg_all": 15.183864049725356,
     "eigenvalues": [
-     35.21245642022576,
-     70.55904476316985,
-     116.4607944600584
+     38.630247389521415,
+     84.55172395535591,
+     99.10633234173888
     ],
-    "asphericity": 0.10081200931176393,
-    "acylindricity": 35.34658834294409,
-    "kappa2": 0.10081200931176393,
-    "R_sphere": 19.245445159978935,
-    "Rh": 19.245445159978935,
-    "diameter": 38.49089031995787,
-    "V_sphere": 29858.809810630202,
-    "vdw_volume": 13617.73343847116,
-    "void_fraction": 0.5439291276230631,
-    "density": 0.532387932168786,
-    "sasa": 8693.162474951981,
+    "asphericity": 0.060491020434005116,
+    "acylindricity": 45.921476565834496,
+    "kappa2": 0.060491020434005116,
+    "R_sphere": 19.247870171641335,
+    "Rh": 19.247870171641335,
+    "diameter": 38.49574034328267,
+    "V_sphere": 29870.098261303476,
+    "vdw_volume": 13579.147722616739,
+    "void_fraction": 0.5453932690871512,
+    "density": 0.5321867331349308,
+    "sasa": 9074.452738941009,
     "gen": 4,
-    "file": "/mol2/carbosilane-g4.mol2"
+    "file": "/mol2/carbosilane-g4.mol2",
+    "md": {
+     "box": 117.0,
+     "temperature": 300.0,
+     "production_ns": 5.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 250.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    9,
+    18,
+    27,
+    36
+   ],
+   "monomer_attach": "SI1",
+   "labile_atoms": [
+    "H22"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "C4",
+    "C9"
+   ],
+   "bond_length": 1.89,
+   "bond_angle": 109.5,
+   "branching_factor": 1,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "phosphorus": {
   "id": "phosphorus",
@@ -644,10 +834,10 @@
    "Rh": 4.155484876664236,
    "diameter": 8.310969753328472,
    "V_sphere": 300.57560337216023,
-   "vdw_volume": 203.099370023858,
-   "void_fraction": 0.32429855335800895,
+   "vdw_volume": 206.066184775976,
+   "void_fraction": 0.3144281090543686,
    "density": 1.1059888938502116,
-   "sasa": 419.7716074010025,
+   "sasa": 420.495734703268,
    "file": "/mol2/phosphorus-monomer.mol2"
   },
   "generations": [
@@ -663,26 +853,36 @@
      "S": 6
     },
     "mw": 1330.071,
-    "rg_heavy": 6.561172269983371,
-    "rg_all": 6.928230686559598,
+    "rg_heavy": 6.587644047670483,
+    "rg_all": 6.937402111337065,
     "eigenvalues": [
-     7.074991506409547,
-     9.670166069939816,
-     26.303823980049373
+     5.93859536127553,
+     9.56146556279536,
+     27.896993174737467
     ],
-    "asphericity": 0.17622390566598578,
-    "acylindricity": 2.5951745635302688,
-    "kappa2": 0.17622390566598578,
-    "R_sphere": 8.470436977747836,
-    "Rh": 8.470436977747836,
-    "diameter": 16.94087395549567,
-    "V_sphere": 2545.693161545663,
-    "vdw_volume": 1210.1737047397341,
-    "void_fraction": 0.5246191791610283,
-    "density": 0.8675966495011416,
-    "sasa": 1528.3472399438367,
+    "asphericity": 0.22075242802576878,
+    "acylindricity": 3.622870201519831,
+    "kappa2": 0.22075242802576878,
+    "R_sphere": 8.504611895790067,
+    "Rh": 8.504611895790067,
+    "diameter": 17.009223791580133,
+    "V_sphere": 2576.630290520437,
+    "vdw_volume": 1212.7607618859572,
+    "void_fraction": 0.529322943090528,
+    "density": 0.8571795750987921,
+    "sasa": 1503.6949291933126,
     "gen": 1,
-    "file": "/mol2/phosphorus-g1.mol2"
+    "file": "/mol2/phosphorus-g1.mol2",
+    "md": {
+     "box": 67.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "water",
+     "timestep_fs": 1.0,
+     "piston_ps": 250.0,
+     "sites": 3,
+     "monomers": 6
+    }
    },
    {
     "n_atoms": 354,
@@ -696,26 +896,34 @@
      "S": 18
     },
     "mw": 3708.231,
-    "rg_heavy": 11.074436485418014,
-    "rg_all": 11.388553216316227,
+    "rg_heavy": 11.112536018866736,
+    "rg_all": 11.42078646276756,
     "eigenvalues": [
-     20.496253858168096,
-     24.651424012830354,
-     77.49546559855924
+     17.797811896734977,
+     19.604836738051286,
+     86.0858081358243
     ],
-    "asphericity": 0.2014005418175382,
-    "acylindricity": 4.155170154662258,
-    "kappa2": 0.2014005418175382,
-    "R_sphere": 14.297036025551922,
-    "Rh": 14.297036025551922,
-    "diameter": 28.594072051103844,
-    "V_sphere": 12241.274700317768,
-    "vdw_volume": 3472.054537870701,
-    "void_fraction": 0.716364951945685,
-    "density": 0.5030246111089474,
-    "sasa": 3805.138800497861,
+    "asphericity": 0.29792109687672585,
+    "acylindricity": 1.8070248413163092,
+    "kappa2": 0.29792109687672585,
+    "R_sphere": 14.346222311733646,
+    "Rh": 14.346222311733646,
+    "diameter": 28.692444623467292,
+    "V_sphere": 12368.051321194307,
+    "vdw_volume": 3426.647641390061,
+    "void_fraction": 0.722943610727258,
+    "density": 0.49786844230288446,
+    "sasa": 3764.921021320534,
     "gen": 2,
-    "file": "/mol2/phosphorus-g2.mol2"
+    "file": "/mol2/phosphorus-g2.mol2",
+    "md": {
+     "box": 77.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "water",
+     "timestep_fs": 1.0,
+     "piston_ps": 250.0
+    }
    },
    {
     "n_atoms": 810,
@@ -729,26 +937,34 @@
      "S": 42
     },
     "mw": 8464.551,
-    "rg_heavy": 15.173857566210893,
-    "rg_all": 15.486222671291477,
+    "rg_heavy": 15.64658506396041,
+    "rg_all": 15.948278334681127,
     "eigenvalues": [
-     38.15937567280517,
-     58.48382182007625,
-     133.6027559467741
+     44.958259856259815,
+     48.58804577400779,
+     151.2693185334814
     ],
-    "asphericity": 0.14303396586286676,
-    "acylindricity": 20.324446147271082,
-    "kappa2": 0.14303396586286676,
-    "R_sphere": 19.589365883886064,
-    "Rh": 19.589365883886064,
-    "diameter": 39.17873176777213,
-    "V_sphere": 31488.338328192258,
-    "vdw_volume": 7887.858468256627,
-    "void_fraction": 0.7494990562523764,
-    "density": 0.44637851242220145,
-    "sasa": 7423.424431076715,
+    "asphericity": 0.18235399547972186,
+    "acylindricity": 3.6297859177479737,
+    "kappa2": 0.18235399547972186,
+    "R_sphere": 20.19965445924546,
+    "Rh": 20.19965445924546,
+    "diameter": 40.39930891849092,
+    "V_sphere": 34523.94613605421,
+    "vdw_volume": 7876.097057725452,
+    "void_fraction": 0.7718656776173032,
+    "density": 0.4071295200784338,
+    "sasa": 8101.179518720356,
     "gen": 3,
-    "file": "/mol2/phosphorus-g3.mol2"
+    "file": "/mol2/phosphorus-g3.mol2",
+    "md": {
+     "box": 85.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "water",
+     "timestep_fs": 1.0,
+     "piston_ps": 250.0
+    }
    },
    {
     "n_atoms": 1722,
@@ -762,28 +978,62 @@
      "S": 90
     },
     "mw": 17977.191,
-    "rg_heavy": 19.56659539762548,
-    "rg_all": 19.88951908946982,
+    "rg_heavy": 19.833606127218673,
+    "rg_all": 20.107920138759855,
     "eigenvalues": [
-     67.4934530549075,
-     96.67995889752656,
-     218.67824350194476
+     79.40448811449619,
+     87.14978992895647,
+     226.81765396619346
     ],
-    "asphericity": 0.13164650085556007,
-    "acylindricity": 29.186505842619056,
-    "kappa2": 0.13164650085556007,
-    "R_sphere": 25.260366038994057,
-    "Rh": 25.260366038994057,
-    "diameter": 50.520732077988114,
-    "V_sphere": 67516.12797730953,
-    "vdw_volume": 16801.12373451141,
-    "void_fraction": 0.7511539207319791,
-    "density": 0.44214366060178273,
-    "sasa": 13995.92658513183,
+    "asphericity": 0.13344109233200985,
+    "acylindricity": 7.7453018144602765,
+    "kappa2": 0.13344109233200985,
+    "R_sphere": 25.605075408651768,
+    "Rh": 25.605075408651768,
+    "diameter": 51.210150817303536,
+    "V_sphere": 70318.04484275646,
+    "vdw_volume": 16753.392621857358,
+    "void_fraction": 0.7617483156802654,
+    "density": 0.42452585307654706,
+    "sasa": 15370.611681392118,
     "gen": 4,
-    "file": "/mol2/phosphorus-g4.mol2"
+    "file": "/mol2/phosphorus-g4.mol2",
+    "md": {
+     "box": 91.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "water",
+     "timestep_fs": 1.0,
+     "piston_ps": 250.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    2,
+    3,
+    5
+   ],
+   "monomer_attach": "O1",
+   "labile_atoms": [
+    "H5"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "P1"
+   ],
+   "bond_length": 1.61,
+   "bond_angle": 120.0,
+   "branching_factor": 2,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "pll": {
   "id": "pll",
@@ -876,7 +1126,17 @@
     "density": 0.39049787338649244,
     "sasa": 697.439377325792,
     "gen": 1,
-    "file": "/mol2/pll-g1.mol2"
+    "file": "/mol2/pll-g1.mol2",
+    "md": {
+     "box": 65.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0,
+     "sites": 2,
+     "monomers": 2
+    }
    },
    {
     "n_atoms": 133,
@@ -907,7 +1167,15 @@
     "density": 0.25645097680381884,
     "sasa": 1349.517619096101,
     "gen": 2,
-    "file": "/mol2/pll-g2.mol2"
+    "file": "/mol2/pll-g2.mol2",
+    "md": {
+     "box": 75.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 293,
@@ -938,7 +1206,15 @@
     "density": 0.24251380552178795,
     "sasa": 2501.294839099399,
     "gen": 3,
-    "file": "/mol2/pll-g3.mol2"
+    "file": "/mol2/pll-g3.mol2",
+    "md": {
+     "box": 81.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 613,
@@ -969,7 +1245,15 @@
     "density": 0.27163953384279477,
     "sasa": 4411.422716585757,
     "gen": 4,
-    "file": "/mol2/pll-g4.mol2"
+    "file": "/mol2/pll-g4.mol2",
+    "md": {
+     "box": 87.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 1253,
@@ -1000,9 +1284,43 @@
     "density": 0.3478895333607957,
     "sasa": 7245.894316115492,
     "gen": 5,
-    "file": "/mol2/pll-g5.mol2"
+    "file": "/mol2/pll-g5.mol2",
+    "md": {
+     "box": 92.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    6,
+    7
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "H7"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "N2",
+    "N1"
+   ],
+   "bond_length": 1.54,
+   "bond_angle": 109.5,
+   "branching_factor": 1,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "polyester": {
   "id": "polyester",
@@ -1094,7 +1412,17 @@
     "density": 1.3117099776915142,
     "sasa": 730.0246622563112,
     "gen": 1,
-    "file": "/mol2/polyester-g1.mol2"
+    "file": "/mol2/polyester-g1.mol2",
+    "md": {
+     "box": 60.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0,
+     "sites": 3,
+     "monomers": 3
+    }
    },
    {
     "n_atoms": 167,
@@ -1124,7 +1452,15 @@
     "density": 1.1898492507657612,
     "sasa": 1214.3286718066859,
     "gen": 2,
-    "file": "/mol2/polyester-g2.mol2"
+    "file": "/mol2/polyester-g2.mol2",
+    "md": {
+     "box": 68.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 359,
@@ -1154,7 +1490,15 @@
     "density": 0.9715701405523637,
     "sasa": 2111.4817219194474,
     "gen": 3,
-    "file": "/mol2/polyester-g3.mol2"
+    "file": "/mol2/polyester-g3.mol2",
+    "md": {
+     "box": 74.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 743,
@@ -1184,7 +1528,15 @@
     "density": 0.942648367501498,
     "sasa": 3509.622567497942,
     "gen": 4,
-    "file": "/mol2/polyester-g4.mol2"
+    "file": "/mol2/polyester-g4.mol2",
+    "md": {
+     "box": 79.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    },
    {
     "n_atoms": 1511,
@@ -1214,9 +1566,44 @@
     "density": 0.9244034350213005,
     "sasa": 5723.372230687159,
     "gen": 5,
-    "file": "/mol2/polyester-g5.mol2"
+    "file": "/mol2/polyester-g5.mol2",
+    "md": {
+     "box": 83.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 200.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    13,
+    17,
+    18
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "H4"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "O3",
+    "O2"
+   ],
+   "bond_length": 1.43,
+   "bond_angle": 109.5,
+   "branching_factor": 1,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "GAFF2",
+   "water_model": "TIP3P"
+  }
  },
  "polyglycerol": {
   "id": "polyglycerol",
@@ -1308,7 +1695,17 @@
     "density": 1.2072599571954445,
     "sasa": 630.2076182767601,
     "gen": 1,
-    "file": "/mol2/polyglycerol-g1.mol2"
+    "file": "/mol2/polyglycerol-g1.mol2",
+    "md": {
+     "box": 60.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0,
+     "sites": 3,
+     "monomers": 3
+    }
    },
    {
     "n_atoms": 122,
@@ -1338,7 +1735,15 @@
     "density": 0.8248887125521005,
     "sasa": 1061.7090614695337,
     "gen": 2,
-    "file": "/mol2/polyglycerol-g2.mol2"
+    "file": "/mol2/polyglycerol-g2.mol2",
+    "md": {
+     "box": 66.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0
+    }
    },
    {
     "n_atoms": 254,
@@ -1368,7 +1773,15 @@
     "density": 0.6549446962338034,
     "sasa": 1818.6694236432816,
     "gen": 3,
-    "file": "/mol2/polyglycerol-g3.mol2"
+    "file": "/mol2/polyglycerol-g3.mol2",
+    "md": {
+     "box": 71.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0
+    }
    },
    {
     "n_atoms": 518,
@@ -1398,7 +1811,15 @@
     "density": 0.7066056682609791,
     "sasa": 2881.3401650824103,
     "gen": 4,
-    "file": "/mol2/polyglycerol-g4.mol2"
+    "file": "/mol2/polyglycerol-g4.mol2",
+    "md": {
+     "box": 75.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0
+    }
    },
    {
     "n_atoms": 1046,
@@ -1428,7 +1849,15 @@
     "density": 0.7808370450538139,
     "sasa": 4564.5985446979485,
     "gen": 5,
-    "file": "/mol2/polyglycerol-g5.mol2"
+    "file": "/mol2/polyglycerol-g5.mol2",
+    "md": {
+     "box": 79.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0
+    }
    },
    {
     "n_atoms": 2102,
@@ -1458,9 +1887,44 @@
     "density": 0.8778134723236868,
     "sasa": 7158.364368135557,
     "gen": 6,
-    "file": "/mol2/polyglycerol-g6.mol2"
+    "file": "/mol2/polyglycerol-g6.mol2",
+    "md": {
+     "box": 82.0,
+     "temperature": 300.0,
+     "production_ns": 10.0,
+     "rigid_bonds": "all",
+     "timestep_fs": 2.0,
+     "piston_ps": 500.0
+    }
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    13,
+    17,
+    18
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "H3"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "O1",
+    "O2"
+   ],
+   "bond_length": 1.43,
+   "bond_angle": 109.5,
+   "branching_factor": 1,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)",
+   "force_field": "CHARMM36",
+   "water_model": "TIP3P"
+  }
  },
  "triazine": {
   "id": "triazine",
@@ -1552,7 +2016,11 @@
     "density": 1.1958851842333538,
     "sasa": 733.7208406144682,
     "gen": 1,
-    "file": "/mol2/triazine-g1.mol2"
+    "file": "/mol2/triazine-g1.mol2",
+    "md": {
+     "sites": 3,
+     "monomers": 3
+    }
    },
    {
     "n_atoms": 72,
@@ -1704,6 +2172,31 @@
     "gen": 6,
     "file": "/mol2/triazine-g6.mol2"
    }
-  ]
+  ],
+  "build": {
+   "core_binding_atoms": [
+    2,
+    3,
+    6
+   ],
+   "monomer_attach": "C1",
+   "labile_atoms": [
+    "CL2"
+   ],
+   "labile_mode": "single",
+   "terminal_atoms": [
+    "C2",
+    "C3"
+   ],
+   "bond_length": 1.33,
+   "bond_angle": 120.0,
+   "branching_factor": 1,
+   "output_formats": [
+    "mol2",
+    "pdb",
+    "psf"
+   ],
+   "parameterization": "Bond Charge Correction (Fragment BCC)"
+  }
  }
 }
