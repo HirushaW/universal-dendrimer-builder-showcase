@@ -60,7 +60,9 @@
         backgroundColor: '#060e16', antialias: true,
       });
       el._viewer = viewer;
-      const model = viewer.addModel(text, 'mol2');
+      // structures are MOL2 unless a generation had no MOL2 and fell back to PDB
+      const fmt = /\.pdb(\?|$)/i.test(url) ? 'pdb' : 'mol2';
+      const model = viewer.addModel(text, fmt);
       fixElements(model);
       styleModel(viewer);
       viewer.zoomTo();

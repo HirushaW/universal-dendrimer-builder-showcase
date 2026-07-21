@@ -3,11 +3,11 @@ import Layout from '../../../../layouts/Layout.astro';
 import MolViewer from '../../../../components/MolViewer.astro';
 import MolViewerRuntime from '../../../../components/MolViewerRuntime.astro';
 import { dendrimers, colorAccent } from '../../../../data/dendrimers';
-import { getStructure, formula } from '../../../../data/structures';
+import { getStructure, formula, seriesProvenance } from '../../../../data/structures';
 
 const accentHex: Record<string, string> = {
   teal: '#2ce8d8', sky: '#38bdf8', amber: '#fbbf24', red: '#f87171',
-  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9',
+  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9', violet: '#a78bfa',
 };
 
 // pick a representative minimised generation for each type's card
@@ -15,11 +15,16 @@ const cards = dendrimers.map(d => {
   const s = getStructure(d.id);
   const gens = s?.generations ?? [];
   const rep = gens.length ? gens[Math.min(2, gens.length - 1)] : null;
-  return { d, s, rep, maxGen: gens.length ? gens[gens.length - 1].gen : null };
+  return {
+    d, s, rep,
+    maxGen: gens.length ? gens[gens.length - 1].gen : null,
+    provenance: seriesProvenance(gens),
+  };
 });
+const familyCount = dendrimers.length;
 ---
 
-<Layout title="Structure Gallery" description="Live interactive 3D of all 7 UDB dendrimer families - AMBER-minimised generation series, core and monomer viewers, and full characterization data." activeNav="tools">
+<Layout title="Structure Gallery" description="Live interactive 3D of every UDB dendrimer family - full G1-G6 generation series, core and monomer viewers, and complete characterization data." activeNav="tools">
   <MolViewerRuntime />
 
   <!-- Header -->
@@ -33,8 +38,8 @@ const cards = dendrimers.map(d => {
       <p class="hud-eyebrow mb-3">Interactive 3D Library</p>
       <h1 class="hud-title text-4xl sm:text-5xl mb-3">Structure Gallery</h1>
       <p class="text-lg text-slate-400 max-w-2xl">
-        Seven dendrimer families - each with a live, rotatable AMBER-minimised generation
-        series, core &amp; monomer viewers, and full characterization data. Every structure
+        {familyCount} dendrimer families - each with a live, rotatable generation series
+        through G6, core &amp; monomer viewers, and full characterization data. Every structure
         is loaded from real UDB output. Drag to rotate · scroll to zoom · click atoms to inspect.
       </p>
     </div>
@@ -45,7 +50,7 @@ const cards = dendrimers.map(d => {
     <p class="hud-eyebrow justify-center mb-8" style="justify-content:center">Select a dendrimer family</p>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {cards.map(({ d, rep, maxGen }) => {
+      {cards.map(({ d, rep, maxGen, provenance }) => {
         const accent = accentHex[d.color] ?? '#2ce8d8';
         return (
           <div class="hud-panel hud-corners rounded-2xl overflow-hidden flex flex-col">
@@ -62,6 +67,7 @@ const cards = dendrimers.map(d => {
               <h2 class="font-display font-bold text-lg mb-1" style={`color:${accent}`}>{d.full}</h2>
               {rep && <p class="font-mono text-[10px] text-slate-500 mb-3">Showing G{rep.gen} · {rep.n_atoms.toLocaleString()} atoms · {formula(rep.composition)}</p>}
               <p class="text-slate-400 text-xs leading-relaxed line-clamp-3 flex-1">{d.description}</p>
+              {provenance && <p class="font-mono text-[10px] text-slate-600 mt-3">{provenance}</p>}
               <div class="mt-4 flex items-center justify-between">
                 <span class="font-mono text-[10px] text-slate-500">{maxGen ? `G1-G${maxGen} series` : ''}</span>
                 <a href={`/tools/udb/structures/${d.id}/`}

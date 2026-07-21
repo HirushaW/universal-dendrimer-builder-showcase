@@ -10,8 +10,24 @@ export interface GenMD {
   piston_ps?: number;      // Langevin piston period, ps
   force_field?: string;
   water_model?: string;
-  sites?: number;          // founding core sites (G1)
-  monomers?: number;       // monomers grafted at G1
+}
+
+/** As-built record for one generation, parsed from the UDB build log. */
+export interface GenLog {
+  sites?: number;            // grafting sites this generation was grown onto
+  monomers?: number;         // monomers added at this generation
+  atoms_built?: number;      // as-built atom count
+  bonds_built?: number;      // as-built bond count
+  terminals?: number;        // peripheral (terminal) groups
+  branch_points?: number;    // branching junctions
+  mw_built?: number;         // Da, as built
+  rg_built?: number;         // Å, as built
+  rg_solvated?: number;      // Å, solvated estimate
+  delta_built?: number;      // asphericity as built
+  validation_passed?: number;
+  validation_total?: number;
+  min_rg_before?: number;    // Rg before inter-generational AMBER minimisation
+  min_rg_after?: number;     // Rg after
 }
 
 /** Type-level build parameters, parsed from the UDB build log. */
@@ -28,7 +44,12 @@ export interface BuildParams {
   parameterization?: string;
   force_field?: string;
   water_model?: string;
+  udb_version?: string;
+  generations_built?: number[];
 }
+
+/** Which coordinates a published generation came from. */
+export type GeometrySource = 'amber_min' | 'amber_min_pdb' | 'as_built' | 'as_built_pdb';
 
 export interface StructureMetrics {
   file: string;
@@ -36,6 +57,9 @@ export interface StructureMetrics {
   n_bonds: number;
   gen?: number;
   md?: GenMD;
+  log?: GenLog;
+  source?: GeometrySource;
+  source_label?: string;
   composition?: Record<string, number>;
   mw?: number;
   rg_heavy?: number;
@@ -121,8 +145,55 @@ export function mdRows(md?: GenMD): MetricRow[] {
   if (md.production_ns != null) rows.push({ label: 'Production', value: `${md.production_ns} ns` });
   if (md.timestep_fs != null) rows.push({ label: 'Timestep', value: `${md.timestep_fs} fs`, note: md.rigid_bonds ? `rigidBonds: ${md.rigid_bonds}` : undefined });
   if (md.piston_ps != null) rows.push({ label: 'Langevin piston', value: `${md.piston_ps} ps` });
-  if (md.monomers != null) rows.push({ label: 'G1 shell', value: `${md.monomers} monomers`, note: md.sites != null ? `${md.sites} core sites` : undefined });
   return rows;
+}
+
+/** Display-ready as-built rows for one generation (from the build log). */
+export function logRows(l?: GenLog): MetricRow[] {
+  if (!l) return [];
+  const rows: MetricRow[] = [];
+  if (l.monomers != null) rows.push({ label: 'Monomers added', value: l.monomers.toLocaleString(), note: l.sites != null ? `on ${l.sites} sites` : undefined });
+  else if (l.sites != null) rows.push({ label: 'Grafting sites', value: l.sites.toLocaleString() });
+  if (l.terminals != null) rows.push({ label: 'Terminal groups', value: l.terminals.toLocaleString() });
+  if (l.branch_points != null) rows.push({ label: 'Branch junctions', value: l.branch_points.toLocaleString() });
+  if (l.rg_built != null) rows.push({ label: 'Rg (as built)', value: `${l.rg_built.toFixed(2)} Å`, note: l.rg_solvated != null ? `${l.rg_solvated.toFixed(2)} Å solvated` : undefined });
+  if (l.min_rg_before != null && l.min_rg_after != null) {
+    const d = l.min_rg_after - l.min_rg_before;
+    rows.push({ label: 'AMBER min. ΔRg', value: `${d >= 0 ? '+' : ''}${d.toFixed(2)} Å`, note: `${l.min_rg_before.toFixed(2)} → ${l.min_rg_after.toFixed(2)} Å` });
+  }
+  if (l.validation_total != null) rows.push({ label: 'Validation', value: `${l.validation_passed}/${l.validation_total} passed` });
+  return rows;
+}
+
+/** Short provenance label for a published generation's coordinates. */
+export function sourceLabel(m: StructureMetrics): string {
+  switch (m.source) {
+    case 'amber_min':
+    case 'amber_min_pdb':  return 'AMBER-minimised';
+    case 'as_built':
+    case 'as_built_pdb':   return 'as-built (UDB)';
+    default:               return '';
+  }
+}
+
+export function isMinimised(m: StructureMetrics): boolean {
+  return m.source === 'amber_min' || m.source === 'amber_min_pdb';
+}
+
+/** "G1-G4 AMBER-minimised · G5-G6 as-built" style summary for a series.
+ *  Consecutive generations sharing a provenance collapse into one range. */
+export function seriesProvenance(gens: StructureMetrics[]): string {
+  const runs: { min: boolean; from: number; to: number }[] = [];
+  for (const g of gens) {
+    const min = isMinimised(g);
+    const last = runs[runs.length - 1];
+    if (last && last.min === min && g.gen === last.to + 1) last.to = g.gen!;
+    else runs.push({ min, from: g.gen!, to: g.gen! });
+  }
+  return runs
+    .map(r => `${r.from === r.to ? `G${r.from}` : `G${r.from}-G${r.to}`} ` +
+              `${r.min ? 'AMBER-minimised' : 'as-built'}`)
+    .join(' · ');
 }
 
 /** Display-ready build-parameter rows for a type (from the build log). */

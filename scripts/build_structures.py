@@ -4,8 +4,14 @@ Build the live-structure dataset for the UDB website.
 
 For every dendrimer type it:
   - parses the pure core (core_typed.mol2) and monomer (monomer_typed.mol2)
-  - parses each AMBER/GAFF-minimised generation (dendrimer_<t>_gen<N>_min_gaff.mol2),
-    taking generations contiguously from gen1 and STOPPING at the first missing one
+  - resolves every generation up to MAX_GEN (6) through a provenance fallback
+    chain, so a family is always shown complete to G6:
+        1. dendrimer_<t>_gen<N>_min_gaff.mol2   AMBER/GAFF-minimised (preferred)
+        2. dendrimer_<t>_gen<N>_min.pdb         AMBER-minimised, PDB only
+        3. dendrimer_<t>_gen<N>_typed.mol2      as-built, GAFF-typed
+        4. dendrimer_<t>_gen<N>.pdb             as-built, plain PDB
+    The chosen tier is recorded on each generation as `source`, so the site can
+    label which geometries are minimised and which are as-built.
   - runs the real UDB characterization module (udb_characterization.py) on each
   - copies the .mol2 files into public/mol2/ under clean names
   - writes src/data/structures.generated.json consumed by the site at build time
@@ -22,6 +28,7 @@ BUILDS    = os.path.join(WEB, "Structures")
 CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/Old/v1.0/mods"
 GOLDEN    = os.path.join(CHAR_DIR, "golden")
 PUB_MOL2  = os.path.join(WEB, "public", "mol2")
+MAX_GEN   = 6                      # every family is published through G6
 OUT_JSON  = os.path.join(WEB, "src", "data", "structures.generated.json")
 
 sys.path.insert(0, CHAR_DIR)
@@ -57,12 +64,16 @@ def resolve_folder(folder):
 
 
 def detect_stem(folder):
-    """Auto-detect the 'dendrimer_<stem>' prefix from the gen1 minimised mol2 in a
-    folder. Falls back to any gen*_min_gaff file. Returns e.g. 'dendrimer_triazine'."""
-    for f in sorted(os.listdir(folder)):
-        mo = re.match(r"(dendrimer_.+?)_gen\d+_min_gaff\.mol2$", f)
-        if mo:
-            return mo.group(1)
+    """Auto-detect the 'dendrimer_<stem>' prefix from the generation files in a
+    folder (minimised first, then as-built). Returns e.g. 'dendrimer_triazine'."""
+    names = sorted(os.listdir(folder))
+    for pattern in (r"(dendrimer_.+?)_gen\d+_min_gaff\.mol2$",
+                    r"(dendrimer_.+?)_gen\d+_typed\.mol2$",
+                    r"(dendrimer_.+?)_gen\d+\.pdb$"):
+        for f in names:
+            mo = re.match(pattern, f)
+            if mo:
+                return mo.group(1)
     return None
 
 
@@ -93,6 +104,39 @@ def parse_mol2(path):
             elif section == "BOND":
                 n_bonds += 1
     return atoms, n_bonds
+
+
+def parse_pdb(path):
+    """Return (atoms, n_bonds) for a PDB. Used only when no MOL2 exists for a
+    generation: there are no GAFF types or charges, so vdW radii fall back to
+    Bondi element radii inside the characterization module. Bonds are counted
+    from CONECT records (each pair once); absent CONECT gives 0."""
+    atoms, bonds = [], set()
+    with open(path) as fh:
+        for line in fh:
+            rec = line[:6]
+            if rec in ("ATOM  ", "HETATM"):
+                try:
+                    atoms.append({
+                        "idx": int(line[6:11]), "name": line[12:16].strip(),
+                        "type": "",
+                        "x": float(line[30:38]), "y": float(line[38:46]),
+                        "z": float(line[46:54]), "charge": "0.0",
+                    })
+                except ValueError:
+                    continue
+            elif rec == "CONECT":
+                nums = line[6:].split()
+                if len(nums) >= 2:
+                    a = nums[0]
+                    for b in nums[1:]:
+                        bonds.add((min(a, b), max(a, b)))
+    return atoms, len(bonds)
+
+
+def parse_structure(path):
+    """Parse a MOL2 or PDB by extension."""
+    return parse_pdb(path) if path.lower().endswith(".pdb") else parse_mol2(path)
 
 
 def characterize(atoms, n_bonds):
@@ -145,16 +189,30 @@ def characterize(atoms, n_bonds):
     return {k: v for k, v in m.items() if v is not None}
 
 
-def gens_for(folder):
-    """Contiguous gen numbers with a *_min_gaff.mol2, starting at 1, stop at first gap."""
-    present = set()
-    for f in os.listdir(folder):
-        mo = re.match(r"dendrimer_.*_gen(\d+)_min_gaff\.mol2$", f)
-        if mo:
-            present.add(int(mo.group(1)))
-    out, n = [], 1
-    while n in present:
-        out.append(n); n += 1
+# geometry provenance, best first: (filename suffix, source id, label)
+SOURCE_CHAIN = [
+    ("_min_gaff.mol2", "amber_min",     "AMBER-minimised"),
+    ("_min.pdb",       "amber_min_pdb", "AMBER-minimised"),
+    ("_typed.mol2",    "as_built",      "as-built"),
+    (".pdb",           "as_built_pdb",  "as-built"),
+]
+
+
+def gens_for(folder, stem):
+    """Resolve every generation 1..MAX_GEN present in `folder`.
+
+    Returns [(gen, path, source_id, source_label)]. Each generation takes the
+    best geometry available to it (see SOURCE_CHAIN), so families whose AMBER
+    minimisation only reached G4 still publish a complete G1-G6 series from
+    their as-built coordinates. Generations with no file at all are skipped.
+    """
+    out = []
+    for n in range(1, MAX_GEN + 1):
+        for suffix, sid, label in SOURCE_CHAIN:
+            path = os.path.join(folder, f"{stem}_gen{n}{suffix}")
+            if os.path.exists(path):
+                out.append((n, path, sid, label))
+                break
     return out
 
 
@@ -168,14 +226,16 @@ def main():
             only = {t.strip().lower() for t in argv[i + 1].split(",") if t.strip()}
 
     os.makedirs(PUB_MOL2, exist_ok=True)
-    dataset = {}
-    if only and os.path.exists(OUT_JSON):
+    dataset, prior = {}, {}
+    if os.path.exists(OUT_JSON):
         try:
-            dataset = json.load(open(OUT_JSON))
-            print(f"subset rebuild: {sorted(only)} (keeping "
-                  f"{sorted(set(dataset) - only)})")
+            prior = json.load(open(OUT_JSON))
         except Exception:                                # noqa: BLE001
-            dataset = {}
+            prior = {}
+    if only and prior:
+        dataset = prior
+        print(f"subset rebuild: {sorted(only)} (keeping "
+              f"{sorted(set(dataset) - only)})")
     for folder, tid, name in TYPES:
         if only and tid not in only:
             continue
@@ -197,21 +257,36 @@ def main():
                 entry[kind] = data
                 print(f"  {kind:8s} {data['n_atoms']:5d} atoms -> {dst_name}")
 
-        # contiguous minimised generations
-        gens = gens_for(fdir)
+        # full generation series (G1..G6), each at its best available geometry
         stem = detect_stem(fdir) or f"dendrimer_{tid}"
-        prefix = f"{stem}_gen"
-        for n in gens:
-            src = os.path.join(fdir, f"{prefix}{n}_min_gaff.mol2")
-            atoms, nb = parse_mol2(src)
-            dst_name = f"{tid}-g{n}.mol2"
+        for n, src, sid, label in gens_for(fdir, stem):
+            atoms, nb = parse_structure(src)
+            ext = ".pdb" if src.lower().endswith(".pdb") else ".mol2"
+            dst_name = f"{tid}-g{n}{ext}"
             shutil.copyfile(src, os.path.join(PUB_MOL2, dst_name))
             data = characterize(atoms, nb)
             data["gen"] = n
             data["file"] = f"/mol2/{dst_name}"
+            data["source"] = sid
+            data["source_label"] = label
             entry["generations"].append(data)
             print(f"  G{n}       {data['n_atoms']:5d} atoms  Rg={data.get('rg_heavy',0):.2f}  "
-                  f"asph={data.get('asphericity',0):.3f}  -> {dst_name}")
+                  f"asph={data.get('asphericity',0):.3f}  [{label}] -> {dst_name}")
+
+        # carry forward log-derived metadata (build recipe, per-generation MD and
+        # build records). Geometry is always recomputed here; enrich_from_logs.py
+        # re-derives the metadata afterwards and overwrites whatever it can still
+        # find in the current logs, so this only preserves fields whose source log
+        # is no longer shipped with the structure set.
+        old = prior.get(tid, {})
+        if old.get("build"):
+            entry["build"] = old["build"]
+        old_gens = {g.get("gen"): g for g in old.get("generations", [])}
+        for g in entry["generations"]:
+            og = old_gens.get(g["gen"], {})
+            for key in ("md", "log"):
+                if og.get(key):
+                    g[key] = og[key]
         dataset[tid] = entry
 
     os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)

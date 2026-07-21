@@ -3,7 +3,8 @@ import Layout from '../../../../layouts/Layout.astro';
 import MolViewer from '../../../../components/MolViewer.astro';
 import MolViewerRuntime from '../../../../components/MolViewerRuntime.astro';
 import { dendrimers, colorBadge, colorAccent } from '../../../../data/dendrimers';
-import { getStructure, metricRows, mdRows, buildRows, formula, ELEMENT_COLORS } from '../../../../data/structures';
+import { getStructure, metricRows, mdRows, logRows, buildRows, formula,
+         sourceLabel, isMinimised, seriesProvenance, ELEMENT_COLORS } from '../../../../data/structures';
 
 export function getStaticPaths() {
   return dendrimers.map(d => ({ params: { type: d.id }, props: { d } }));
@@ -19,13 +20,16 @@ const next = dendrimers[currentIdx + 1] ?? null;
 
 const accentHex: Record<string, string> = {
   teal: '#2ce8d8', sky: '#38bdf8', amber: '#fbbf24', red: '#f87171',
-  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9',
+  emerald: '#34d399', orange: '#fb923c', fuchsia: '#e879f9', violet: '#a78bfa',
 };
 const accent = accentHex[d.color] ?? '#2ce8d8';
 
 const gens = struct?.generations ?? [];
 const maxGen = gens.length ? gens[gens.length - 1].gen : null;
 const bRows = buildRows(struct?.build);
+// which parts of the series are AMBER-minimised vs published from as-built coords
+const provenance = seriesProvenance(gens);
+const anyAsBuilt = gens.some(g => !isMinimised(g));
 
 // elements present across this family's structures (for the legend)
 const elementsPresent = new Set<string>();
@@ -36,7 +40,7 @@ const elementsPresent = new Set<string>();
 
 <Layout
   title={`${d.name} - ${d.full}`}
-  description={`${d.name} (${d.full}) dendrimer - live interactive 3D of the AMBER-minimised generation series (G1-G${maxGen ?? '?'}), core and monomer, with full characterization data.`}
+  description={`${d.name} (${d.full}) dendrimer - live interactive 3D of the full generation series (G1-G${maxGen ?? '?'}), core and monomer, with full characterization and build-log data.`}
   activeNav="tools"
 >
   <MolViewerRuntime />
@@ -69,7 +73,8 @@ const elementsPresent = new Set<string>();
             { label: 'Full name',   value: d.full },
             { label: 'Core',        value: d.coreLabel },
             { label: 'Force field', value: d.forceField },
-            { label: 'Series',      value: maxGen ? `G1 - G${maxGen} (AMBER-minimised)` : '-' },
+            { label: 'Series',      value: maxGen ? `G1 - G${maxGen}` : '-' },
+            { label: 'Geometry',    value: provenance || '-' },
           ].map(row => (
             <div class="flex flex-col gap-0.5">
               <span class="font-mono text-[10px] text-slate-500 uppercase tracking-wider">{row.label}</span>
@@ -169,16 +174,21 @@ const elementsPresent = new Set<string>();
     <!-- Generation series: live minimised structures + full characterization -->
     <section>
       <p class="hud-eyebrow mb-3">Generation Series</p>
-      <h2 class="hud-title text-2xl sm:text-3xl">AMBER-Minimised Structures</h2>
+      <h2 class="hud-title text-2xl sm:text-3xl">{maxGen ? `G1 - G${maxGen} Structures` : 'Structures'}</h2>
       <p class="text-slate-400 text-sm mt-2 mb-8 max-w-3xl">
-        Each generation below is the actual GAFF2/AMBER energy-minimised structure ({maxGen ? `G1-G${maxGen}` : ''}).
-        All metrics are computed by UDB's characterization module directly from these minimised coordinates.
+        Every generation UDB produced for this family, at the best geometry available to it:
+        <span class="text-slate-300">{provenance}</span>.
+        {anyAsBuilt && ' Generations beyond the AMBER minimisation run are shown from UDB\'s as-built coordinates (Fibonacci placement + collective minimisation), which are the same coordinates written to the released PDB.'}
+        All metrics below are computed by UDB's characterization module directly from the coordinates shown.
       </p>
 
       <div class="space-y-6">
         {gens.map(g => {
           const rows = metricRows(g);
           const mRows = mdRows(g.md);
+          const lRows = logRows(g.log);
+          const minimised = isMinimised(g);
+          const srcTag = sourceLabel(g);
           return (
             <div class="hud-panel hud-corners rounded-2xl p-5 sm:p-6">
               <div class="grid lg:grid-cols-[minmax(0,1fr)_1.25fr] gap-6 items-start">
@@ -186,7 +196,14 @@ const elementsPresent = new Set<string>();
                 <div>
                   <div class="flex items-center justify-between mb-3">
                     <span class="font-hud text-2xl font-bold" style={`color:${accent}`}>{d.name} G{g.gen}</span>
-                    <span class="hud-chip">{g.n_atoms.toLocaleString()} atoms</span>
+                    <div class="flex items-center gap-2">
+                      {srcTag && (
+                        <span class="hud-chip" style={minimised ? `color:${accent};border-color:${accent}55` : 'color:#94a3b8'}>
+                          {srcTag}
+                        </span>
+                      )}
+                      <span class="hud-chip">{g.n_atoms.toLocaleString()} atoms</span>
+                    </div>
                   </div>
                   <MolViewer id={`${d.id}-g${g.gen}`} url={g.file} height="360px" accent={accent} zoom={0.92} />
                 </div>
@@ -195,7 +212,9 @@ const elementsPresent = new Set<string>();
                 <div>
                   <div class="flex items-center justify-between mb-3">
                     <span class="font-mono text-[11px] tracking-[0.2em] uppercase" style={`color:${accent}`}>// Characterization</span>
-                    <span class="font-mono text-[10px] text-slate-500">GAFF2 · AM1-BCC · minimised</span>
+                    <span class="font-mono text-[10px] text-slate-500">
+                      {struct?.build?.force_field ?? 'GAFF2'} · Fragment BCC · {minimised ? 'minimised' : 'as built'}
+                    </span>
                   </div>
                   <!-- composition chips -->
                   {g.composition && (
@@ -218,6 +237,22 @@ const elementsPresent = new Set<string>();
                       </div>
                     ))}
                   </div>
+
+                  {lRows.length > 0 && (
+                    <div class="mt-5 pt-4 border-t border-[var(--hud-line)]">
+                      <span class="font-mono text-[11px] tracking-[0.2em] uppercase text-slate-400 block mb-2">// Build Record</span>
+                      <div class="grid sm:grid-cols-2 gap-x-6 gap-y-0">
+                        {lRows.map(r => (
+                          <div class="flex items-baseline justify-between gap-3 py-1.5 border-b border-[var(--hud-line-soft)]">
+                            <span class="font-mono text-[11px] text-slate-500">{r.label}</span>
+                            <span class="font-mono text-[11px] text-slate-200 text-right">
+                              {r.value}{r.note && <span class="text-slate-500"> · {r.note}</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {mRows.length > 0 && (
                     <div class="mt-5 pt-4 border-t border-[var(--hud-line)]">

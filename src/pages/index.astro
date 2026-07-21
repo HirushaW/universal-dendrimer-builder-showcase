@@ -67,9 +67,9 @@ const dendrimerTypes = [
 
 const galleryAccent: Record<string, string> = {
   pamam: '#2ce8d8', ppi: '#38bdf8', carbosilane: '#fbbf24', phosphorus: '#f87171',
-  pll: '#34d399', polyester: '#fb923c', polyglycerol: '#e879f9',
+  pll: '#34d399', polyester: '#fb923c', polyglycerol: '#e879f9', triazine: '#a78bfa',
 };
-const structures = ['pamam', 'ppi', 'carbosilane', 'phosphorus', 'pll', 'polyester', 'polyglycerol']
+const structures = ['pamam', 'ppi', 'carbosilane', 'phosphorus', 'pll', 'polyester', 'polyglycerol', 'triazine']
   .map(id => {
     const s = getStructure(id);
     const gens = s?.generations ?? [];
