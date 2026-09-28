@@ -4,6 +4,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import RevealInit from '../components/RevealInit.astro';
 import ScienceCanvas from '../components/ScienceCanvas.astro';
+import LiquidGlass from '../components/LiquidGlass.astro';
 
 interface Props {
   title: string;
@@ -53,16 +54,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Fonts (self-served fallback via Google Fonts) -->
+    <!-- Fonts: Inter (text) · Space Grotesk (display) · JetBrains Mono (data).
+         Loaded once here (was also @import-ed from global.css → a render-blocking chain). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Space+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..700&display=swap"
       rel="stylesheet"
     />
+    <meta name="theme-color" content="#04070e" />
   </head>
   <body class="min-h-screen flex flex-col" style="background:#04070e">
     <ScienceCanvas intensity={0.82} />
+    <LiquidGlass />
     <Nav activeNav={activeNav} />
     <main class="flex-1">
       <slot />

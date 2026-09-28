@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 
 interface DendrimerSpec {
   label: string;
@@ -79,6 +79,29 @@ function formatMW(da: number): string {
   return Math.round(da) + ' Da';
 }
 
+/** Smoothly animates a number toward `target` (ease-out cubic). Honors reduced motion. */
+function useTween(target: number, ms = 480): number {
+  const [value, setValue] = useState(target);
+  const from = useRef(target);
+  useEffect(() => {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { from.current = target; setValue(target); return; }
+    const a = from.current;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const k = Math.min(1, (now - t0) / ms);
+      const cur = a + (target - a) * (1 - Math.pow(1 - k, 3));
+      from.current = cur;
+      setValue(cur);
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, ms]);
+  return value;
+}
+
 export default function DendrimerCalculator() {
   const [type, setType] = useState<string>('PAMAM');
   const [gen, setGen] = useState<number>(3);
@@ -106,20 +129,29 @@ export default function DendrimerCalculator() {
     return { nTerm, nAtoms, mw, rg };
   }, [type, gen, spec]);
 
+  const tTerm = useTween(results.nTerm);
+  const tAtoms = useTween(results.nAtoms);
+  const tMw = useTween(results.mw);
+  const tRg = useTween(results.rg);
+  const pct = ((gen - 1) / 9) * 100;
+
   return (
-    <div className="bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden">
+    <div className="lg-calc rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-500/10 to-slate-900 border-b border-slate-700 px-6 py-4 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="lg-calc-head px-6 py-4 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center lg-calc-ico">
+          <svg className="w-4 h-4 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
         </div>
         <div>
-          <h3 className="text-slate-100 font-semibold text-sm">Live Dendrimer Calculator</h3>
+          <h3 className="text-slate-100 font-semibold text-sm font-display tracking-wide">Live Dendrimer Calculator</h3>
           <p className="text-slate-500 text-xs">Estimates based on UDB structural models</p>
         </div>
+        <span className="ml-auto hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-teal-300/80">
+          <span className="hud-dot animate-pulse" aria-hidden="true"></span>LIVE
+        </span>
       </div>
 
       <div className="p-6 grid md:grid-cols-2 gap-6">
@@ -127,13 +159,15 @@ export default function DendrimerCalculator() {
         <div className="space-y-5">
           {/* Type selector */}
           <div>
-            <label className="block text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
+            <label htmlFor="udb-calc-type" className="block text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
               Dendrimer Type
             </label>
             <select
+              id="udb-calc-type"
               value={type}
               onChange={e => setType(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 appearance-none cursor-pointer"
+              className="lg-select w-full rounded-xl px-3.5 py-2.5 text-slate-100 text-sm cursor-pointer"
+              style={{ ['--accent' as string]: spec.color }}
             >
               {Object.keys(TYPES).map(k => (
                 <option key={k} value={k}>{TYPES[k].label} - {TYPES[k].description}</option>
@@ -144,33 +178,47 @@ export default function DendrimerCalculator() {
           {/* Generation slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-slate-400 text-xs font-medium uppercase tracking-wider">
+              <label htmlFor="udb-calc-gen" className="text-slate-400 text-xs font-medium uppercase tracking-wider">
                 Generation
               </label>
               <span
-                className="text-xl font-bold px-3 py-0.5 rounded-lg"
-                style={{ color: spec.color, background: spec.color + '15' }}
+                key={gen}
+                className="lg-gen-badge font-hud text-xl font-bold px-3 py-0.5 rounded-lg"
+                style={{ color: spec.color, background: spec.color + '15', boxShadow: `inset 0 1px 0 ${spec.color}40, 0 0 18px ${spec.color}22` }}
               >
                 G{gen}
               </span>
             </div>
             <input
+              id="udb-calc-gen"
               type="range"
               min={1} max={10} step={1}
               value={gen}
               onChange={e => setGen(Number(e.target.value))}
-              className="w-full accent-teal-500 cursor-pointer"
+              className="lg-range"
+              style={{ ['--pct' as string]: `${pct}%`, ['--accent' as string]: spec.color }}
+              aria-valuetext={`Generation ${gen}`}
             />
-            <div className="flex justify-between text-slate-600 text-xs mt-1">
+            <div className="flex justify-between text-slate-600 text-xs mt-1.5">
               {Array.from({ length: 10 }, (_, i) => (
-                <span key={i + 1} className={gen === i + 1 ? 'text-teal-400' : ''}>G{i+1}</span>
+                <button
+                  type="button"
+                  key={i + 1}
+                  onClick={() => setGen(i + 1)}
+                  className={`lg-tick font-mono ${gen === i + 1 ? 'is-on' : ''}`}
+                  style={gen === i + 1 ? { color: spec.color } : undefined}
+                  aria-label={`Set generation ${i + 1}`}
+                  aria-pressed={gen === i + 1}
+                >
+                  G{i + 1}
+                </button>
               ))}
             </div>
           </div>
 
           {/* Type info pill */}
           <div
-            className="px-3 py-2 rounded-lg text-xs"
+            className="px-3 py-2 rounded-lg text-xs transition-colors duration-300"
             style={{ background: spec.color + '15', borderLeft: `3px solid ${spec.color}` }}
           >
             <span className="text-slate-400">Core arms (f) = </span>
@@ -181,33 +229,36 @@ export default function DendrimerCalculator() {
           </div>
         </div>
 
-        {/* Results */}
+        {/* Results (numbers animate; the hidden line below announces final values once) */}
+        <p className="sr-only" aria-live="polite">
+          {`${spec.label} G${gen}: ${formatLargeNumber(results.nTerm)} terminal groups, ${formatLargeNumber(results.nAtoms)} atoms, ${formatMW(results.mw)}, Rg ${results.rg.toFixed(1)} Å`}
+        </p>
         <div className="grid grid-cols-2 gap-3">
           {[
             {
               label: 'Terminal Groups',
-              value: formatLargeNumber(results.nTerm),
+              value: formatLargeNumber(tTerm),
               sub: `f·m^G = ${spec.f}·${spec.m}^${gen}`,
               icon: '⬡',
               color: spec.color,
             },
             {
               label: 'Atom Count',
-              value: formatLargeNumber(results.nAtoms),
+              value: formatLargeNumber(tAtoms),
               sub: 'heavy atoms (approx.)',
               icon: '⚛',
               color: '#94a3b8',
             },
             {
               label: 'Mol. Weight',
-              value: formatMW(results.mw),
+              value: formatMW(tMw),
               sub: 'estimated',
               icon: '⚖',
               color: '#94a3b8',
             },
             {
               label: 'Rg (radius of gyration)',
-              value: `${results.rg.toFixed(1)} Å`,
+              value: `${tRg.toFixed(1)} Å`,
               sub: '3.0·(N/84)^(1/3)',
               icon: '◎',
               color: '#94a3b8',
@@ -215,10 +266,11 @@ export default function DendrimerCalculator() {
           ].map(item => (
             <div
               key={item.label}
-              className="bg-slate-800 rounded-xl p-4 border border-slate-700"
+              className="lg-tile rounded-xl p-4"
+              style={{ ['--accent' as string]: spec.color }}
             >
-              <div className="text-lg mb-1">{item.icon}</div>
-              <div className="text-2xl font-bold" style={{ color: item.color }}>
+              <div className="text-lg mb-1" aria-hidden="true">{item.icon}</div>
+              <div className="font-hud text-2xl font-bold" style={{ color: item.color }}>
                 {item.value}
               </div>
               <div className="text-slate-400 text-xs mt-1">{item.label}</div>

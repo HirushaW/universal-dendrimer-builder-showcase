@@ -36,7 +36,8 @@ const tabs = [
 ---
 
 <header class="sticky top-0 z-50">
-  <div class="border-b border-[var(--hud-line-soft)] bg-[rgba(4,7,14,0.72)] backdrop-blur-xl">
+  <div class="lg-navbar border-b border-[var(--hud-line-soft)]">
+    <span class="lg-progress" aria-hidden="true"></span>
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-4">
 
@@ -61,7 +62,8 @@ const tabs = [
         </a>
 
         <!-- Desktop HUD tab bar -->
-        <div class="hidden md:flex items-center gap-1 rounded-lg border border-[var(--hud-line-soft)] bg-[rgba(8,20,28,0.4)] px-1 py-1">
+        <div class="lg-tabbar hidden md:flex items-center gap-1 rounded-xl border border-[var(--hud-line-soft)] px-1 py-1" data-tabbar>
+          <span class="lg-tab-blob" aria-hidden="true"></span>
           {tabs.map(tab => (
             tab.mega ? (
               <div class="nav-mega" data-mega>
@@ -143,7 +145,7 @@ const tabs = [
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-b border-[var(--hud-line-soft)] bg-[rgba(4,7,14,0.97)] backdrop-blur-xl">
+  <div id="mobile-menu" class="lg-drawer hidden md:hidden border-b border-[var(--hud-line-soft)]">
     <div class="px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto">
       <p class="font-mono text-[10px] text-[var(--hud-cy-deep)] uppercase tracking-[0.2em] px-2 pb-2">// Systems</p>
       {tabs.map(tab => (
@@ -170,12 +172,63 @@ const tabs = [
 </header>
 
 <style>
+  /* ── Liquid-glass bar ─────────────────────────────────────────────────
+     The blur lives on a pseudo-element, not the bar itself: an element with
+     backdrop-filter isolates its descendants' backdrops, which would stop the
+     Builder mega-panel from frosting the page underneath it. */
+  .lg-navbar { position: relative; }
+  .lg-navbar::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0) 60%),
+      rgba(4,7,14,0.58);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(200,255,250,0.06);
+    transition: background .35s ease, box-shadow .35s ease;
+  }
+  header.is-scrolled .lg-navbar::before {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0) 60%),
+      rgba(4,7,14,0.72);
+    box-shadow: inset 0 1px 0 rgba(200,255,250,0.08), 0 14px 40px -12px rgba(0,0,0,0.7);
+  }
+
+  /* Tab capsule + the liquid indicator that glides between tabs */
+  .lg-tabbar {
+    position: relative;
+    background: linear-gradient(180deg, rgba(111,255,242,0.05), rgba(8,20,28,0.35));
+    box-shadow: inset 0 1px 0 rgba(200,255,250,0.10), inset 0 -1px 0 rgba(0,0,0,0.3);
+  }
+  .lg-tab-blob {
+    position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; z-index: 0;
+    border-radius: 9px; pointer-events: none; opacity: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 55%),
+      linear-gradient(180deg, rgba(111,255,242,0.16), rgba(44,232,216,0.06));
+    box-shadow:
+      inset 0 1px 0 rgba(200,255,250,0.30),
+      inset 0 0 0 1px rgba(44,232,216,0.22),
+      0 6px 20px -6px rgba(44,232,216,0.45);
+    transition: transform .55s var(--lg-spring), width .55s var(--lg-spring), opacity .3s ease;
+  }
+  .lg-tabbar.lg-ready .lg-tab-blob { opacity: 1; }
+  .lg-tabbar.lg-ready .nav-tab:hover { background: transparent; }
+
+  /* Mobile drawer glass */
+  .lg-drawer {
+    background: linear-gradient(180deg, rgba(8,20,28,0.78), rgba(4,7,14,0.9));
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    box-shadow: 0 24px 50px -16px rgba(0,0,0,0.75);
+  }
+
   /* ── Primary command tabs ─────────────────────────────────────────── */
   .nav-tab {
-    position: relative;
+    position: relative; z-index: 1;
     display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.55rem 0.9rem; border-radius: 8px;
-    font-family: 'Chakra Petch', sans-serif;
+    font-family: var(--font-display);
     font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
     color: rgb(203, 213, 225);                 /* slate-300 - higher contrast than before */
     background: transparent; border: 0; cursor: pointer;
@@ -212,7 +265,7 @@ const tabs = [
     opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
   }
   .mega-eyebrow {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+    font-family: var(--font-mono); font-size: 0.62rem;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--hud-cy-deep); padding: 0 0.35rem 0.6rem;
   }
@@ -245,15 +298,15 @@ const tabs = [
   }
   .mega-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .mega-label {
-    font-family: 'Chakra Petch', sans-serif; font-weight: 600; font-size: 0.8rem;
+    font-family: var(--font-display); font-weight: 600; font-size: 0.8rem;
     color: rgb(226, 232, 240); letter-spacing: 0.01em;
   }
   .mega-card:hover .mega-label, .mega-card:focus-visible .mega-label { color: var(--hud-cy-bright); }
-  .mega-desc { font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; color: rgb(100, 116, 139); }
+  .mega-desc { font-family: var(--font-mono); font-size: 0.64rem; color: rgb(100, 116, 139); }
   .mega-card-cta { grid-column: 1 / -1; border-top: 1px solid var(--hud-line-soft); border-radius: 0 0 10px 10px; margin-top: 0.15rem; padding-top: 0.7rem; }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-tab::after, .mega-panel, .mega-card, .nav-caret { transition: none !important; }
+    .nav-tab::after, .mega-panel, .mega-card, .nav-caret, .lg-tab-blob { transition: none !important; }
   }
 </style>
 
@@ -287,6 +340,33 @@ const tabs = [
       document.addEventListener('click', function (e) {
         if (!wrap.contains(e.target)) close();
       });
+    });
+
+    // ── Liquid tab indicator: rests on the active tab, glides to the hovered one ──
+    document.querySelectorAll('[data-tabbar]').forEach(function (bar) {
+      var blob = bar.querySelector('.lg-tab-blob');
+      if (!blob) return;
+      var tabs = Array.prototype.slice.call(bar.querySelectorAll('.nav-tab'));
+      function home() { return bar.querySelector('.nav-tab.is-active'); }
+      function moveTo(t) {
+        if (!t) { blob.style.opacity = '0'; return; }
+        var br = bar.getBoundingClientRect(), tr = t.getBoundingClientRect();
+        blob.style.width = tr.width + 'px';
+        blob.style.transform = 'translateX(' + (tr.left - br.left) + 'px)';
+        blob.style.opacity = '';
+      }
+      // place without animating on first paint, then enable the glide
+      blob.style.transition = 'none';
+      moveTo(home());
+      requestAnimationFrame(function () { blob.style.transition = ''; bar.classList.add('lg-ready'); });
+      tabs.forEach(function (t) {
+        t.addEventListener('pointerenter', function () { moveTo(t); });
+        t.addEventListener('focus', function () { moveTo(t); });
+      });
+      bar.addEventListener('pointerleave', function () { moveTo(home()); });
+      bar.addEventListener('focusout', function (e) { if (!bar.contains(e.relatedTarget)) moveTo(home()); });
+      var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { moveTo(home()); }, 120); });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveTo(home()); });
     });
 
     // ── Mobile drawer ──
