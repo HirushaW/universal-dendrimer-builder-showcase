@@ -42,12 +42,29 @@
     });
   }
 
+  // Free the GPU for 3Dmol: freeze the ambient ScienceCanvas while a live WebGL
+  // viewer is on screen (it keeps its last frame), and let it breathe again once
+  // every viewer has scrolled away. Off-screen viewers also stop auto-spinning.
+  const onScreen = new Set();
+  let bgPaused = false;
+  function syncBackground() {
+    const pause = onScreen.size > 0;
+    if (pause === bgPaused) return;
+    bgPaused = pause;
+    try { window.dispatchEvent(new CustomEvent('sci-bg', { detail: { pause } })); } catch (_) {}
+  }
+  const visibility = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const el = e.target;
+      if (e.isIntersecting) onScreen.add(el); else onScreen.delete(el);
+      if (el._viewer && el._spinning) el._viewer.spin(e.isIntersecting ? 'y' : false, 0.6);
+    }
+    syncBackground();
+  });
+
   function initViewer(el) {
     if (el.dataset.init === '1') return;
     el.dataset.init = '1';
-    // Free the GPU for 3Dmol: freeze the ambient ScienceCanvas while a WebGL
-    // viewer is live (it keeps its last frame - visible but no longer animating).
-    try { window.dispatchEvent(new CustomEvent('sci-bg', { detail: { pause: true } })); } catch (_) {}
     const url  = el.dataset.url;
     const zoom = parseFloat(el.dataset.zoom || '0.9');
     const spin = el.dataset.spin === '1';
@@ -90,6 +107,8 @@
 
       viewer.render();
       if (spin) viewer.spin('y', 0.6);
+      el._spinning = spin;
+      visibility.observe(el);
 
       // controls
       const bSpin  = el.querySelector('[data-act="spin"]');
@@ -98,6 +117,7 @@
       bSpin && bSpin.addEventListener('click', (e) => {
         e.stopPropagation();
         spinning = !spinning;
+        el._spinning = spinning;
         viewer.spin(spinning ? 'y' : false, 0.6);
       });
       bReset && bReset.addEventListener('click', (e) => {

@@ -16,7 +16,7 @@ const bibtex = `@software{walgampaya2025udb,
 }`;
 ---
 
-<div class={`rounded-xl border ${compact ? 'border-slate-700 bg-slate-900' : 'border-teal-500/20 bg-teal-500/5'} p-6`} id="citation">
+<div class={`lg-cite rounded-xl border ${compact ? 'border-slate-700 bg-slate-900' : 'border-teal-500/20 bg-teal-500/5'} p-6`} id="citation">
   {!compact && (
     <div class="flex items-center gap-2 mb-4">
       <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,9 +41,9 @@ const bibtex = `@software{walgampaya2025udb,
     <pre class="code-block p-4 text-xs text-slate-300 overflow-x-auto leading-relaxed">{bibtex}</pre>
     <button
       id="copy-bibtex"
-      onclick="navigator.clipboard.writeText(this.dataset.text).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy BibTeX',1500)})"
+      onclick="navigator.clipboard.writeText(this.dataset.text).then(()=>{this.textContent='Copied ✓';this.classList.add('is-done');setTimeout(()=>{this.textContent='Copy BibTeX';this.classList.remove('is-done')},1500)})"
       data-text={bibtex}
-      class="absolute top-2 right-2 px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs rounded-md transition-colors"
+      class="lg-copy lg-copy-static"
     >
       Copy BibTeX
     </button>

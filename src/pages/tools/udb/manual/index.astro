@@ -32,10 +32,10 @@ const tabs = [
     <div class="grid lg:grid-cols-4 gap-10">
 
       <!-- Sidebar TOC -->
-      <aside class="lg:col-span-1">
+      <aside class="min-w-0 lg:col-span-1">
         <div class="sticky top-24 bg-slate-900 border border-slate-700 rounded-xl p-4">
           <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">Contents</p>
-          <nav class="space-y-1 text-sm">
+          <nav class="space-y-1 text-sm" data-toc aria-label="Manual contents">
             {[
               { href: '#overview', label: 'Workflow Overview' },
               { href: '#getting-started', label: 'Getting Started' },
@@ -47,7 +47,7 @@ const tabs = [
               { href: '#outputs', label: 'Output Files' },
               { href: '#parameters', label: 'Key Parameters' },
             ].map(item => (
-              <a href={item.href} class="block px-2 py-1.5 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors">
+              <a href={item.href} class="lg-toc-link block px-2 py-1.5 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors">
                 {item.label}
               </a>
             ))}
@@ -60,7 +60,7 @@ const tabs = [
       </aside>
 
       <!-- Main content -->
-      <main class="lg:col-span-3 space-y-14">
+      <article class="min-w-0 lg:col-span-3 space-y-14">
 
         <!-- Workflow overview -->
         <section id="overview">
@@ -327,7 +327,27 @@ const tabs = [
           <a href="/tools/udb/validation/" class="btn-outline">Benchmarks</a>
         </div>
 
-      </main>
+      </article>
     </div>
   </div>
+  <!-- Scroll-spy: highlight the Contents entry for the section in view -->
+  <script is:inline>
+    (function () {
+      var toc = document.querySelector('[data-toc]');
+      if (!toc || !('IntersectionObserver' in window)) return;
+      var links = {};
+      toc.querySelectorAll('a[href^="#"]').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+      var current = null;
+      function mark(id) {
+        if (id === current || !links[id]) return;
+        if (current && links[current]) { links[current].classList.remove('is-current'); links[current].removeAttribute('aria-current'); }
+        current = id;
+        links[id].classList.add('is-current'); links[id].setAttribute('aria-current', 'location');
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) mark(e.target.id); });
+      }, { rootMargin: '-30% 0px -60% 0px' });
+      Object.keys(links).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+    })();
+  </script>
 </Layout>

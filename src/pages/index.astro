@@ -47,10 +47,10 @@ const features = [
 ];
 
 const stats = [
-  { value: '9',      label: 'Dendrimer Types' },
-  { value: 'G1-G10', label: 'Generation Range' },
-  { value: '10/10',  label: 'Validation Score' },
-  { value: '~5.9k',  label: 'Lines of Code' },
+  { value: '9',      label: 'Dendrimer Types',  count: true },
+  { value: 'G1-G10', label: 'Generation Range', count: false },
+  { value: '10/10',  label: 'Validation Score', count: true },
+  { value: '~5.9k',  label: 'Lines of Code',    count: true },
 ];
 
 const dendrimerTypes = [
@@ -123,10 +123,10 @@ const telemetry = [
       <!-- Main console panel -->
       <div class="hud-panel hud-corners scanlines relative rounded-2xl p-6 sm:p-10 lg:p-12 reveal">
 
-        <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
 
           <!-- LEFT · identity + CTA -->
-          <div>
+          <div class="min-w-0">
             <p class="hud-eyebrow mb-5">COMPUTATIONAL CHEMISTRY // MOLECULAR SIMULATION</p>
 
             <h1 class="font-display font-bold text-slate-50 leading-[0.95] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[4.2rem]">
@@ -166,7 +166,7 @@ const telemetry = [
           </div>
 
           <!-- RIGHT · live procedural reactor -->
-          <div class="relative flex items-center justify-center min-h-[360px] sm:min-h-[440px]">
+          <div class="relative min-w-0 flex items-center justify-center min-h-[360px] sm:min-h-[440px]">
             <!-- ambient glow -->
             <div class="absolute w-[440px] h-[440px] max-w-full rounded-full blur-3xl pointer-events-none"
                  style="background:radial-gradient(circle,rgba(44,232,216,0.20),transparent 65%)"></div>
@@ -195,7 +195,7 @@ const telemetry = [
           {stats.map(s => (
             <div class="bg-[rgba(6,14,20,0.6)] px-4 py-5 text-center">
               <div class="font-hud text-2xl sm:text-3xl font-bold text-transparent bg-clip-text"
-                   style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)">{s.value}</div>
+                   style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)" data-countup={s.count ? '' : undefined}>{s.value}</div>
               <div class="font-mono text-[10px] text-slate-500 mt-1.5 uppercase tracking-[0.15em]">{s.label}</div>
             </div>
           ))}
@@ -212,10 +212,10 @@ const telemetry = [
           </div>
           <div class="flex items-end gap-4">
             <div class="font-hud text-5xl font-bold text-transparent bg-clip-text"
-                 style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)">3-4×</div>
+                 style="background-image:linear-gradient(120deg,#6ffff2,#2ce8d8)" data-countup>3-4×</div>
             <div class="font-mono text-xs text-slate-400 pb-1.5 leading-relaxed">FASTER<br/>SIMULATION</div>
             <!-- mini bar chart -->
-            <div class="ml-auto flex items-end gap-1.5 h-16">
+            <div class="lg-bars ml-auto flex items-end gap-1.5 h-16">
               {[38,52,44,70,62,92].map(h => (
                 <span class="w-2.5 rounded-sm" style={`height:${h}%;background:linear-gradient(180deg,#6ffff2,rgba(44,232,216,0.25))`}></span>
               ))}
@@ -230,7 +230,7 @@ const telemetry = [
             <span class="hud-dot animate-pulse"></span>
           </div>
           <table class="w-full font-mono text-[11px]">
-            <tbody>
+            <tbody class="lg-rows">
               {telemetry.map((row, i) => (
                 <tr class={i === 0 ? 'text-[var(--hud-cy-deep)]' : 'text-slate-400'}>
                   {row.map(cell => (

@@ -1,0 +1,295 @@
+---
+/**
+ * LiquidGlass - the site-wide interaction layer for the liquid-glass theme.
+ * Mounted once in Layout.astro (right after <ScienceCanvas/>). Pairs with the
+ * "LIQUID GLASS LAYER" section of global.css, which does all the painting;
+ * this script only feeds it pointer/scroll state and adds small affordances.
+ *
+ * What it drives:
+ *   - pointer sheen      writes --mx/--my on the .hud-panel/.card under the cursor
+ *   - 3D tilt            interactive cards lean toward the pointer (.lg-tilting)
+ *   - magnetic buttons   CTAs drift a few px toward the cursor (--mag-x/--mag-y)
+ *   - click ripple       liquid ripple on buttons
+ *   - cursor light       soft glow behind the glass that trails the pointer
+ *   - scroll state       header.is-scrolled, .lg-progress bar, back-to-top
+ *   - count-up           numbers inside [data-countup] roll up when revealed
+ *   - lightbox           large figures open in a glass overlay (Esc / click closes)
+ *   - copy buttons       every .code-block with a <pre> gets a Copy control
+ *
+ * Safety:
+ *  - pointer effects only for fine pointers; all motion off under
+ *    prefers-reduced-motion (content and controls stay fully usable)
+ *  - one rAF-throttled handler per input type; idempotent (guarded)
+ */
+---
+<div class="lg-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="lg-cursor-glow" aria-hidden="true"></div>
+
+<script is:inline>
+(function () {
+  if (window.__lgInit) return;
+  window.__lgInit = true;
+
+  var mm = function (q) { return window.matchMedia ? matchMedia(q).matches : false; };
+  var REDUCE = mm('(prefers-reduced-motion: reduce)');
+  var FINE   = mm('(hover: hover) and (pointer: fine)');
+
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+  function init() {
+    var root = document.documentElement;
+
+    /* ── Pointer sheen on glass surfaces ─────────────────────────────── */
+    var SURF = '.hud-panel, .card';
+    var pending = null, sheenRaf = 0;
+    function paintSheen() {
+      sheenRaf = 0;
+      if (!pending) return;
+      var x = pending.x, y = pending.y, el = pending.el;
+      pending = null;
+      // light every glass layer under the pointer (panels can nest)
+      while (el) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (x - r.left).toFixed(1) + 'px');
+        el.style.setProperty('--my', (y - r.top).toFixed(1) + 'px');
+        el = el.parentElement && el.parentElement.closest(SURF);
+      }
+    }
+    if (FINE) {
+      document.addEventListener('pointermove', function (e) {
+        var t = e.target && e.target.closest ? e.target.closest(SURF) : null;
+        if (!t) return;
+        pending = { x: e.clientX, y: e.clientY, el: t };
+        if (!sheenRaf) sheenRaf = requestAnimationFrame(paintSheen);
+      }, { passive: true });
+    }
+
+    /* ── 3D tilt on interactive cards ────────────────────────────────── */
+    if (FINE && !REDUCE) {
+      var TILT = '[data-tilt], main a.card, main a.hud-panel, main .hud-panel.group';
+      var MAX = 5; // degrees
+      document.querySelectorAll(TILT).forEach(function (el) {
+        // never tilt live 3D viewers (dragging rotates the molecule instead)
+        if (el.querySelector('.mol-viewer, canvas')) return;
+        var r = null, raf = 0, px = 0, py = 0;
+        function apply() {
+          raf = 0;
+          if (!r) return;
+          var nx = clamp((px - r.left) / r.width, 0, 1) - 0.5;
+          var ny = clamp((py - r.top) / r.height, 0, 1) - 0.5;
+          el.style.setProperty('--ry', (nx * 2 * MAX).toFixed(2) + 'deg');
+          el.style.setProperty('--rx', (-ny * 2 * MAX).toFixed(2) + 'deg');
+        }
+        el.addEventListener('pointerenter', function () {
+          var revealing = /\breveal/.test(el.className) && !el.classList.contains('in');
+          if (revealing) return;
+          r = el.getBoundingClientRect();
+          el.classList.add('lg-tilting');
+        });
+        el.addEventListener('pointermove', function (e) {
+          if (!r) return;
+          px = e.clientX; py = e.clientY;
+          if (!raf) raf = requestAnimationFrame(apply);
+        });
+        el.addEventListener('pointerleave', function () {
+          r = null;
+          el.classList.remove('lg-tilting');
+          el.style.removeProperty('--rx'); el.style.removeProperty('--ry');
+        });
+      });
+    }
+
+    /* ── Magnetic CTAs + click ripple ────────────────────────────────── */
+    var BTN = '.hud-btn, .hud-btn-ghost, .btn-primary, .btn-outline';
+    if (FINE && !REDUCE) {
+      document.querySelectorAll(BTN).forEach(function (el) {
+        el.addEventListener('pointermove', function (e) {
+          var r = el.getBoundingClientRect();
+          var dx = (e.clientX - (r.left + r.width / 2)) * 0.18;
+          var dy = (e.clientY - (r.top + r.height / 2)) * 0.28;
+          el.style.setProperty('--mag-x', clamp(dx, -6, 6).toFixed(1) + 'px');
+          el.style.setProperty('--mag-y', clamp(dy, -4, 4).toFixed(1) + 'px');
+        });
+        el.addEventListener('pointerleave', function () {
+          el.style.removeProperty('--mag-x'); el.style.removeProperty('--mag-y');
+        });
+      });
+    }
+    if (!REDUCE) {
+      document.addEventListener('pointerdown', function (e) {
+        var b = e.target && e.target.closest ? e.target.closest(BTN) : null;
+        if (!b) return;
+        var r = b.getBoundingClientRect();
+        var s = document.createElement('span');
+        s.className = 'lg-ripple';
+        s.style.left = (e.clientX - r.left) + 'px';
+        s.style.top = (e.clientY - r.top) + 'px';
+        b.appendChild(s);
+        setTimeout(function () { s.remove(); }, 700);
+      });
+    }
+
+    /* ── Cursor light behind the glass ───────────────────────────────── */
+    var glow = document.querySelector('.lg-cursor-glow');
+    if (glow && FINE && !REDUCE) {
+      var gx = innerWidth / 2, gy = innerHeight / 3, tx = gx, ty = gy, gRaf = 0;
+      function glide() {
+        gx += (tx - gx) * 0.16; gy += (ty - gy) * 0.16;
+        glow.style.transform = 'translate3d(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px,0)';
+        gRaf = (Math.abs(tx - gx) + Math.abs(ty - gy) > 0.5) ? requestAnimationFrame(glide) : 0;
+      }
+      document.addEventListener('pointermove', function (e) {
+        tx = e.clientX; ty = e.clientY;
+        glow.classList.add('is-on');
+        if (!gRaf) gRaf = requestAnimationFrame(glide);
+      }, { passive: true });
+      document.documentElement.addEventListener('pointerleave', function () { glow.classList.remove('is-on'); });
+    }
+
+    /* ── Scroll: header state · progress · back-to-top ───────────────── */
+    var header = document.querySelector('header');
+    var bar = document.querySelector('.lg-progress');
+    // appended last so it is also last in keyboard order; unfocusable while hidden
+    var topBtn = document.createElement('button');
+    topBtn.type = 'button'; topBtn.className = 'lg-top';
+    topBtn.setAttribute('aria-label', 'Back to top');
+    topBtn.setAttribute('tabindex', '-1'); topBtn.setAttribute('aria-hidden', 'true');
+    topBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6"/></svg>';
+    document.body.appendChild(topBtn);
+    var topOn = false;
+    var sRaf = 0;
+    function onScroll() {
+      sRaf = 0;
+      var y = window.scrollY || root.scrollTop || 0;
+      var max = Math.max(1, root.scrollHeight - innerHeight);
+      if (header) header.classList.toggle('is-scrolled', y > 8);
+      if (bar) bar.style.setProperty('--lg-p', clamp(y / max, 0, 1).toFixed(4));
+      var on = y > 700;
+      if (on !== topOn) {
+        topOn = on;
+        topBtn.classList.toggle('is-on', on);
+        topBtn.setAttribute('tabindex', on ? '0' : '-1');
+        topBtn.setAttribute('aria-hidden', on ? 'false' : 'true');
+      }
+    }
+    window.addEventListener('scroll', function () { if (!sRaf) sRaf = requestAnimationFrame(onScroll); }, { passive: true });
+    onScroll();
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: REDUCE ? 'auto' : 'smooth' });
+    });
+
+    /* ── Count-up numbers ────────────────────────────────────────────── */
+    var counters = document.querySelectorAll('[data-countup]');
+    function countUp(el) {
+      var src = el.dataset.countupText || el.textContent;
+      el.dataset.countupText = src;
+      var toks = [];
+      src.replace(/\d+(?:\.\d+)?/g, function (m) { toks.push(m); return m; });
+      if (!toks.length || REDUCE) return;
+      var t0 = performance.now(), DUR = 1500;
+      function step(now) {
+        var k = clamp((now - t0) / DUR, 0, 1);
+        var e = k === 1 ? 1 : 1 - Math.pow(2, -10 * k);          // ease-out expo
+        var i = 0;
+        el.textContent = src.replace(/\d+(?:\.\d+)?/g, function () {
+          var tok = toks[i++], dec = (tok.split('.')[1] || '').length;
+          return (parseFloat(tok) * e).toFixed(dec);
+        });
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    if (counters.length && 'IntersectionObserver' in window) {
+      var cio = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); } });
+      }, { threshold: 0.6 });
+      counters.forEach(function (c) { cio.observe(c); });
+    }
+
+    /* ── Lightbox for figures ────────────────────────────────────────── */
+    var box = null, lastFocus = null;
+    function closeBox() {
+      if (!box) return;
+      var b = box; box = null;
+      b.classList.remove('is-on');
+      root.style.overflow = '';
+      setTimeout(function () { b.remove(); }, REDUCE ? 0 : 300);
+      lastFocus && lastFocus.focus && lastFocus.focus({ preventScroll: true });
+    }
+    function openBox(img) {
+      lastFocus = document.activeElement;
+      box = document.createElement('div');
+      box.className = 'lg-lightbox';
+      box.setAttribute('role', 'dialog');
+      box.setAttribute('aria-modal', 'true');
+      box.setAttribute('aria-label', img.alt || 'Enlarged figure');
+      var fig = document.createElement('figure');
+      var big = document.createElement('img');
+      big.src = img.currentSrc || img.src; big.alt = img.alt || '';
+      fig.appendChild(big);
+      if (img.alt) { var cap = document.createElement('figcaption'); cap.textContent = img.alt; fig.appendChild(cap); }
+      var x = document.createElement('button');
+      x.type = 'button'; x.setAttribute('aria-label', 'Close');
+      x.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>';
+      box.appendChild(fig); box.appendChild(x);
+      box.addEventListener('click', closeBox);
+      document.body.appendChild(box);
+      root.style.overflow = 'hidden';
+      requestAnimationFrame(function () { box && box.classList.add('is-on'); });
+      x.focus({ preventScroll: true });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (!box) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeBox(); }
+      else if (e.key === 'Tab') { e.preventDefault(); }   // focus trap: Close is the only control
+    });
+    document.querySelectorAll('main img').forEach(function (img) {
+      if (img.closest('a, button, .mol-viewer, [data-no-zoom]')) return;
+      var w = img.getBoundingClientRect().width || img.width;
+      if (w < 300) return;
+      img.classList.add('lg-zoomable');
+      img.setAttribute('tabindex', '0');
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-label', 'Enlarge figure' + (img.alt ? ': ' + img.alt : ''));
+      img.addEventListener('click', function () { openBox(img); });
+      img.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBox(img); }
+      });
+    });
+
+    /* ── Copy buttons on code blocks ─────────────────────────────────── */
+    var COPY_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>';
+    function copyText(txt) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+      return new Promise(function (res, rej) {
+        var ta = document.createElement('textarea');
+        ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy') ? res() : rej(); } catch (err) { rej(err); }
+        ta.remove();
+      });
+    }
+    document.querySelectorAll('.code-block').forEach(function (blk) {
+      if (blk.tagName === 'PRE' || blk.querySelector('button')) return;
+      var pres = blk.querySelectorAll('pre');
+      if (!pres.length) return;
+      blk.classList.add('lg-has-copy');
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'lg-copy';
+      b.setAttribute('aria-label', 'Copy code');
+      b.innerHTML = COPY_ICON + '<span>Copy</span>';
+      b.addEventListener('click', function () {
+        var txt = Array.prototype.map.call(pres, function (p) { return p.textContent; }).join('\n');
+        copyText(txt).then(function () {
+          b.classList.add('is-done'); b.lastChild.textContent = 'Copied';
+          setTimeout(function () { b.classList.remove('is-done'); b.lastChild.textContent = 'Copy'; }, 1600);
+        }, function () { b.lastChild.textContent = 'Press Ctrl+C'; });
+      });
+      blk.appendChild(b);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
+})();
+</script>
