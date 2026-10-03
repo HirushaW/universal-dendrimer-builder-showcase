@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import RevealInit from '../components/RevealInit.astro';
 import ScienceCanvas from '../components/ScienceCanvas.astro';
 import LiquidGlass from '../components/LiquidGlass.astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title: string;
@@ -63,6 +64,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
       rel="stylesheet"
     />
     <meta name="theme-color" content="#04070e" />
+    <SpeedInsights />
   </head>
   <body class="min-h-screen flex flex-col" style="background:#04070e">
     <ScienceCanvas intensity={0.82} />
