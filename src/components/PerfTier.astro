@@ -1,0 +1,118 @@
+---
+/**
+ * PerfTier - decides how much visual richness this device can afford, before
+ * first paint, and keeps that decision honest with a frame-rate governor.
+ * Mounted once in Layout.astro <head>.
+ *
+ * Sets <html data-perf="high|mid|low">; global.css and every animated
+ * component (ScienceCanvas, DendrimerReactor, LiquidGlass, MolViewerRuntime)
+ * read it. A `udb-perf` window event fires whenever the tier changes.
+ *
+ *   high  full liquid glass, 60 fps canvases, all pointer effects
+ *   mid   "glass-lite": live blur only on nav/overlays, 30 fps canvases,
+ *         lighter 3D viewers (default for phones/tablets and 4-core machines)
+ *   low   no live blur, static background, 3D viewers load on tap
+ *
+ * 1. Initial guess from hardware signals (save-data, memory, cores, pointer).
+ * 2. Governor: samples real frame times while the page is in use; if the
+ *    median frame stays slower than ~36 fps it steps down one tier (never up)
+ *    and remembers that for 14 days, so a struggling phone starts light next
+ *    visit.
+ * 3. Manual override for testing: ?perf=high|mid|low (this tab) · ?perf=auto
+ */
+---
+<script is:inline>
+(function () {
+  var d = document.documentElement;
+  var RANK = { low: 0, mid: 1, high: 2 };
+  var KEY = 'udb-perf', PIN = 'udb-perf-pin', TTL = 14 * 864e5;
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) {} return null; }
+  function mq(q) { return !!(window.matchMedia && matchMedia(q).matches); }
+
+  // ── 1. hardware guess ─────────────────────────────────────────────────
+  var nav = navigator, conn = nav.connection || {};
+  var mem = nav.deviceMemory, cores = nav.hardwareConcurrency || 4;
+  var coarse = mq('(pointer: coarse)') && !mq('(pointer: fine)');
+  var tier = 'high';
+  if (conn.saveData || (mem && mem <= 2) || cores <= 2) tier = 'low';
+  else if (coarse || (mem && mem <= 4) || (cores <= 4 && !(mem >= 8))) tier = 'mid';
+
+  // remembered downgrade from a previous visit
+  try {
+    var past = JSON.parse(ls(KEY) || 'null');
+    if (past && RANK[past.t] !== undefined && Date.now() - past.ts < TTL && RANK[past.t] < RANK[tier]) tier = past.t;
+  } catch (e) {}
+
+  // explicit override (testing / user choice), kept for this tab
+  var q = (location.search.match(/[?&]perf=(\w+)/) || [])[1];
+  if (q === 'auto') { ss(PIN, null); ls(KEY, null); }
+  else if (RANK[q] !== undefined) ss(PIN, q);
+  var pinned = ss(PIN);
+  if (RANK[pinned] !== undefined) tier = pinned;
+
+  function apply(t, why) {
+    if (d.dataset.perf === t) return;
+    d.dataset.perf = t;
+    try { window.dispatchEvent(new CustomEvent('udb-perf', { detail: { tier: t, reason: why } })); } catch (e) {}
+  }
+  apply(tier, 'init');
+  window.udbPerf = { get tier() { return d.dataset.perf; }, set: function (t) { if (RANK[t] !== undefined) apply(t, 'manual'); } };
+  if (RANK[pinned] !== undefined || tier === 'low') return;   // nothing to govern
+
+  // ── 2. frame-rate governor ────────────────────────────────────────────
+  // Samples only while the page is being used (load, scroll, pointer), so an
+  // idle tab is never kept awake. Two slow windows in a row → step down.
+  var WINDOW = 2500, SLOW_MS = 28, raf = 0, samples = [], last = 0, t0 = 0, bad = 0, good = 0;
+  function frame(now) {
+    if (last) { var dt = now - last; if (dt < 1000) samples.push(dt); }
+    last = now;
+    if (now - t0 >= WINDOW) return judge();
+    raf = requestAnimationFrame(frame);
+  }
+  function judge() {
+    raf = 0; last = 0;
+    if (document.hidden) { samples = []; return; }
+    // A visible page delivers a frame every vsync while rAF is pending, so a
+    // window with almost no frames is itself the slowest possible verdict
+    // (< ~1.6 fps); frames over 1 s were dropped from `samples` for the same reason.
+    var median = Infinity;
+    if (samples.length >= 4) {
+      samples.sort(function (a, b) { return a - b; });
+      median = samples[samples.length >> 1];
+    }
+    samples = [];
+    if (median > SLOW_MS) {
+      good = 0;
+      if (++bad >= 2) {
+        bad = 0;
+        var next = d.dataset.perf === 'high' ? 'mid' : 'low';
+        ls(KEY, JSON.stringify({ t: next, ts: Date.now() }));
+        apply(next, 'governor');
+        if (next === 'low') return;          // floor reached
+      }
+      start();                              // keep watching
+    } else {
+      bad = 0;
+      if (++good < 3) start();              // a few clean windows, then rest
+    }
+  }
+  function start() {
+    if (raf || document.hidden || d.dataset.perf === 'low') return;
+    samples = []; last = 0; t0 = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+  // re-arm on real use: heavy sections (3D viewers) only appear on scroll
+  var armT = 0;
+  function arm() { clearTimeout(armT); armT = setTimeout(function () { good = Math.min(good, 1); start(); }, 120); }
+  window.addEventListener('load', function () { setTimeout(start, 1800); }, { once: true });
+  window.addEventListener('scroll', arm, { passive: true });
+  window.addEventListener('pointerdown', arm, { passive: true });
+  // a tab switch mid-window is not slowness: discard that window
+  document.addEventListener('visibilitychange', function () {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    samples = []; last = 0;
+    if (!document.hidden) arm();
+  });
+})();
+</script>

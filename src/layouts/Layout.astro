@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import RevealInit from '../components/RevealInit.astro';
 import ScienceCanvas from '../components/ScienceCanvas.astro';
 import LiquidGlass from '../components/LiquidGlass.astro';
+import PerfTier from '../components/PerfTier.astro';
 
 interface Props {
   title: string;
@@ -16,11 +17,13 @@ interface Props {
 const {
   title,
   description = 'Universal Dendrimer Builder (UDB) - open-source Python application for building, parameterizing, and simulating dendrimer nanostructures with AMBER and NAMD.',
-  image = '/images/og-default.png',
+  image = '/images/og-default.jpg',
   activeNav,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.example.com');
+const site = Astro.site ?? new URL('https://universal-dendrimer-builder-showcas.vercel.app');
+const canonicalURL = new URL(Astro.url.pathname, site);
+const imageURL = new URL(image, site);   // social cards require an absolute URL
 ---
 
 <!doctype html>
@@ -30,6 +33,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
     <!-- Remove the no-js guard before paint so JS users get scroll-reveal;
          if JS is disabled, `.no-js .reveal` keeps all content visible. -->
     <script is:inline>document.documentElement.classList.remove('no-js');</script>
+    <!-- Device tier (high/mid/low) before first paint; see PerfTier.astro -->
+    <PerfTier />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
@@ -43,13 +48,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://udb.exam
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Universal Dendrimer Builder" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${title} | Universal Dendrimer Builder`} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

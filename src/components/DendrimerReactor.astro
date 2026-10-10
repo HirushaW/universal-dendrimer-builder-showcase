@@ -106,18 +106,39 @@ const { height = '340px', maxGen = 4, compact = false, id = 'reactor' } = Astro.
     }
     buildTree();
 
+    // ── per-tier budget (PerfTier.astro → html[data-perf]) ──
+    const budget = () => {
+      const t = document.documentElement.dataset.perf;
+      return t === 'low' ? { fps: 24, dpr: 1 } : t === 'mid' ? { fps: 30, dpr: 1.5 } : { fps: 60, dpr: 2 };
+    };
+    let B = budget();
+
+    // ── glow sprites, rendered once ──
+    // Replaces per-frame shadowBlur + a fresh radial gradient per node, which
+    // are among the slowest 2D-canvas operations on phones.
+    function sprite(stops: [number, string][]) {
+      const s = 64, c = document.createElement('canvas');
+      c.width = c.height = s;
+      const g = c.getContext('2d')!;
+      const grd = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+      stops.forEach(([o, col]) => grd.addColorStop(o, col));
+      g.fillStyle = grd; g.fillRect(0, 0, s, s);
+      return c;
+    }
+    const HALO = sprite([[0, 'rgba(111,255,242,0.55)'], [0.35, 'rgba(111,255,242,0.2)'], [1, 'rgba(44,232,216,0)']]);
+    const CORE = sprite([[0, 'rgba(225,255,252,1)'], [0.45, 'rgba(160,255,247,0.95)'], [0.78, 'rgba(111,255,242,0.85)'], [1, 'rgba(111,255,242,0)']]);
+
     // ── responsive canvas ──
     let W = 0, H = 0, dpr = 1;
     function resize() {
       const r = stage.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, B.dpr);
       W = r.width; H = r.height;
       canvas.width = Math.round(W * dpr);
       canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (reduce) draw(performance.now(), 0);
     }
-    resize();
-    new ResizeObserver(resize).observe(stage);
 
     // ── timeline (ms within one cycle) ──
     const T_BUILD = 3000, T_HOLD = 3600, T_FADE = 1100, T_GAP = 400;
@@ -135,12 +156,13 @@ const { height = '340px', maxGen = 4, compact = false, id = 'reactor' } = Astro.
       else if (t < T_BUILD + T_HOLD) { reveal = MAX_GEN; phase = 'SIMULATING'; held = true; }
       else if (t < T_BUILD + T_HOLD + T_FADE) {
         reveal = MAX_GEN * (1 - easeInOut((t - T_BUILD - T_HOLD) / T_FADE)); phase = 'RESET'; held = false;
-      } else { reveal = 0; phase = 'RESET'; held = false; if (t > CYCLE - 16) buildTree(); }
+      } else { reveal = 0; phase = 'RESET'; held = false; if (t > CYCLE - 40) buildTree(); }
       return { reveal, phase, held };
     }
 
-    // smooth counters for the readout
-    let shownGen = 0, shownAtoms = 0, lastGen = -1, lastPhase = '';
+    // smooth counters for the readout (DOM only written when the text changes)
+    let shownGen = 0, shownAtoms = 0, lastGen = -1, lastPhase = '', lastAtoms = '';
+    const X: number[] = [], Y: number[] = [], A: number[] = [];
 
     function draw(now: number, dt: number) {
       const { reveal, phase, held } = reduce
@@ -152,67 +174,64 @@ const { height = '340px', maxGen = 4, compact = false, id = 'reactor' } = Astro.
       ctx.clearRect(0, 0, W, H);
       const cx = W / 2, cy = H / 2;
       const scale = (Math.min(W, H) * 0.46) / maxR;
+      const amp = held ? 3.2 : 1.4;
 
-      // node live position (rotation + thermal jitter)
-      const pos = (n: RNode) => {
-        const a = n.ang + rot;
-        let x = Math.cos(a) * n.R * scale;
-        let y = Math.sin(a) * n.R * scale;
-        const appear = Math.max(0, Math.min(1, reveal - (n.gen - 1)));
-        const amp = held ? 3.2 : 1.4;
-        x += Math.sin(now * 0.0024 + n.seed) * amp * appear;
-        y += Math.cos(now * 0.0021 + n.seed * 1.3) * amp * appear;
-        return { x: cx + x, y: cy + y, appear };
-      };
-
-      // 1) edges (drawn first, glowing)
-      ctx.lineCap = 'round';
-      for (let i = 1; i < nodes.length; i++) {
-        const n = nodes[i];
-        const appear = Math.max(0, Math.min(1, reveal - (n.gen - 1)));
-        if (appear <= 0) continue;
-        const p = pos(nodes[n.parent]);
-        const c = pos(n);
-        const ex = p.x + (c.x - p.x) * appear;
-        const ey = p.y + (c.y - p.y) * appear;
-        ctx.strokeStyle = `rgba(44,232,216,${0.10 + 0.30 * appear})`;
-        ctx.lineWidth = Math.max(0.6, (1.7 - n.gen * 0.18) * appear);
-        ctx.shadowColor = 'rgba(44,232,216,0.55)';
-        ctx.shadowBlur = 6 * appear;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-      }
-
-      // 2) nodes
+      // node live positions (rotation + thermal jitter), computed once per frame
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
-        const c = pos(n);
-        if (c.appear <= 0) continue;
-        const rad = (n.gen === 0 ? 7 : Math.max(1.6, 5 - n.gen * 0.6)) * (0.4 + 0.6 * c.appear);
-        const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rad * 2.4);
-        g.addColorStop(0, `rgba(190,255,250,${0.95 * c.appear})`);
-        g.addColorStop(0.4, `rgba(111,255,242,${0.85 * c.appear})`);
-        g.addColorStop(1, 'rgba(44,232,216,0)');
-        ctx.fillStyle = g;
-        ctx.shadowColor = 'rgba(111,255,242,0.8)';
-        ctx.shadowBlur = (n.gen === 0 ? 22 : 12) * c.appear;
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, rad, 0, Math.PI * 2);
-        ctx.fill();
+        const a = n.ang + rot;
+        const appear = Math.max(0, Math.min(1, reveal - (n.gen - 1)));
+        const j = reduce ? 0 : amp * appear;
+        X[i] = cx + Math.cos(a) * n.R * scale + Math.sin(now * 0.0024 + n.seed) * j;
+        Y[i] = cy + Math.sin(a) * n.R * scale + Math.cos(now * 0.0021 + n.seed * 1.3) * j;
+        A[i] = n.gen === 0 ? 1 : appear;
       }
-      ctx.shadowBlur = 0;
+
+      // 1) edges: a wide faint pass (the glow) under a crisp core pass
+      ctx.lineCap = 'round';
+      for (let pass = 0; pass < 2; pass++) {
+        for (let i = 1; i < nodes.length; i++) {
+          const appear = A[i];
+          if (appear <= 0) continue;
+          const n = nodes[i], p = n.parent;
+          const ex = X[p] + (X[i] - X[p]) * appear;
+          const ey = Y[p] + (Y[i] - Y[p]) * appear;
+          const w = Math.max(0.6, (1.7 - n.gen * 0.18) * appear);
+          ctx.strokeStyle = pass === 0
+            ? `rgba(44,232,216,${0.16 * appear})`
+            : `rgba(44,232,216,${0.10 + 0.30 * appear})`;
+          ctx.lineWidth = pass === 0 ? w * 4 : w;
+          ctx.beginPath();
+          ctx.moveTo(X[p], Y[p]);
+          ctx.lineTo(ex, ey);
+          ctx.stroke();
+        }
+      }
+
+      // 2) nodes: halo + core sprites
+      for (let i = 0; i < nodes.length; i++) {
+        const appear = A[i];
+        if (appear <= 0) continue;
+        const gen = nodes[i].gen;
+        const rad = (gen === 0 ? 7 : Math.max(1.6, 5 - gen * 0.6)) * (0.4 + 0.6 * appear);
+        const halo = (rad + (gen === 0 ? 22 : 12) * appear) * 2;
+        ctx.globalAlpha = appear;
+        ctx.drawImage(HALO, X[i] - halo / 2, Y[i] - halo / 2, halo, halo);
+        const core = rad * 2.3;
+        ctx.drawImage(CORE, X[i] - core / 2, Y[i] - core / 2, core, core);
+      }
+      ctx.globalAlpha = 1;
 
       // 3) readouts
       const targetGen = Math.max(0, Math.min(MAX_GEN, Math.round(reveal)));
       const targetAtoms = ATOMS[targetGen] ?? 0;
-      shownGen += (targetGen - shownGen) * Math.min(1, dt * 0.02);
-      shownAtoms += (targetAtoms - shownAtoms) * Math.min(1, dt * 0.012);
+      // (dt = 0 on a still frame → snap straight to the target)
+      shownGen += (targetGen - shownGen) * (dt ? Math.min(1, dt * 0.02) : 1);
+      shownAtoms += (targetAtoms - shownAtoms) * (dt ? Math.min(1, dt * 0.012) : 1);
       const gRound = Math.round(shownGen);
       if (gRound !== lastGen) { elGen.forEach((e) => (e.textContent = String(gRound))); lastGen = gRound; }
       const atomsTxt = Math.round(shownAtoms).toLocaleString();
-      elAtoms.forEach((e) => (e.textContent = atomsTxt));
+      if (atomsTxt !== lastAtoms) { elAtoms.forEach((e) => (e.textContent = atomsTxt)); lastAtoms = atomsTxt; }
       if (phase !== lastPhase) {
         elPhase.forEach((e) => (e.textContent = phase));
         elDot.forEach((e) => (e.style.background = phase === 'SIMULATING' ? '#6ffff2' : 'var(--hud-cy-deep)'));
@@ -220,21 +239,31 @@ const { height = '340px', maxGen = 4, compact = false, id = 'reactor' } = Astro.
       }
     }
 
-    let prev = performance.now();
-    function frame(now: number) {
-      const dt = Math.min(48, now - prev); prev = now;
-      draw(now, dt);
-      raf = requestAnimationFrame(frame);
-    }
-    let raf = requestAnimationFrame(frame);
+    resize();
+    new ResizeObserver(resize).observe(stage);
 
-    // pause when off-screen (perf)
+    // reduced motion: one finished, still frame - no animation loop at all
+    if (reduce) return;
+
+    let prev = performance.now(), lastDraw = 0, raf = 0;
+    function frame(now: number) {
+      raf = requestAnimationFrame(frame);
+      if (B.fps < 60 && now - lastDraw < 1000 / B.fps - 2) return;   // frame cap below 'high'
+      const dt = Math.min(64, now - prev); prev = now; lastDraw = now;
+      draw(now, dt);
+    }
+    function play() { if (!raf) { prev = performance.now(); raf = requestAnimationFrame(frame); } }
+    function pause() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+    // run only while on screen
     new IntersectionObserver((es) => {
       for (const e of es) {
-        if (e.isIntersecting && !raf) { prev = performance.now(); start = performance.now(); raf = requestAnimationFrame(frame); }
-        else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = 0 as unknown as number; }
+        if (e.isIntersecting) { start = performance.now(); play(); } else pause();
       }
     }, { threshold: 0.05 }).observe(stage);
+
+    // site tier changed at runtime → new frame/pixel budget
+    window.addEventListener('udb-perf', () => { B = budget(); resize(); });
   }
 
   document.querySelectorAll<HTMLElement>('.reactor-stage').forEach(initReactor);

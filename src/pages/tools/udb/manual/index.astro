@@ -251,7 +251,7 @@ const tabs = [
               <div>
                 <p class="mono text-teal-500 text-xs tracking-widest uppercase mb-2">{d.label}</p>
                 <div class="diagram-frame">
-                  <img src={d.src} alt={d.alt} class="w-full" />
+                  <img src={d.src} alt={d.alt} class="w-full" loading="lazy" decoding="async" />
                 </div>
               </div>
             ))}

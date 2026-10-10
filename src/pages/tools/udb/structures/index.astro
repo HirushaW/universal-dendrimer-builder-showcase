@@ -55,7 +55,7 @@ const familyCount = dendrimers.length;
         return (
           <div class="hud-panel hud-corners rounded-2xl overflow-hidden flex flex-col">
             {rep ? (
-              <MolViewer id={`gal-${d.id}`} url={rep.file} height="260px" accent={accent} spin={true} zoom={0.85} />
+              <MolViewer id={`gal-${d.id}`} url={rep.file} height="260px" accent={accent} spin={true} zoom={0.85} atoms={rep.n_atoms} />
             ) : (
               <div class="h-[260px] flex items-center justify-center text-slate-600 font-mono text-xs">no structure</div>
             )}

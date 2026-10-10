@@ -133,13 +133,13 @@ const elementsPresent = new Set<string>();
       <div class="grid md:grid-cols-2 gap-6">
         {struct?.core && (
           <div>
-            <MolViewer id={`${d.id}-core`} url={struct.core.file} height="320px" accent={accent} zoom={0.85}
+            <MolViewer id={`${d.id}-core`} url={struct.core.file} height="320px" accent={accent} zoom={0.85} atoms={struct.core.n_atoms}
               label="Initiator Core" sublabel={`${struct.core.n_atoms} atoms · ${formula(struct.core.composition)} · ${struct.core.mw?.toFixed(1)} Da`} />
           </div>
         )}
         {struct?.monomer && (
           <div>
-            <MolViewer id={`${d.id}-monomer`} url={struct.monomer.file} height="320px" accent={accent} zoom={0.85}
+            <MolViewer id={`${d.id}-monomer`} url={struct.monomer.file} height="320px" accent={accent} zoom={0.85} atoms={struct.monomer.n_atoms}
               label="Repeat Unit (Monomer)" sublabel={`${struct.monomer.n_atoms} atoms · ${formula(struct.monomer.composition)} · ${struct.monomer.mw?.toFixed(1)} Da`} />
           </div>
         )}
@@ -205,7 +205,7 @@ const elementsPresent = new Set<string>();
                       <span class="hud-chip">{g.n_atoms.toLocaleString()} atoms</span>
                     </div>
                   </div>
-                  <MolViewer id={`${d.id}-g${g.gen}`} url={g.file} height="360px" accent={accent} zoom={0.92} />
+                  <MolViewer id={`${d.id}-g${g.gen}`} url={g.file} height="360px" accent={accent} zoom={0.92} atoms={g.n_atoms} />
                 </div>
 
                 <!-- characterization data -->

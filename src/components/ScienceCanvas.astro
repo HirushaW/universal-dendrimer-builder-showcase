@@ -61,36 +61,48 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
   // ── Device tier ─────────────────────────────────────────────────────
   var mqReduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   var mqCoarse = window.matchMedia ? matchMedia('(pointer: coarse)') : { matches: false };
+  // The site-wide tier (PerfTier.astro → html[data-perf]) caps what this
+  // canvas may do: low → one still frame, mid → at most the 'med' budget.
   function detectTier() {
     if (mqReduce.matches) return 'static';
+    var site = document.documentElement.dataset.perf || 'high';
+    if (site === 'low') return 'static';
     var conn = navigator.connection || {};
     if (conn.saveData) return 'low';
     var cores = navigator.hardwareConcurrency || 4;
     var mem   = navigator.deviceMemory || 4;
     var narrow = window.innerWidth < 640;
-    if (cores <= 4 || mem <= 2 || (narrow && mqCoarse.matches)) return 'low';
-    if (cores <= 6 || mem <= 4 || mqCoarse.matches || window.innerWidth < 1024) return 'med';
-    return 'high';
+    var t;
+    if (cores <= 4 || mem <= 2 || (narrow && mqCoarse.matches)) t = 'low';
+    else if (cores <= 6 || mem <= 4 || mqCoarse.matches || window.innerWidth < 1024) t = 'med';
+    else t = 'high';
+    if (site === 'mid' && t === 'high') t = 'med';
+    return t;
   }
-  var tier = detectTier();
 
-  // Per-tier budgets (richer, slightly more visible motion - still subtle)
-  var BUD = {
-    high: { field: 19000, capF: 92, dend: 3, helix: 2, ring: 4, chain: 3, drift: 1.3, bonds: true },
-    med:  { field: 30000, capF: 56, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.95, bonds: true },
-    low:  { field: 52000, capF: 26, dend: 1, helix: 0, ring: 1, chain: 0, drift: 0.55, bonds: false },
-    static:{ field: 34000, capF: 44, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.0, bonds: true },
-  }[tier];
+  // Per-tier budgets (richer, slightly more visible motion - still subtle).
+  // fps: only 'high' draws every display frame; ambience reads fine at 30.
+  var BUDGETS = {
+    high: { field: 19000, capF: 92, dend: 3, helix: 2, ring: 4, chain: 3, drift: 1.3, bonds: true,  fps: 60, dpr: 1.5 },
+    med:  { field: 30000, capF: 56, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.95, bonds: true, fps: 30, dpr: 1 },
+    low:  { field: 52000, capF: 26, dend: 1, helix: 0, ring: 1, chain: 0, drift: 0.55, bonds: false, fps: 30, dpr: 1 },
+    static:{ field: 34000, capF: 44, dend: 2, helix: 1, ring: 3, chain: 2, drift: 0.0, bonds: true, fps: 0,  dpr: 1 },
+  };
+  var tier, BUD, PROBE;
+  var FINE = !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
+  function applyTier() {
+    tier = detectTier();
+    BUD = BUDGETS[tier];
+    // Variant weighting → drop motifs the page doesn't emphasise
+    if (variant === 'bio')  { BUD = Object.assign({}, BUD, { dend: Math.max(0, BUD.dend - 1) }); }
+    if (variant === 'chem') { BUD = Object.assign({}, BUD, { helix: 0 }); }
+    if (variant === 'data') { BUD = Object.assign({}, BUD, { dend: 0, helix: 0, ring: Math.min(1, BUD.ring) }); }
+    // pointer probe (listened on window: the canvas itself never takes events)
+    PROBE = FINE && (tier === 'high' || tier === 'med');
+  }
+  applyTier();
 
-  // Variant weighting → drop motifs the page doesn't emphasise
-  if (variant === 'bio')  { BUD = Object.assign({}, BUD, { dend: Math.max(0, BUD.dend - 1) }); }
-  if (variant === 'chem') { BUD = Object.assign({}, BUD, { helix: 0 }); }
-  if (variant === 'data') { BUD = Object.assign({}, BUD, { dend: 0, helix: 0, ring: Math.min(1, BUD.ring) }); }
-
-  var W = 0, H = 0, dpr = 1, scrollY = 0, raf = 0, last = 0, glow = null;
-  // pointer probe (listened on window: the canvas itself never takes events)
-  var PROBE = tier !== 'static' && tier !== 'low' &&
-              !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
+  var W = 0, H = 0, dpr = 1, scrollY = 0, raf = 0, last = 0, lastDraw = 0, glow = null;
   var ptr = { x: -9999, y: -9999, on: false, a: 0 };
   var PR = 170, PR2 = PR * PR, PUSH = 80;
   var nodes = [], dends = [], helices = [], rings = [], chains = [];
@@ -172,7 +184,7 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
   }
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = Math.min(window.devicePixelRatio || 1, BUD.dpr);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width  = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
@@ -190,20 +202,24 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
   // ── Motif drawing ───────────────────────────────────────────────────
   var GRAPH_D = 140, GRAPH_D2 = GRAPH_D * GRAPH_D;
 
+  var ys = [];
   function drawField(off) {
+    for (var w = 0; w < nodes.length; w++) ys[w] = wrapY(nodes[w].y - off * nodes[w].p * 0.05);
     // bonds
     if (BUD.bonds) {
       ctx.lineWidth = 1;
       for (var i = 0; i < nodes.length; i++) {
-        var a = nodes[i], ay = wrapY(a.y - off * a.p * 0.05);
+        var a = nodes[i], ay = ys[i];
         for (var j = i + 1; j < nodes.length; j++) {
           var b = nodes[j];
-          var dx = a.x - b.x, dy = ay - wrapY(b.y - off * b.p * 0.05);
+          var dx = a.x - b.x;
+          if (dx > GRAPH_D || dx < -GRAPH_D) continue;
+          var dy = ay - ys[j];
           var d2 = dx * dx + dy * dy;
           if (d2 < GRAPH_D2) {
             var al = (1 - d2 / GRAPH_D2) * 0.14 * intensity;
             ctx.strokeStyle = 'rgba(' + LINE + ',' + al + ')';
-            ctx.beginPath(); ctx.moveTo(a.x, ay); ctx.lineTo(b.x, wrapY(b.y - off * b.p * 0.05)); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(a.x, ay); ctx.lineTo(b.x, ys[j]); ctx.stroke();
           }
         }
       }
@@ -339,7 +355,7 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
 
   // ── Frame ───────────────────────────────────────────────────────────
   function frame(now, animate) {
-    var dt = animate ? Math.min(40, now - last) : 0; last = now;
+    var dt = animate ? Math.min(50, now - last) : 0; last = now;
     ctx.clearRect(0, 0, W, H);
 
     if (PROBE) ptr.a += ((ptr.on ? 1 : 0) - ptr.a) * Math.min(1, dt * 0.006);
@@ -374,8 +390,14 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
     if (rings.length)   drawRings(off, now);
   }
 
-  function loop(now) { frame(now, true); raf = requestAnimationFrame(loop); }
-  function start() { if (!raf && tier !== 'static') { last = performance.now(); raf = requestAnimationFrame(loop); } }
+  function loop(now) {
+    raf = requestAnimationFrame(loop);
+    // frame cap (30 fps below 'high'): skip display frames between draws
+    if (BUD.fps < 60 && now - lastDraw < 1000 / BUD.fps - 2) return;
+    lastDraw = now;
+    frame(now, true);
+  }
+  function start() { if (!raf && tier !== 'static') { last = lastDraw = performance.now(); raf = requestAnimationFrame(loop); } }
   function stop()  { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
 
   // ── Init ────────────────────────────────────────────────────────────
@@ -396,6 +418,15 @@ const { variant = 'mixed', intensity = 1 } = Astro.props;
 
   // Allow other components (e.g. WebGL MOL2 viewers) to dim the background
   // while they render, protecting the GPU. Dispatch 'sci-bg' CustomEvents.
+  // Site tier changed at runtime (PerfTier governor) → rebuild at the new budget
+  window.addEventListener('udb-perf', function () {
+    var before = tier;
+    applyTier();
+    if (tier === before) return;
+    stop(); resize();
+    if (tier === 'static') frame(performance.now(), false); else if (!document.hidden) start();
+  });
+
   window.addEventListener('sci-bg', function (e) {
     if (!e || !e.detail) return;
     if (e.detail.pause) stop(); else if (!document.hidden) start();

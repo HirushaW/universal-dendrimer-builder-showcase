@@ -1,37 +1,95 @@
 ---
-/** Loads 3Dmol.js once and lazily initialises every <MolViewer> on the page.
- *  Include once per page that uses MolViewer. */
+/** Lazily initialises every <MolViewer> on the page. Include once per page.
+ *
+ *  Performance design (tiers come from PerfTier.astro → html[data-perf]):
+ *  - 3Dmol (pinned 2.5.5, self-hosted in /vendor) is fetched only when a viewer
+ *    nears the viewport - it no longer blocks page parsing on load.
+ *  - 3Dmol renders every viewer through ONE shared WebGL context, so cost is
+ *    per *render*: resolution and render count are what we budget.
+ *      · `upscale` off below 'high' (3Dmol otherwise renders at 2x when
+ *        antialiasing on normal-DPI screens), plus a device-pixel-ratio cap
+ *      · one shared spin scheduler with a per-tick render budget replaces a
+ *        separate 40 Hz timer per viewer; only on-screen viewers spin
+ *      · very large models (G5/G6) drop the sphere layer on mid/low tiers
+ *  - low tier: viewers wait for a tap instead of auto-loading.
+ *  - the ambient ScienceCanvas pauses while a live viewer is on screen.
+ */
 ---
-<script is:inline src="https://3Dmol.org/build/3Dmol-min.js"></script>
 <script is:inline>
 (function () {
-  const JMOL = {
+  var LIB = '/vendor/3dmol/3Dmol-2.5.5.min.js';
+  var JMOL = {
     H:'#e6e6e6', C:'#909090', N:'#3050F8', O:'#FF2010', P:'#FF8000',
     S:'#FFFF30', Si:'#F0C8A0', Cl:'#1FF01F', F:'#90E050', Br:'#A62929'
   };
+  var DEG_PER_S = 24;               // auto-spin speed (matches the previous 0.6°/25 ms)
 
-  function whenReady(cb) {
-    if (typeof window.$3Dmol !== 'undefined') return cb();
-    let n = 0;
-    const t = setInterval(() => {
-      if (typeof window.$3Dmol !== 'undefined') { clearInterval(t); cb(); }
-      else if (++n > 100) clearInterval(t);   // ~10s give up
-    }, 100);
+  function perf() { return document.documentElement.dataset.perf || 'high'; }
+  function profile() {
+    var t = perf();
+    if (t === 'low') return { antialias: false, upscale: false, dpr: 1,   spinHz: 15, perTick: 1, autoSpin: false, lightOver: 0,     auto: false };
+    if (t === 'mid') return { antialias: true,  upscale: false, dpr: 1.5, spinHz: 20, perTick: 2, autoSpin: true,  lightOver: 3000,  auto: true };
+    return               { antialias: true,  upscale: undefined, dpr: 2, spinHz: 30, perTick: 4, autoSpin: true,  lightOver: 14000, auto: true };
   }
 
-  const TWO = { SI: 'Si', CL: 'Cl', BR: 'Br' };
+  // ── library loader (on demand, once) ───────────────────────────────────
+  var libWaiters = [], libLoading = false;
+  function withLib(cb) {
+    if (window.$3Dmol) return cb();
+    libWaiters.push(cb);
+    if (libLoading) return;
+    libLoading = true;
+    var s = document.createElement('script');
+    s.src = LIB; s.async = true;
+    s.onload = function () { flush(); };
+    s.onerror = function () { libLoading = false; flush(new Error('3Dmol failed to load')); };
+    document.head.appendChild(s);
+    function flush(err) { var w = libWaiters; libWaiters = []; w.forEach(function (f) { f(err); }); }
+  }
+
+  // Cap the canvas pixel ratio. 3Dmol sizes its canvas from
+  // window.devicePixelRatio inside Renderer#setSize; the renderer class is not
+  // exported, so wrap the method on the shared prototype of the first instance.
+  var dprPatched = false;
+  function capPixelRatio(viewer) {
+    if (dprPatched || !viewer.getRenderer) return;
+    var proto = Object.getPrototypeOf(viewer.getRenderer());
+    var orig = proto && proto.setSize;
+    if (typeof orig !== 'function') return;
+    proto.setSize = function (w, h) {
+      var cap = profile().dpr, real = window.devicePixelRatio || 1;
+      if (real <= cap) return orig.call(this, w, h);
+      var own = Object.getOwnPropertyDescriptor(window, 'devicePixelRatio');
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, get: function () { return cap; } });
+      try { return orig.call(this, w, h); }
+      finally {
+        if (own) Object.defineProperty(window, 'devicePixelRatio', own);
+        else delete window.devicePixelRatio;
+      }
+    };
+    dprPatched = true;
+  }
+
+  var TWO = { SI: 'Si', CL: 'Cl', BR: 'Br' };
   // GAFF atom types (c3, hc, oh, …) confuse 3Dmol's element inference, so derive
   // the element from the clean atom NAME (C1, N4, H12, Si2 …) and set it explicitly.
-  function fixElements(model) {
-    const atoms = model.selectedAtoms({});
-    for (const a of atoms) {
-      const nm = (a.atom || a.elem || 'C').replace(/[^A-Za-z]/g, '');
-      const two = nm.slice(0, 2).toUpperCase();
+  function fixElements(atoms) {
+    for (var i = 0; i < atoms.length; i++) {
+      var a = atoms[i];
+      var nm = (a.atom || a.elem || 'C').replace(/[^A-Za-z]/g, '');
+      var two = nm.slice(0, 2).toUpperCase();
       a.elem = TWO[two] || (nm.charAt(0).toUpperCase());
     }
   }
 
-  function styleModel(viewer) {
+  function styleModel(viewer, light) {
+    if (light) {
+      // large models on lighter tiers: sticks only (the sphere layer roughly
+      // doubles the geometry); same colours and proportions
+      viewer.setStyle({}, { stick: { colorscheme: 'Jmol', radius: 0.18 } });
+      viewer.setStyle({ elem: 'H' }, { stick: { colorscheme: 'Jmol', radius: 0.08 } });
+      return;
+    }
     viewer.setStyle({}, {
       stick:  { colorscheme: 'Jmol', radius: 0.16 },
       sphere: { colorscheme: 'Jmol', scale: 0.30 },
@@ -42,104 +100,184 @@
     });
   }
 
-  // Free the GPU for 3Dmol: freeze the ambient ScienceCanvas while a live WebGL
-  // viewer is on screen (it keeps its last frame), and let it breathe again once
-  // every viewer has scrolled away. Off-screen viewers also stop auto-spinning.
-  const onScreen = new Set();
-  let bgPaused = false;
+  // ── background pause + spin scheduling ─────────────────────────────────
+  // Free GPU time for 3Dmol: freeze the ambient ScienceCanvas while a live viewer
+  // is on screen (it keeps its last frame) and let it breathe again once every
+  // viewer has scrolled away.
+  var onScreen = new Set();          // live viewers currently visible
+  var bgPaused = false;
   function syncBackground() {
-    const pause = onScreen.size > 0;
+    var pause = onScreen.size > 0;
     if (pause === bgPaused) return;
     bgPaused = pause;
-    try { window.dispatchEvent(new CustomEvent('sci-bg', { detail: { pause } })); } catch (_) {}
+    try { window.dispatchEvent(new CustomEvent('sci-bg', { detail: { pause: pause } })); } catch (_) {}
   }
-  const visibility = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      const el = e.target;
-      if (e.isIntersecting) onScreen.add(el); else onScreen.delete(el);
-      if (el._viewer && el._spinning) el._viewer.spin(e.isIntersecting ? 'y' : false, 0.6);
+
+  // One timer for all viewers. Each tick renders at most `perTick` viewers
+  // (round-robin), so ten visible spinning viewers cost the same as a few.
+  // Rotation is time-based, so a viewer updated less often still turns at
+  // the same angular speed.
+  var spinTimer = 0, spinHz = 0, rr = 0;
+  function spinners() {
+    var out = [];
+    onScreen.forEach(function (el) { if (el._spinning && el._viewer) out.push(el); });
+    return out;
+  }
+  function spinTick() {
+    var list = spinners();
+    if (!list.length || document.hidden) return syncSpin();
+    var P = profile(), n = Math.min(P.perTick, list.length), now = performance.now();
+    for (var i = 0; i < n; i++) {
+      var el = list[(rr + i) % list.length];
+      var dt = Math.min(0.25, (now - (el._lastSpin || now)) / 1000);
+      el._lastSpin = now;
+      if (dt > 0) el._viewer.rotate(DEG_PER_S * dt, 'y');
     }
+    rr = (rr + n) % list.length;
+  }
+  function syncSpin() {
+    var want = spinners().length && !document.hidden ? profile().spinHz : 0;
+    if (want === spinHz) return;
+    clearInterval(spinTimer); spinTimer = 0; spinHz = want;
+    if (want) spinTimer = setInterval(spinTick, 1000 / want);
+  }
+  document.addEventListener('visibilitychange', syncSpin);
+  window.addEventListener('udb-perf', syncSpin);
+
+  var visibility = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { onScreen.add(e.target); e.target._lastSpin = performance.now(); }
+      else onScreen.delete(e.target);
+    });
     syncBackground();
+    syncSpin();
   });
+
+  // ── viewer init ────────────────────────────────────────────────────────
+  function fail(el) {
+    el.innerHTML = '<div class="absolute inset-0 flex items-center justify-center">' +
+      '<p style="color:#64748b;font:11px monospace;text-align:center;padding:1rem">' +
+      'Structure unavailable</p></div>';
+  }
 
   function initViewer(el) {
     if (el.dataset.init === '1') return;
     el.dataset.init = '1';
-    const url  = el.dataset.url;
-    const zoom = parseFloat(el.dataset.zoom || '0.9');
-    const spin = el.dataset.spin === '1';
+    var tap = el.querySelector('.mv-tap');
+    if (tap) tap.remove();
+    var loading = el.querySelector('.mv-loading');
+    if (loading) loading.style.display = '';
 
-    fetch(url).then(r => r.text()).then(text => {
-      const loading = el.querySelector('.mv-loading');
-      if (loading) loading.remove();
+    var url  = el.dataset.url;
+    var zoom = parseFloat(el.dataset.zoom || '0.9');
+    var P = profile();
 
-      const viewer = window.$3Dmol.createViewer(el, {
-        backgroundColor: '#060e16', antialias: true,
-      });
-      el._viewer = viewer;
-      // structures are MOL2 unless a generation had no MOL2 and fell back to PDB
-      const fmt = /\.pdb(\?|$)/i.test(url) ? 'pdb' : 'mol2';
-      const model = viewer.addModel(text, fmt);
-      fixElements(model);
-      styleModel(viewer);
-      viewer.zoomTo();
-      viewer.zoom(zoom);
+    withLib(function (libErr) {
+      if (libErr) return fail(el);
+      fetch(url).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.text();
+      }).then(function (text) {
+        if (loading) loading.remove();
 
-      // click an atom -> label index / element / name
-      const chip = el.querySelector('.mv-atom');
-      viewer.setClickable({}, true, (atom) => {
-        const idx = (atom.serial ?? atom.index ?? 0) + 1;
-        const elem = atom.elem || '?';
-        const nm = atom.atom || '';
-        if (chip) {
-          chip.textContent = `#${idx} · ${elem}${nm && nm !== elem ? ' · ' + nm : ''}`;
-          chip.style.opacity = '1';
-        }
-        viewer.removeAllLabels();
-        viewer.addLabel(`${elem}${idx}`, {
-          position: { x: atom.x, y: atom.y, z: atom.z },
-          backgroundColor: '#04070e', backgroundOpacity: 0.85,
-          fontColor: JMOL[elem] || '#6ffff2', fontSize: 12,
-          borderColor: '#2ce8d8', borderThickness: 1,
+        var cfg = { backgroundColor: '#060e16', antialias: P.antialias };
+        if (P.upscale !== undefined) cfg.upscale = P.upscale;
+        var viewer = window.$3Dmol.createViewer(el, cfg);
+        capPixelRatio(viewer);
+        el._viewer = viewer;
+        // structures are MOL2 unless a generation had no MOL2 and fell back to PDB
+        var fmt = /\.pdb(\?|$)/i.test(url) ? 'pdb' : 'mol2';
+        var model = viewer.addModel(text, fmt);
+        var atoms = model.selectedAtoms({});
+        fixElements(atoms);
+        styleModel(viewer, P.lightOver === 0 || atoms.length > P.lightOver);
+        viewer.zoomTo();
+        viewer.zoom(zoom);
+
+        // click an atom -> label index / element / name
+        var chip = el.querySelector('.mv-atom');
+        viewer.setClickable({}, true, function (atom) {
+          var idx = (atom.serial != null ? atom.serial : (atom.index || 0)) + 1;
+          var elem = atom.elem || '?';
+          var nm = atom.atom || '';
+          if (chip) {
+            chip.textContent = '#' + idx + ' · ' + elem + (nm && nm !== elem ? ' · ' + nm : '');
+            chip.style.opacity = '1';
+          }
+          viewer.removeAllLabels();
+          viewer.addLabel(elem + idx, {
+            position: { x: atom.x, y: atom.y, z: atom.z },
+            backgroundColor: '#04070e', backgroundOpacity: 0.85,
+            fontColor: JMOL[elem] || '#6ffff2', fontSize: 12,
+            borderColor: '#2ce8d8', borderThickness: 1,
+          });
+          viewer.render();
         });
+
+        viewer.resize();          // apply the pixel-ratio cap to this first frame
         viewer.render();
-      });
 
-      viewer.render();
-      if (spin) viewer.spin('y', 0.6);
-      el._spinning = spin;
-      visibility.observe(el);
+        // spin: auto on capable tiers (if the viewer asks for it), always on demand
+        el._spinning = el.dataset.spin === '1' && P.autoSpin;
+        visibility.observe(el);
 
-      // controls
-      const bSpin  = el.querySelector('[data-act="spin"]');
-      const bReset = el.querySelector('[data-act="reset"]');
-      let spinning = spin;
-      bSpin && bSpin.addEventListener('click', (e) => {
-        e.stopPropagation();
-        spinning = !spinning;
-        el._spinning = spinning;
-        viewer.spin(spinning ? 'y' : false, 0.6);
-      });
-      bReset && bReset.addEventListener('click', (e) => {
-        e.stopPropagation();
-        viewer.removeAllLabels();
-        if (chip) chip.style.opacity = '0';
-        viewer.zoomTo(); viewer.zoom(zoom); viewer.render();
-      });
-    }).catch(() => {
-      el.innerHTML = '<div class="absolute inset-0 flex items-center justify-center">' +
-        '<p style="color:#64748b;font:11px monospace;text-align:center;padding:1rem">' +
-        'Structure unavailable</p></div>';
+        var bSpin  = el.querySelector('[data-act="spin"]');
+        var bReset = el.querySelector('[data-act="reset"]');
+        bSpin && bSpin.addEventListener('click', function (e) {
+          e.stopPropagation();
+          el._spinning = !el._spinning;
+          el._lastSpin = performance.now();
+          syncSpin();
+        });
+        bReset && bReset.addEventListener('click', function (e) {
+          e.stopPropagation();
+          viewer.removeAllLabels();
+          if (chip) chip.style.opacity = '0';
+          viewer.zoomTo(); viewer.zoom(zoom); viewer.render();
+        });
+      }).catch(function () { fail(el); });
     });
   }
 
+  // low tier: a light placeholder that loads the model on tap
+  function addTapToLoad(el) {
+    if (el.querySelector('.mv-tap')) return;
+    var loading = el.querySelector('.mv-loading');
+    if (loading) loading.style.display = 'none';
+    var atoms = el.dataset.atoms ? Number(el.dataset.atoms).toLocaleString() + ' atoms · ' : '';
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mv-tap';
+    if (el.dataset.accent) b.style.setProperty('--mv-accent', el.dataset.accent);
+    b.setAttribute('aria-label', 'Load interactive 3D structure');
+    b.innerHTML =
+      '<span class="mv-tap-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">' +
+      '<circle cx="12" cy="12" r="2.2"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/>' +
+      '<ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg></span>' +
+      '<span>Load 3D model</span><small>' + atoms + 'tap to view</small>';
+    b.addEventListener('click', function (e) { e.stopPropagation(); initViewer(el); });
+    el.appendChild(b);
+  }
+
   function boot() {
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) { whenReady(() => initViewer(e.target)); io.unobserve(e.target); }
-      }
-    }, { rootMargin: '150px' });
-    document.querySelectorAll('.mol-viewer').forEach((el) => io.observe(el));
+    var els = document.querySelectorAll('.mol-viewer');
+    if (!els.length) return;
+    if (!profile().auto) { els.forEach(addTapToLoad); return; }
+
+    // warm the library a little ahead of the first viewer, build each viewer just
+    // before it scrolls in
+    var warm = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) { withLib(function () {}); warm.disconnect(); }
+    }, { rootMargin: '900px 0px' });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        // the governor may have stepped down since boot
+        if (profile().auto) initViewer(e.target); else addTapToLoad(e.target);
+      });
+    }, { rootMargin: '250px 0px' });
+    els.forEach(function (el) { warm.observe(el); io.observe(el); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

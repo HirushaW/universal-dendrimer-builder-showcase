@@ -323,11 +323,14 @@
 .hud-scan { position: relative; overflow: hidden; }
 .hud-scan::before {
   content: ''; position: absolute; left: 0; right: 0; height: 26%;
-  top: -30%; z-index: 3; pointer-events: none;
+  top: 0; z-index: 3; pointer-events: none;
   background: linear-gradient(180deg, transparent, rgba(44,232,216,0.10) 60%, rgba(111,255,242,0.22));
+  /* transform-only (compositor) - animating `top` repainted the frame every tick.
+     Same travel as before: -30% → 110% of the frame = -115% → 423% of the band. */
+  transform: translateY(-115%);
   animation: hud-sweep 5.5s linear infinite;
 }
-@keyframes hud-sweep { 0% { top: -30%; } 100% { top: 110%; } }
+@keyframes hud-sweep { from { transform: translateY(-115%); } to { transform: translateY(423%); } }
 
 /* ── Glitch title ────────────────────────────────────────────────── */
 .glitch { position: relative; display: inline-block; }
@@ -484,9 +487,10 @@ main { animation: page-in .6s cubic-bezier(.2,.7,.2,1) backwards; }
 .reveal {
   opacity: 0; transform: translateY(22px);
   transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
-  will-change: opacity, transform;
+  /* no will-change: it pinned a GPU layer on every unrevealed element (memory on phones);
+     the browser promotes elements on its own for the duration of the transition */
 }
-.reveal.in { opacity: 1; transform: none; will-change: auto; }  /* release the layer (and the glass backdrop) once shown */
+.reveal.in { opacity: 1; transform: none; }
 /* Stagger children of a .reveal-group */
 .reveal-group.in > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
 .reveal-group.in > *:nth-child(2) { animation-delay: .06s; }
@@ -1030,3 +1034,69 @@ main [id] { scroll-margin-top: 5.5rem; }
   outline: none; border-color: var(--hud-cy-bright);
   box-shadow: inset 0 0 0 1px var(--hud-cy-bright), inset 0 0 18px rgba(44,232,216,0.18);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   PERFORMANCE TIERS  (html[data-perf] is set by PerfTier.astro)
+   Live backdrop blur over an animated background is the single most
+   expensive effect on this site: every glass surface is re-blurred on
+   every frame the canvas behind it changes. Lower tiers keep the look
+   (same colours, rims, gloss) but trade live blur for a denser tint.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── mid · "glass-lite" (phones, tablets, 4-core laptops) ─────────── */
+/* live blur stays only on the nav bar, drawer, lightbox and back-to-top */
+html[data-perf="mid"] :is(main, footer, .mega-panel),
+html[data-perf="mid"] :is(main, footer, .mega-panel) *,
+html[data-perf="mid"] :is(main, footer) *::before,
+html[data-perf="mid"] :is(main, footer) *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html[data-perf="mid"] {
+  --lg-fill: linear-gradient(180deg, rgba(16,34,42,0.74), rgba(6,14,20,0.62));
+}
+html[data-perf="mid"] .lg-aurora span { animation: none; }
+html[data-perf="mid"] .lg-cursor-glow { display: none; }
+
+/* ── low · no live blur, static ambience ──────────────────────────── */
+html[data-perf="low"] *,
+html[data-perf="low"] *::before,
+html[data-perf="low"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html[data-perf="low"] {
+  --lg-fill: linear-gradient(180deg, rgba(14,30,38,0.93), rgba(6,14,20,0.93));
+}
+html[data-perf="low"] .lg-navbar::before { background: rgba(4,7,14,0.95) !important; }
+html[data-perf="low"] .lg-drawer { background: rgb(6,12,18); }
+html[data-perf="low"] .lg-lightbox { background: rgba(4,7,14,0.93); }
+html[data-perf="low"] .lg-aurora,
+html[data-perf="low"] .lg-cursor-glow { display: none; }
+html[data-perf="low"] .hud-scan::before { animation: none; opacity: 0; }
+html[data-perf="low"] .glitch::before,
+html[data-perf="low"] .glitch::after { animation: none !important; opacity: 0 !important; }
+
+/* both lower tiers: scanline overlays drop their multiply blend, which
+   forced a full-section blend pass whenever the background moved */
+html:is([data-perf="mid"], [data-perf="low"]) .scanlines::after { mix-blend-mode: normal; opacity: 0.35; }
+
+/* ── Tap-to-load placeholder for 3D viewers on the low tier ───────── */
+.mv-tap {
+  position: absolute; inset: 0; z-index: 4;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .55rem;
+  width: 100%; border: 0; cursor: pointer;
+  color: var(--mv-accent, var(--hud-cy));
+  background:
+    radial-gradient(60% 60% at 50% 45%, color-mix(in srgb, var(--mv-accent, #2ce8d8) 10%, transparent), transparent 70%),
+    #060e16;
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase;
+  transition: background .25s ease;
+}
+.mv-tap:hover, .mv-tap:focus-visible { background-color: #08131c; }
+.mv-tap-ico {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mv-accent, #2ce8d8) 45%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--mv-accent, #2ce8d8) 22%, transparent), inset 0 1px 0 rgba(200,255,250,0.18);
+}
+.mv-tap small { font-size: .6rem; letter-spacing: .08em; text-transform: none; color: rgb(100,116,139); }

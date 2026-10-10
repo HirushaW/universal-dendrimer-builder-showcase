@@ -15,10 +15,11 @@ interface Props {
   spin?: boolean;         // auto-spin on load
   zoom?: number;          // initial zoom factor (default 0.9)
   accent?: string;        // hud cyan by default; pass a hex to tint the frame
+  atoms?: number;         // atom count, shown on the low-tier tap-to-load placeholder
 }
 const {
   id, url, label = '', sublabel = '', height = '300px',
-  spin = false, zoom = 0.9, accent = '#2ce8d8',
+  spin = false, zoom = 0.9, accent = '#2ce8d8', atoms,
 } = Astro.props;
 ---
 
@@ -29,6 +30,8 @@ const {
     data-url={url}
     data-spin={spin ? '1' : '0'}
     data-zoom={zoom}
+    data-accent={accent}
+    data-atoms={atoms}
     style={`height:${height};background:#060e16;border:1px solid ${accent}44;box-shadow:0 0 30px ${accent}18, inset 0 0 40px rgba(0,0,0,.5)`}
   >
     <!-- loading -->

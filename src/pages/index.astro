@@ -317,7 +317,7 @@ const telemetry = [
           <div class="hud-panel hud-corners hud-scan rounded-xl overflow-hidden p-1.5">
             <img src="/images/gui-pamam.png"
                  alt="UDB v1.0 GUI - PAMAM G6 build complete, 9,156 atoms, Generation Preview table"
-                 class="w-full block rounded-lg" width="800" height="500" loading="lazy" />
+                 class="w-full block rounded-lg" width="800" height="500" loading="lazy" decoding="async" />
           </div>
           <!-- terminal readout -->
           <div class="hud-panel hud-panel-solid hud-corners rounded-xl p-5">
@@ -349,7 +349,7 @@ const telemetry = [
       <div class="grid gap-5" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
         {structures.map(s => (
           <div class="hud-panel hud-corners group rounded-xl overflow-hidden transition-transform duration-300 hover:-translate-y-1 reveal">
-            <MolViewer id={`home-${s.id}`} url={s.rep.file} height="220px" accent={s.accent} spin={true} zoom={0.82} />
+            <MolViewer id={`home-${s.id}`} url={s.rep.file} height="220px" accent={s.accent} spin={true} zoom={0.82} atoms={s.rep.n_atoms} />
             <div class="px-4 py-3 border-t border-[var(--hud-line-soft)]">
               <div class="font-display font-semibold text-sm mb-0.5" style={`color:${s.accent}`}>{s.name} G{s.rep.gen}</div>
               <div class="font-mono text-[10px] text-slate-500">{s.rep.n_atoms.toLocaleString()} atoms · {formula(s.rep.composition)}</div>
@@ -410,7 +410,7 @@ const telemetry = [
         </p>
       </div>
       <div class="hud-panel hud-corners rounded-2xl p-4 sm:p-6 reveal">
-        <DendrimerCalculator client:load />
+        <DendrimerCalculator client:visible />
       </div>
     </div>
   </section>

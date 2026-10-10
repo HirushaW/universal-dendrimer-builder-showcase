@@ -3,16 +3,42 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": "astro",
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "dendrimer/pamam": true,
-      "dendrimer/ppi": true,
-      "dendrimer/carbosilane": true,
-      "dendrimer/phosphorus": true,
-      "dendrimer/pll": true,
-      "dendrimer/polyester": true,
-      "dendrimer/polyglycerol": true
+  "headers": [
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/vendor/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/mol2/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
     }
-  }
+  ]
 }

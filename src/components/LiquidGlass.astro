@@ -33,6 +33,8 @@
   var mm = function (q) { return window.matchMedia ? matchMedia(q).matches : false; };
   var REDUCE = mm('(prefers-reduced-motion: reduce)');
   var FINE   = mm('(hover: hover) and (pointer: fine)');
+  // site tier (PerfTier.astro); read live so a governor downgrade applies at once
+  function tier() { return document.documentElement.dataset.perf || 'high'; }
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
@@ -57,6 +59,7 @@
     }
     if (FINE) {
       document.addEventListener('pointermove', function (e) {
+        if (tier() === 'low') return;
         var t = e.target && e.target.closest ? e.target.closest(SURF) : null;
         if (!t) return;
         pending = { x: e.clientX, y: e.clientY, el: t };
@@ -81,6 +84,7 @@
           el.style.setProperty('--rx', (-ny * 2 * MAX).toFixed(2) + 'deg');
         }
         el.addEventListener('pointerenter', function () {
+          if (tier() === 'low') return;
           var revealing = /\breveal/.test(el.className) && !el.classList.contains('in');
           if (revealing) return;
           r = el.getBoundingClientRect();
@@ -104,6 +108,7 @@
     if (FINE && !REDUCE) {
       document.querySelectorAll(BTN).forEach(function (el) {
         el.addEventListener('pointermove', function (e) {
+          if (tier() === 'low') return;
           var r = el.getBoundingClientRect();
           var dx = (e.clientX - (r.left + r.width / 2)) * 0.18;
           var dy = (e.clientY - (r.top + r.height / 2)) * 0.28;
@@ -139,6 +144,7 @@
         gRaf = (Math.abs(tx - gx) + Math.abs(ty - gy) > 0.5) ? requestAnimationFrame(glide) : 0;
       }
       document.addEventListener('pointermove', function (e) {
+        if (tier() !== 'high') { glow.classList.remove('is-on'); return; }
         tx = e.clientX; ty = e.clientY;
         glow.classList.add('is-on');
         if (!gRaf) gRaf = requestAnimationFrame(glide);
