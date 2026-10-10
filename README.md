@@ -102,10 +102,15 @@ and recorded in [CHANGELOG.md](CHANGELOG.md).
 UDB paper in preparation. Until it is published, please cite the software
 (BibTeX on the [UDB page](https://universal-dendrimer-builder-showcas.vercel.app/tools/udb/#citation)).
 
+## License
+
+The website code and content are released under the [MIT License](LICENSE).
+3Dmol.js is © University of Pittsburgh and contributors, BSD-3-Clause
+(`public/vendor/3dmol/LICENSE.txt`). The UDB software is MIT-licensed in its own repository.
+
 ## Author
 
 **Hirusha Walgampaya**, Department of Chemistry, University of Peradeniya, Sri Lanka
 · [hiruwalgampaya@gmail.com](mailto:hiruwalgampaya@gmail.com)
 
 The UDB software lives at [HirushaW/universal-dendrimer-builder](https://github.com/HirushaW/universal-dendrimer-builder).
-3Dmol.js is © University of Pittsburgh and contributors, BSD-3-Clause (`public/vendor/3dmol/LICENSE.txt`).

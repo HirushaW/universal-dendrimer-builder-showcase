@@ -25,7 +25,10 @@ WEB       = os.path.dirname(HERE)
 # Structures live in the website repo itself (the newly produced set). Do NOT read
 # from any external build folder — the site visualises exactly what is in ./Structures.
 BUILDS    = os.path.join(WEB, "Structures")
-CHAR_DIR  = "/home/hirushawalgampaya/Downloads/udb-software/Old/v1.0/mods"
+# Folder holding udb_characterization.py (part of the UDB software); set UDB_CHAR_DIR
+# to point elsewhere.
+CHAR_DIR  = os.environ.get("UDB_CHAR_DIR") or os.path.expanduser(
+    "~/Downloads/udb-software/Old/v1.0/mods")
 GOLDEN    = os.path.join(CHAR_DIR, "golden")
 PUB_MOL2  = os.path.join(WEB, "public", "mol2")
 MAX_GEN   = 6                      # every family is published through G6
