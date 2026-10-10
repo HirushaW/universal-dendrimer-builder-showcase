@@ -36,3 +36,7 @@ skills/
 # AMBER/NAMD files — the site only ships the generated public/mol2 + JSON, so keep
 # the raw set local rather than bloating the repo/deploy.
 Structures/
+
+# Tooling / platform caches
+.vercel/
+.claude/

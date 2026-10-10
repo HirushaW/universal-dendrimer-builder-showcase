@@ -2,6 +2,13 @@
   "name": "udb-website",
   "version": "1.0.0",
   "private": true,
+  "description": "Website for the Universal Dendrimer Builder (UDB): documentation, benchmarks and a live 3D structure gallery.",
+  "homepage": "https://universal-dendrimer-builder-showcas.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HirushaW/universal-dendrimer-builder-showcase.git"
+  },
+  "author": "Hirusha Walgampaya",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

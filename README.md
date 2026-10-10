@@ -1,161 +1,111 @@
 # Universal Dendrimer Builder — Website
 
-Static website for the [Universal Dendrimer Builder (UDB)](/) project.
+**Live site:** https://universal-dendrimer-builder-showcas.vercel.app
 
-Built with [Astro](https://astro.build), [Tailwind CSS](https://tailwindcss.com),
-and React for interactive components. Deployable to GitHub Pages or Netlify.
+The official website of the **Universal Dendrimer Builder (UDB)**, an open-source
+Python desktop application for building, force-field parameterizing and simulating
+dendrimer nanostructures (9 families, generations G1–G10, AMBER + NAMD pipeline).
+
+The site hosts the documentation, installation guide, user manual, validation
+benchmarks and an interactive 3D gallery of real UDB-built structures.
+
+![UDB website](public/images/og-default.jpg)
 
 ---
 
-## Prerequisites
+## What's on the site
 
-- Node.js 18 or 20
-- npm 8+
+| Page | What it shows |
+|---|---|
+| **Home** | Overview, live procedural dendrimer "reactor", feature modules, structure previews, size estimator |
+| **UDB Overview** | Features, force-field support matrix, the seven-stage placement engine |
+| **Installation** | Linux setup: Conda, AmberTools25, NAMD 3.x, known issues |
+| **User Manual** | Tab-by-tab workflow, theory and key parameters |
+| **Structure Gallery** | Live, rotatable 3D models of every family (core, monomer and G1–G6), with characterization and build-log data |
+| **Benchmarks** | Atom counts, Rg and asphericity validated against literature (Maiti et al. 2004) |
+| **Size Estimator** | Interactive terminal-group, atom-count, mass and Rg estimates |
+| **Changelog / About** | UDB version history, author and citation |
 
----
+## Design and performance
 
-## Run Locally
+- **Fusion HUD / liquid-glass** interface: frosted glass panels, animated scientific
+  background, Space Grotesk + Inter + JetBrains Mono typography.
+- **Adaptive performance tiers.** On load, every device is rated `high`, `mid` or `low`
+  from its hardware. A frame-rate governor then steps the site down if it runs slowly
+  (`src/components/PerfTier.astro`). Lower tiers keep the same look but drop live blur,
+  cap animation frame rates and load 3D models on tap. Low-end phones stay smooth.
+- **3D structures** are rendered with [3Dmol.js](https://3dmol.org) (pinned 2.5.5,
+  self-hosted in `public/vendor/3dmol/`). It loads only when a model scrolls near view.
+- Respects `prefers-reduced-motion` and `prefers-reduced-transparency`, and works without JavaScript.
+- Testing override: append `?perf=high`, `?perf=mid` or `?perf=low` to any URL (`?perf=auto` resets).
+
+## Tech stack
+
+[Astro 4](https://astro.build) (static site) · [Tailwind CSS 3](https://tailwindcss.com) ·
+React 18 (size-estimator island only) · 3Dmol.js · deployed on [Vercel](https://vercel.com).
+
+## Run locally
+
+Requires Node.js 18+.
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Start the dev server
-npm run dev
+npm run dev        # http://localhost:4321
+npm run build      # production build → dist/
+npm run preview    # serve the production build
 ```
 
-The site will be available at `http://localhost:4321`.
+## Project structure
 
----
+```
+├── public/
+│   ├── images/            figures, renders, social preview image
+│   ├── mol2/              structure files shown in the 3D gallery
+│   └── vendor/3dmol/      pinned 3Dmol.js build + license
+├── scripts/               Python tools that regenerate the structure dataset
+│   ├── build_structures.py      UDB output → public/mol2 + structures.generated.json
+│   ├── enrich_from_logs.py      adds build/MD-setup data from UDB build logs
+│   └── make_validation_chart.py regenerates the benchmark figure
+├── src/
+│   ├── components/        Nav, Footer, viewers, canvases, PerfTier, LiquidGlass …
+│   ├── data/              dendrimer metadata + generated structure dataset
+│   ├── layouts/           page shell (SEO, fonts, global effects)
+│   ├── pages/             one file per route
+│   └── styles/global.css  theme, liquid-glass layer, performance tiers
+├── astro.config.mjs
+└── vercel.json            build settings + cache headers
+```
 
-## Build for Production
+### Updating the structure gallery
+
+The raw UDB build outputs (`Structures/`, about 45 MB of AMBER/NAMD files) are kept
+locally and are not committed. After producing new structures:
 
 ```bash
+python3 scripts/build_structures.py
+python3 scripts/enrich_from_logs.py
 npm run build
 ```
 
-Output goes to `./dist/`. Preview the production build locally:
+## Branches and releases
 
-```bash
-npm run preview
-```
+| Branch | Purpose |
+|---|---|
+| `main` | Stable. Always matches the live site, and every push deploys to production. |
+| `dev` | Day-to-day work. Every push gets its own Vercel preview URL. Merge into `main` when ready. |
 
----
+Releases are tagged with [semantic versions](https://semver.org) (`v1.0.0`, `v1.1.0`, …)
+and recorded in [CHANGELOG.md](CHANGELOG.md).
 
-## Deploy to GitHub Pages
+## Citation
 
-### Automatic (recommended)
+UDB paper in preparation. Until it is published, please cite the software
+(BibTeX on the [UDB page](https://universal-dendrimer-builder-showcas.vercel.app/tools/udb/#citation)).
 
-1. Push this repository to GitHub.
-2. In your repo → **Settings → Pages**, set Source to **GitHub Actions**.
-3. Push to the `main` branch — the workflow in `.github/workflows/deploy.yml` will
-   build and deploy automatically.
+## Author
 
-The workflow passes `--site` and `--base` flags at build time based on the Pages
-URL, so `astro.config.mjs` does not need to be modified.
+**Hirusha Walgampaya**, Department of Chemistry, University of Peradeniya, Sri Lanka
+· [hiruwalgampaya@gmail.com](mailto:hiruwalgampaya@gmail.com)
 
-### Manual base path configuration
-
-If you need a custom base path (e.g., for a project page at
-`https://username.github.io/repo-name/`), uncomment and edit these lines in
-`astro.config.mjs`:
-
-```js
-site: 'https://yourusername.github.io',
-base: '/your-repo-name',
-```
-
----
-
-## Deploy to Netlify
-
-1. Connect your GitHub repo in the Netlify dashboard.
-2. Set Build command: `npm run build`
-3. Set Publish directory: `dist`
-4. No `base` path needed — leave `astro.config.mjs` as-is.
-
-For a custom domain, set it in Netlify's domain management panel and update
-`site:` in `astro.config.mjs` to match.
-
----
-
-## Project Structure
-
-```
-udb-website/
-├── public/
-│   ├── favicon.svg
-│   └── images/
-│       ├── dendrimer-hero.svg      ← Replace with actual PAMAM render
-│       └── placeholder-gui.svg     ← Replace with real screenshot
-├── src/
-│   ├── components/
-│   │   ├── Nav.astro
-│   │   ├── Footer.astro
-│   │   ├── CitationBlock.astro
-│   │   └── DendrimerCalculator.tsx ← React island (live calculator)
-│   ├── layouts/
-│   │   └── Layout.astro            ← Base HTML wrapper
-│   ├── pages/
-│   │   ├── index.astro             ← Landing page (/)
-│   │   ├── about/index.astro       ← /about/
-│   │   ├── docs/index.astro        ← /docs/
-│   │   └── tools/udb/
-│   │       ├── index.astro         ← /tools/udb/
-│   │       ├── install/index.astro ← /tools/udb/install/
-│   │       ├── manual/index.astro  ← /tools/udb/manual/
-│   │       ├── examples/index.astro
-│   │       ├── validation/index.astro
-│   │       ├── limitations/index.astro
-│   │       └── changelog/index.astro
-│   └── styles/
-│       └── global.css
-├── astro.config.mjs
-├── tailwind.config.mjs
-├── tsconfig.json
-└── package.json
-```
-
----
-
-## Adding Real Content
-
-Replace these placeholders as the project matures:
-
-| Placeholder | Location | Replace with |
-|---|---|---|
-| `dendrimer-hero.svg` | `public/images/` | VMD/PyMOL render of PAMAM G3 |
-| `placeholder-gui.svg` | `public/images/` | Real UDB screenshot |
-| Citation BibTeX | `src/components/CitationBlock.astro` | Actual paper BibTeX |
-| Author email | `src/pages/about/index.astro` | Real email |
-| ORCID | `src/pages/about/index.astro` | Real ORCID iD |
-| GitHub URL | `src/components/Nav.astro`, `Footer.astro` | Real repo URL |
-| Theory diagrams | `src/pages/tools/udb/manual/index.astro` | SVG/PNG diagrams |
-| Example screenshots | `src/pages/tools/udb/examples/index.astro` | Real screenshots |
-
----
-
-## Phase Roadmap
-
-| Phase | Status | Content |
-|---|---|---|
-| Phase 1 | ✅ Complete | Landing, Install, Manual, Citation block |
-| Phase 2 | 🔲 Scaffolded | Examples, dendrimer type matrix, tutorial videos |
-| Phase 3 | ✅ Complete | Benchmarks, Limitations, Theory section (diagram placeholders) |
-| Phase 4 | ✅ Complete | Changelog, Live calculator widget |
-
----
-
-## Tech Stack
-
-- **Astro 4.x** — static site generator, zero-JS by default
-- **Tailwind CSS 3.x** — utility-first styling
-- **React 18** — used only for the interactive calculator island
-- **@tailwindcss/typography** — prose styling for documentation pages
-- **Shiki** (via Astro) — syntax highlighting for code blocks
-
----
-
-## License
-
-Website source: to be determined. UDB software license: to be determined.
+The UDB software lives at [HirushaW/universal-dendrimer-builder](https://github.com/HirushaW/universal-dendrimer-builder).
+3Dmol.js is © University of Pittsburgh and contributors, BSD-3-Clause (`public/vendor/3dmol/LICENSE.txt`).
