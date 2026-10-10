@@ -49,3 +49,6 @@ First stable release, matching the live site.
 - Removed internal planning notes, unused images, an unused component and the
   non-functional GitHub Pages workflow (the site is deployed on Vercel).
 - Branch model: `main` (stable, live) and `dev` (ongoing work).
+
+### License
+- Open source under the MIT License, with a security policy (`SECURITY.md`).
