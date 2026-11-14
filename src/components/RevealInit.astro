@@ -29,11 +29,28 @@
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduce || !('IntersectionObserver' in window)) { revealAll(); return; }
 
+      // Elements that enter together (a row of cards, a hero's parts) cascade in
+      // reading order instead of popping at once. The delay is set inline for
+      // the reveal only and cleared afterwards, so later hover transitions on
+      // the same element are never delayed.
+      var STEP = 70, MAX = 420;
       var io = new IntersectionObserver(function (entries) {
+        var batch = [];
         for (var i = 0; i < entries.length; i++) {
-          var e = entries[i];
-          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          if (entries[i].isIntersecting) { batch.push(entries[i]); io.unobserve(entries[i].target); }
         }
+        batch.sort(function (a, b) {
+          var dy = a.boundingClientRect.top - b.boundingClientRect.top;
+          return Math.abs(dy) > 24 ? dy : a.boundingClientRect.left - b.boundingClientRect.left;
+        });
+        batch.forEach(function (e, n) {
+          var el = e.target, d = Math.min(n * STEP, MAX);
+          if (d) {
+            el.style.transitionDelay = d + 'ms';
+            setTimeout(function () { el.style.transitionDelay = ''; }, d + 900);
+          }
+          el.classList.add('in');
+        });
       }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
       document.querySelectorAll(SEL).forEach(function (el) { io.observe(el); });

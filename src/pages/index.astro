@@ -108,7 +108,7 @@ const telemetry = [
   <MolViewerRuntime />
 
   <!-- ══════════════ HERO · COMMAND CONSOLE ══════════════ -->
-  <section class="hud-bg scanlines relative overflow-hidden pt-14 pb-20 lg:pt-20 lg:pb-28">
+  <section class="hud-bg scanlines relative overflow-clip pt-14 pb-20 lg:pt-20 lg:pb-28">
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -121,7 +121,7 @@ const telemetry = [
       </div>
 
       <!-- Main console panel -->
-      <div class="hud-panel hud-corners scanlines relative rounded-2xl p-6 sm:p-10 lg:p-12 reveal">
+      <div class="hud-panel hud-corners scanlines relative rounded-2xl p-6 sm:p-10 lg:p-12 reveal" data-scroll-exit>
 
         <div class="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
 
@@ -130,9 +130,9 @@ const telemetry = [
             <p class="hud-eyebrow mb-5">COMPUTATIONAL CHEMISTRY // MOLECULAR SIMULATION</p>
 
             <h1 class="font-display font-bold text-slate-50 leading-[0.95] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[4.2rem]">
-              <span class="glitch glitch-live block" data-text="UNIVERSAL">UNIVERSAL</span>
-              <span class="glitch glitch-live block" data-text="DENDRIMER">DENDRIMER</span>
-              <span class="block bg-clip-text text-transparent"
+              <span class="glitch glitch-live block hero-line" data-text="UNIVERSAL">UNIVERSAL</span>
+              <span class="glitch glitch-live block hero-line" data-text="DENDRIMER">DENDRIMER</span>
+              <span class="block bg-clip-text text-transparent hero-line hero-shimmer"
                     style="background-image:linear-gradient(100deg,#6ffff2,#2ce8d8 55%,#3a9bd8)">BUILDER</span>
             </h1>
 
@@ -166,7 +166,7 @@ const telemetry = [
           </div>
 
           <!-- RIGHT · live procedural reactor -->
-          <div class="relative min-w-0 flex items-center justify-center min-h-[360px] sm:min-h-[440px]">
+          <div class="relative min-w-0 flex items-center justify-center min-h-[360px] sm:min-h-[440px]" data-scroll-drift>
             <!-- ambient glow -->
             <div class="absolute w-[440px] h-[440px] max-w-full rounded-full blur-3xl pointer-events-none"
                  style="background:radial-gradient(circle,rgba(44,232,216,0.20),transparent 65%)"></div>

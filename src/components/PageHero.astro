@@ -45,7 +45,7 @@ const hasActions = Astro.slots.has('actions');
 ---
 
 <div class="page-hero">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16" data-scroll-exit>
     <div class={`flex flex-col gap-8 ${reactor ? 'lg:flex-row lg:items-center lg:justify-between' : ''}`}>
 
       <!-- Text column -->
@@ -60,7 +60,7 @@ const hasActions = Astro.slots.has('actions');
           <p class={`hud-eyebrow mb-4 ${centered ? 'justify-center' : ''}`}>{eyebrow}</p>
         )}
 
-        <h1 class="hud-title text-4xl sm:text-5xl leading-[1.04] text-slate-50">
+        <h1 class="hud-title hero-title-in text-4xl sm:text-5xl leading-[1.04] text-slate-50">
           {glitch
             ? <span class="glitch glitch-live inline-block" data-text={title}>{title}</span>
             : title}

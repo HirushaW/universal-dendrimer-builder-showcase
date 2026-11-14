@@ -1,6 +1,6 @@
 {
   "name": "udb-website",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "license": "MIT",
   "description": "Website for the Universal Dendrimer Builder (UDB): documentation, benchmarks and a live 3D structure gallery.",

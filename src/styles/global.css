@@ -518,6 +518,7 @@ main { animation: page-in .6s cubic-bezier(.2,.7,.2,1) backwards; }
 .page-hero {
   position: relative;
   overflow: hidden;
+  overflow: clip;   /* clips like hidden but is not a scroll container, so scroll timelines see the page */
   isolation: isolate;
   background:
     radial-gradient(120% 130% at 12% -20%, rgba(20,110,120,0.16), transparent 55%),
@@ -1100,3 +1101,141 @@ html:is([data-perf="mid"], [data-perf="low"]) .scanlines::after { mix-blend-mode
   box-shadow: 0 0 22px color-mix(in srgb, var(--mv-accent, #2ce8d8) 22%, transparent), inset 0 1px 0 rgba(200,255,250,0.18);
 }
 .mv-tap small { font-size: .6rem; letter-spacing: .08em; text-transform: none; color: rgb(100,116,139); }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOTION LAYER  (v1.1)
+   Page-to-page transitions, entrance choreography, scroll-linked depth
+   and micro-interactions. Everything here is compositor-friendly
+   (transform / opacity), uses `backwards` fill so finished animations
+   never override hover states, and switches off for reduced motion and
+   the low performance tier.
+   ══════════════════════════════════════════════════════════════════ */
+
+@property --lg-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
+/* ── Cross-page transitions (View Transitions API; ignored where unsupported) ── */
+@view-transition { navigation: auto; }
+/* (The nav is deliberately not given its own view-transition-name: a named
+   element becomes an isolated group, which would stop its glass from blurring
+   the page behind it. It is identical on every page, so the crossfade leaves it still.) */
+::view-transition-old(root) { animation: vt-out .18s ease both; }
+::view-transition-new(root) { animation: vt-in .3s ease both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in  { from { opacity: 0; } }
+
+/* ── Entrance choreography ─────────────────────────────────────────── */
+@keyframes lg-line-up { from { opacity: 0; transform: translateY(.55em); } }
+@keyframes lg-rise-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes lg-title-in { from { opacity: 0; transform: translateY(.4em); clip-path: inset(0 0 100% 0); }
+                         to   { opacity: 1; transform: none; clip-path: inset(-20% -5% -20% -5%); } }
+
+.hero-line { animation: lg-line-up .9s var(--ease-hud) backwards; }
+.hero-line:nth-child(1) { animation-delay: .12s; }
+.hero-line:nth-child(2) { animation-delay: .24s; }
+.hero-line:nth-child(3) { animation-delay: .36s; }
+.hero-title-in { animation: lg-title-in .9s var(--ease-hud) .1s backwards; }
+
+/* slow light drifting through the gradient word of the hero title */
+html[data-perf="high"] .hero-shimmer {
+  background-size: 220% 100%;
+  animation: lg-line-up .9s var(--ease-hud) .36s backwards, lg-shimmer 7s ease-in-out 1.4s infinite alternate;
+}
+@keyframes lg-shimmer { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+
+/* menu items cascade in when the mega panel / mobile drawer opens */
+.nav-mega[data-open="true"] .mega-card { animation: lg-rise-in .38s var(--ease-hud) backwards; }
+.nav-mega[data-open="true"] .mega-card:nth-child(2) { animation-delay: .03s; }
+.nav-mega[data-open="true"] .mega-card:nth-child(3) { animation-delay: .06s; }
+.nav-mega[data-open="true"] .mega-card:nth-child(4) { animation-delay: .09s; }
+.nav-mega[data-open="true"] .mega-card:nth-child(5) { animation-delay: .12s; }
+.nav-mega[data-open="true"] .mega-card:nth-child(6) { animation-delay: .15s; }
+.nav-mega[data-open="true"] .mega-card:nth-child(7) { animation-delay: .18s; }
+#mobile-menu:not(.hidden) a { animation: lg-rise-in .4s var(--ease-hud) backwards; }
+#mobile-menu:not(.hidden) a:nth-child(2) { animation-delay: .04s; }
+#mobile-menu:not(.hidden) a:nth-child(3) { animation-delay: .08s; }
+#mobile-menu:not(.hidden) a:nth-child(4) { animation-delay: .12s; }
+#mobile-menu:not(.hidden) a:nth-child(5) { animation-delay: .16s; }
+#mobile-menu:not(.hidden) a:nth-child(6) { animation-delay: .20s; }
+
+/* ── Scroll-linked depth (CSS scroll timelines: runs off the main thread) ── */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* a hero recedes as it scrolls away */
+    html:not([data-perf="low"]) [data-scroll-exit] {
+      animation: lg-recede linear forwards;
+      animation-timeline: view();
+      animation-range: exit 15% exit 95%;
+    }
+    /* the reactor drifts slower than the page (parallax) */
+    html:not([data-perf="low"]) [data-scroll-drift] {
+      animation: lg-drift-y linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 900px;
+    }
+  }
+}
+@keyframes lg-recede  { to { opacity: .3; transform: scale(.965); } }
+@keyframes lg-drift-y { to { transform: translateY(70px); } }
+
+/* ── Micro-interactions ────────────────────────────────────────────── */
+a, button { -webkit-tap-highlight-color: transparent; }
+
+/* a light traces the rim of a card while it is hovered */
+@keyframes lg-orbit { to { --lg-ang: 360deg; } }
+html[data-perf="high"] .hud-panel.group:not(.hud-scan):hover::before,
+html[data-perf="high"] a.card:hover::before {
+  background:
+    conic-gradient(from var(--lg-ang), transparent 0 58%, rgba(111,255,242,0.95) 76%, transparent 92%),
+    linear-gradient(155deg, rgba(200,255,250,0.30), rgba(44,232,216,0.07) 32%, rgba(44,232,216,0.02) 64%, rgba(111,255,242,0.14));
+  animation: lg-orbit 2.8s linear infinite;
+}
+
+/* icon tiles lean in with their card */
+.hud-panel.group .w-11.h-11 {
+  transition: transform .45s var(--lg-spring), background-color .3s ease, box-shadow .3s ease;
+}
+.hud-panel.group:hover .w-11.h-11 {
+  transform: scale(1.08) rotate(-4deg);
+  box-shadow: 0 0 18px rgba(44,232,216,0.28), inset 0 1px 0 rgba(200,255,250,0.2);
+}
+.hud-panel.group:active, a.card:active { scale: .985; }
+
+/* table rows: accent bar slides in on hover */
+.table-scientific tbody td:first-child { box-shadow: inset 0 0 0 transparent; transition: box-shadow .25s ease, background .2s ease; }
+.table-scientific tbody tr:hover td:first-child { box-shadow: inset 2px 0 0 var(--hud-cy); }
+
+/* footer links: underline grows from the left */
+footer a {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size .35s var(--ease-hud), color .15s ease;
+}
+footer a:hover { background-size: 100% 1px; }
+
+/* 3D viewer loading state: a soft sweep instead of a static box */
+.mv-loading::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(111,255,242,0.07) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: lg-sweep-x 1.6s ease-in-out infinite;
+}
+@keyframes lg-sweep-x { to { transform: translateX(100%); } }
+
+/* in-page jumps (Contents links, #citation): the destination glows briefly */
+main :target { animation: lg-target 1.8s ease-out backwards; }
+@keyframes lg-target {
+  from { background-color: rgba(44,232,216,0.10); box-shadow: 0 0 0 12px rgba(44,232,216,0.10); }
+  to   { background-color: transparent; box-shadow: 0 0 0 12px transparent; }
+}
+
+/* ── Off switches ──────────────────────────────────────────────────── */
+html[data-perf="low"] ::view-transition-old(root),
+html[data-perf="low"] ::view-transition-new(root) { animation: none; }
+html[data-perf="low"] .mv-loading::after { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  .hero-line, .hero-title-in, .hero-shimmer,
+  .nav-mega[data-open="true"] .mega-card, #mobile-menu:not(.hidden) a,
+  .mv-loading::after, main :target { animation: none !important; }
+  .hud-panel.group .w-11.h-11, footer a, .table-scientific tbody td:first-child { transition: none; }
+  .hud-panel.group:hover .w-11.h-11 { transform: none; }
+}
