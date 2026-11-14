@@ -4,6 +4,28 @@ All notable changes to the UDB website are recorded here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) ·
 Versioning: [Semantic Versioning](https://semver.org).
 
+## [1.1.0] - 2026-11-14
+
+Motion and polish release.
+
+### Added
+- **Page transitions:** moving between pages now crossfades instead of flashing
+  (View Transitions API; browsers without it navigate as before).
+- **Entrance choreography:** elements that scroll in together cascade in reading
+  order; hero headlines rise in line by line; inner-page titles wipe in.
+- **Scroll depth:** each page hero recedes (fades and shrinks slightly) as it scrolls
+  away, and the home reactor drifts slower than the page. Both use CSS scroll
+  timelines, so they run off the main thread.
+- **Hover and touch details:** a light traces the rim of a hovered card, icon tiles
+  lean in, table rows get a sliding accent bar, footer links underline from the
+  left, and menu items cascade in when the Builder menu or mobile drawer opens.
+- **Feedback:** in-page jumps briefly highlight their destination; the 3D viewer
+  loading state has a soft sweep; the hero title's gradient word shimmers slowly.
+
+### Notes
+- Finished animations never override hover states, and the whole layer is off for
+  reduced-motion users and trimmed on the low performance tier.
+
 ## [1.0.0] - 2026-10-10
 
 First stable release, matching the live site.
